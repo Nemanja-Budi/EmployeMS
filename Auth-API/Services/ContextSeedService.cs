@@ -1,12 +1,12 @@
-﻿using Auth_API.Data;
-using Auth_API.Models.Domain;
+﻿using ADMitroSremEmploye.Data;
+using ADMitroSremEmploye.Models.Domain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace Auth_API.Services
+namespace ADMitroSremEmploye.Services
 {
     public class ContextSeedService
     {

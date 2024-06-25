@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Auth_API.Models.DTOs
+namespace ADMitroSremEmploye.Models.DTOs
 {
     public class RegisterDto
     {

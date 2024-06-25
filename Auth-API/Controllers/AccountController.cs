@@ -1,6 +1,6 @@
-﻿using Auth_API.Models.Domain;
-using Auth_API.Models.DTOs;
-using Auth_API.Services;
+﻿using ADMitroSremEmploye.Models.Domain;
+using ADMitroSremEmploye.Models.DTOs;
+using ADMitroSremEmploye.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -13,7 +13,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Auth_API.Controllers
+namespace ADMitroSremEmploye.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

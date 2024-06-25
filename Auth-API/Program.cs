@@ -1,7 +1,10 @@
-using Auth_API;
-using Auth_API.Data;
-using Auth_API.Models.Domain;
-using Auth_API.Services;
+using ADMitroSremEmploye;
+using ADMitroSremEmploye.Data;
+using ADMitroSremEmploye.Mappings;
+using ADMitroSremEmploye.Models.Domain;
+using ADMitroSremEmploye.Repositories;
+using ADMitroSremEmploye.Services;
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
@@ -27,10 +30,25 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
+builder.Services.AddScoped<IAnnualLeaveRepository, SQLAnnualLeaveRepository>();
+
 builder.Services.AddDbContext<UserDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
+var mapperConfig = new MapperConfiguration(cfg =>
+{
+    cfg.AddProfile<AutoMapperProfiles>();
+});
+
+var mapper = mapperConfig.CreateMapper();
+builder.Services.AddSingleton(mapper);
+
+
+// Register IHttpContextAccessor
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<JWTService>();
 builder.Services.AddScoped<ContextSeedService>();

@@ -2,16 +2,16 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Auth_API.Models.Domain;
+using ADMitroSremEmploye.Models.Domain;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using Auth_API.Models.DTOs;
+using ADMitroSremEmploye.Models.DTOs;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using System;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Auth_API.Controllers
+namespace ADMitroSremEmploye.Controllers
 {
     [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]

@@ -1,23 +1,23 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Auth_API.Models.DTOs
+namespace ADMitroSremEmploye.Models.DTOs
 {
     public class MemberAddEditDto
     {
         public string Id { get; set; }
 
         [Required]
-        public string UserName { get; set; }
+        public required string UserName { get; set; }
 
         [Required]
-        public string FirstName { get; set; }
+        public required string FirstName { get; set; }
 
         [Required]
-        public string LastName { get; set; }
-        public string Password { get; set; }
+        public required string LastName { get; set; }
+        public string? Password { get; set; }
 
         [Required]
-        public string Roles { get; set; }
+        public required string Roles { get; set; }
 
 
     }

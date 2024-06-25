@@ -1,4 +1,4 @@
-﻿using Auth_API.Models.Domain;
+﻿using ADMitroSremEmploye.Models.Domain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -10,7 +10,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Auth_API.Services
+namespace ADMitroSremEmploye.Services
 {
     public class JWTService
     {

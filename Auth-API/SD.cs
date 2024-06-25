@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 
-namespace Auth_API
+namespace ADMitroSremEmploye
 {
     public static class SD
     {
