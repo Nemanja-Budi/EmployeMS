@@ -22,7 +22,7 @@ namespace ADMitroSremEmploye.Repositories.Audit_repository
             return await userDbContext.AuditLogs.Include(a => a.User).ToListAsync();
         }
 
-        public async Task<AuditLog> GetAuditLogAsync(Guid id)
+        public async Task<AuditLog?> GetAuditLogAsync(Guid id)
         {
             return await userDbContext.AuditLogs.Include(a => a.User).FirstOrDefaultAsync(a => a.AuditLogId == id);
         }
@@ -36,7 +36,12 @@ namespace ADMitroSremEmploye.Repositories.Audit_repository
 
             if (auditLog.UserId != null)
             {
-                auditLog.User = await userDbContext.Users.FindAsync(auditLog.UserId);
+                var user = await userDbContext.Users.FindAsync(auditLog.UserId);
+                if(user == null)
+                {
+                    return false;
+                }
+                auditLog.User = user;
             }
 
             userDbContext.Entry(auditLog).State = EntityState.Modified;
@@ -59,7 +64,7 @@ namespace ADMitroSremEmploye.Repositories.Audit_repository
             }
         }
 
-        public async Task<User> GetUserAsync(Guid userId)
+        public async Task<User?> GetUserAsync(Guid userId)
         {
             return await userDbContext.Users.FindAsync(userId);
         }
@@ -69,11 +74,16 @@ namespace ADMitroSremEmploye.Repositories.Audit_repository
             return await userDbContext.AuditLogs.AnyAsync(e => e.AuditLogId == id);
         }
 
-        public async Task<AuditLog> CreateAuditLogAsync(AuditLog auditLog)
+        public async Task<AuditLog?> CreateAuditLogAsync(AuditLog auditLog)
         {
             if (auditLog.UserId != null)
             {
-                auditLog.User = await userDbContext.Users.FindAsync(auditLog.UserId);
+                var user = await userDbContext.Users.FindAsync(auditLog.UserId);
+                if(user == null)
+                {
+                    return null;
+                }
+                auditLog.User = user;
             }
             userDbContext.AuditLogs.Add(auditLog);
             await userDbContext.SaveChangesAsync();

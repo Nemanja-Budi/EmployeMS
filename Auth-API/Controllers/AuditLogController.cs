@@ -46,6 +46,7 @@ namespace ADMitroSremEmploye.Controllers
         [HttpPut("update-auditlog/{id}")]
         public async Task<IActionResult> PutAuditLog(Guid id, AuditLogDto auditLogDto)
         {
+
             var auditLog = mapper.Map<AuditLog>(auditLogDto);
 
             bool isUpdated = await auditRepository.UpdateAuditLogAsync(id, auditLog);
@@ -60,11 +61,16 @@ namespace ADMitroSremEmploye.Controllers
 
         // POST: api/AuditLogs/create-auditlog
         [HttpPost("create-auditlog")]
-        public async Task<ActionResult<AuditLogDto>> PostAuditLog(AuditLogDto auditLogDto)
+        public async Task<ActionResult<AuditLogDto?>> PostAuditLog(AuditLogDto auditLogDto)
         {
             var auditLogDomain = mapper.Map<AuditLog>(auditLogDto);
 
             var createdAuditLog = await auditRepository.CreateAuditLogAsync(auditLogDomain);
+
+            if (createdAuditLog == null)
+            {
+                return BadRequest("User not found or another error occurred."); // Prilagodite poruku prema potrebi
+            }
 
             var respondeAuditLog = mapper.Map<AuditLogDto>(createdAuditLog);
 

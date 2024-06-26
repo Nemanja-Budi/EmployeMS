@@ -22,14 +22,12 @@ namespace ADMitroSremEmploye.Controllers
         private readonly JWTService jWTService;
         private readonly SignInManager<User> signInManager;
         private readonly UserManager<User> userManager;
-        private readonly IConfiguration configuration;
 
-        public AccountController(JWTService jWTService, SignInManager<User> signInManager, UserManager<User> userManager, IConfiguration configuration)
+        public AccountController(JWTService jWTService, SignInManager<User> signInManager, UserManager<User> userManager)
         {
             this.jWTService = jWTService;
             this.signInManager = signInManager;
             this.userManager = userManager;
-            this.configuration = configuration;
         }
 
         [Authorize]
