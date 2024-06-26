@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ADMitroSremEmploye.Data.Migrations
 {
     [DbContext(typeof(UserDbContext))]
-    [Migration("20240625104426_FirstMigration2")]
-    partial class FirstMigration2
+    [Migration("20240626063430_FirMigration")]
+    partial class FirMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -42,7 +42,6 @@ namespace ADMitroSremEmploye.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CreatedByUserId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedDate")
@@ -464,9 +463,7 @@ namespace ADMitroSremEmploye.Data.Migrations
                 {
                     b.HasOne("ADMitroSremEmploye.Models.Domain.User", "CreatedByUser")
                         .WithMany()
-                        .HasForeignKey("CreatedByUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CreatedByUserId");
 
                     b.HasOne("ADMitroSremEmploye.Models.Domain.Employe", "Employe")
                         .WithMany()

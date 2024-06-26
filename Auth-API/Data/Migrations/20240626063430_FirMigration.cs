@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ADMitroSremEmploye.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class FirstMigration2 : Migration
+    public partial class FirMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -231,7 +231,7 @@ namespace ADMitroSremEmploye.Data.Migrations
                     IsPaid = table.Column<bool>(type: "bit", nullable: false),
                     IsCarryOver = table.Column<bool>(type: "bit", nullable: false),
                     IsSickLeave = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedByUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CreatedByUserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -241,8 +241,7 @@ namespace ADMitroSremEmploye.Data.Migrations
                         name: "FK_AnnualLeaves_AspNetUsers_CreatedByUserId",
                         column: x => x.CreatedByUserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_AnnualLeaves_Employe_EmployeId",
                         column: x => x.EmployeId,

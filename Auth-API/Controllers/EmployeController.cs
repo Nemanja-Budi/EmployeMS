@@ -1,11 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using ADMitroSremEmploye.Models.Domain;
-using ADMitroSremEmploye.Data;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using System;
-using System.Linq;
+using ADMitroSremEmploye.Models.DTOs;
+using ADMitroSremEmploye.Repositories.Employe_repository;
+using AutoMapper;
 
 namespace ADMitroSremEmploye.Controllers
 {
@@ -13,107 +10,83 @@ namespace ADMitroSremEmploye.Controllers
     [ApiController]
     public class EmployeController : ControllerBase
     {
-        private readonly UserDbContext _context;
+        private readonly IMapper mapper;
+        private readonly IEmployeRepository employeRepository;
 
-        public EmployeController(UserDbContext context)
+        public EmployeController(IMapper mapper, IEmployeRepository employeRepository)
         {
-            _context = context;
+            this.mapper = mapper;
+            this.employeRepository = employeRepository;
         }
 
-        // GET: api/Employe
+        // GET: api/Employe/get-employes
         [HttpGet("get-employes")]
-        public async Task<ActionResult<IEnumerable<Employe>>> GetEmployes()
+        public async Task<ActionResult<IEnumerable<EmployeDto>>> GetEmployes()
         {
-            return await _context.Employe.ToListAsync();
+            var employeDomain = await employeRepository.GetEmployesAsync();
+            return Ok(mapper.Map<IEnumerable<EmployeDto>>(employeDomain));
         }
 
-        // GET: api/Employe/5
+        // GET: api/Employe/get-employe/id
         [HttpGet("get-employe/{id}")]
         public async Task<ActionResult<Employe>> GetEmploye(Guid id)
         {
-            var employe = await _context.Employe.FindAsync(id);
+            var employe = await employeRepository.GetEmployeAsync(id);
 
             if (employe == null)
             {
                 return NotFound();
             }
 
-            return employe;
+            return Ok(mapper.Map<EmployeDto>(employe));
         }
 
-        // PUT: api/Employe/5
+        // PUT: api/Employe/update-employe/id
         [HttpPut("update-employe/{id}")]
-        public async Task<IActionResult> PutEmploye(Guid id, Employe employe)
+        public async Task<IActionResult> PutEmploye(Guid id, EmployeDto employeDto)
         {
-            if (id != employe.Id)
+            if (id != employeDto.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(employe).State = EntityState.Modified;
+            var employeDomain = mapper.Map<Employe>(employeDto);
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!EmployeExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            var updated = await employeRepository.UpdateEmployeAsync(employeDomain);
 
-            return NoContent();
-        }
-
-        // POST: api/Employe
-        [HttpPost("create-employe")]
-        public async Task<ActionResult<Employe>> PostEmploye(Employe employe)
-        {
-            _context.Employe.Add(employe);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetEmploye", new { id = employe.Id }, employe);
-        }
-
-        [HttpDelete("delete-employe/{id}")]
-        public async Task<IActionResult> DeleteEmploye(Guid id)
-        {
-            // Pronađite zapise o zaposlenom uključujući povezane zapise dece
-            var employe = await _context.Employe
-                .Include(e => e.EmployeChild)
-                .FirstOrDefaultAsync(e => e.Id == id);
-
-            if (employe == null)
+            if (!updated)
             {
                 return NotFound();
             }
 
-            // Pronađite sve povezane zapise dece
-            var employeChildren = await _context.EmployeChild
-                .Where(c => c.Id == id)
-                .ToListAsync();
-
-            // Obrisati sve zapise dece
-            _context.EmployeChild.RemoveRange(employeChildren);
-
-            // Obrisati zapis o zaposlenom
-            _context.Employe.Remove(employe);
-
-            // Sačuvati promene u bazi podataka
-            await _context.SaveChangesAsync();
-
             return NoContent();
         }
 
-        private bool EmployeExists(Guid id)
+        // POST: api/Employe/create-employe
+        [HttpPost("create-employe")]
+        public async Task<ActionResult<EmployeDto>> CreateEmploye(EmployeDto employeDto)
         {
-            return _context.Employe.Any(e => e.Id == id);
+            var employeDomain = mapper.Map<Employe>(employeDto);
+
+            var createdEmploye = await employeRepository.CreateEmployeAsync(employeDomain);
+
+            var employeResponse = mapper.Map<EmployeDto>(createdEmploye);
+
+            return CreatedAtAction("GetEmploye", new { id = employeResponse.Id }, employeResponse);
+        }
+
+        // Delete: api/Employe/delete-employe/id
+        [HttpDelete("delete-employe/{id}")]
+        public async Task<IActionResult> DeleteEmploye(Guid id)
+        {
+            var deleted = await employeRepository.DeleteEmployeAsync(id);
+
+            if (!deleted)
+            {
+                return NotFound();
+            }
+
+            return NoContent();
         }
     }
 }

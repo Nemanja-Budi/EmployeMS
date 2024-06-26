@@ -9,6 +9,8 @@ namespace ADMitroSremEmploye.Mappings
         public AutoMapperProfiles()
         {
             CreateMap<AnnualLeave, AnnualLeaveDto>().ReverseMap();
+            CreateMap<Employe, EmployeDto>().ReverseMap();
+            CreateMap<AuditLog, AuditLogDto>().ReverseMap();
         }
     }
 }

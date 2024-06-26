@@ -3,6 +3,8 @@ using ADMitroSremEmploye.Data;
 using ADMitroSremEmploye.Mappings;
 using ADMitroSremEmploye.Models.Domain;
 using ADMitroSremEmploye.Repositories;
+using ADMitroSremEmploye.Repositories.Audit_repository;
+using ADMitroSremEmploye.Repositories.Employe_repository;
 using ADMitroSremEmploye.Services;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -30,8 +32,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
+builder.Services.AddScoped<IEmployeRepository, SQLEmployeRepository>();
 builder.Services.AddScoped<IAnnualLeaveRepository, SQLAnnualLeaveRepository>();
+builder.Services.AddScoped<IAuditRepository, SQLAuditRepository>();
 
 builder.Services.AddDbContext<UserDbContext>(options =>
 {

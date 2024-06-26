@@ -49,6 +49,10 @@ namespace ADMitroSremEmploye.Models.DTOs
         [Required]
         public required bool IsSickLeave { get; set; }
 
+        public string? CreatedByUserId { get; set; }
+
+        public User? CreatedByUser { get; set; }
+
         [Required]
         public required DateTime CreatedDate { get; set; }
     }
