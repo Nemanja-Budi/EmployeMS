@@ -26,6 +26,7 @@ namespace ADMitroSremEmploye.Models.DTOs
         [RegularExpression(@"^\d{13}$", ErrorMessage = "JMBG must be exactly 13 digits.")]
         public required string JMBG { get; set; }
 
+        public decimal HourlyRate { get; set; }
         [Required]
         [RegularExpression(@"^[MF]$", ErrorMessage = "Gender must be either 'M' (Male) or 'F' (Female).")]
         public char Gender { get; set; }
@@ -84,6 +85,8 @@ namespace ADMitroSremEmploye.Models.DTOs
         //[Range(1000000000, 9999999999, ErrorMessage = "Current account must be a valid account number.")]
         public int CurrentAccount { get; set; }
 
-        public List<EmployeChild>? EmployeChild { get; set; }
+        public ICollection<EmployeChild>? EmployeChild { get; set; }
+        public List<EmployeSalary>? EmployeSalary { get; set; }
+
     }
 }

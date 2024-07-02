@@ -23,6 +23,13 @@ namespace ADMitroSremEmploye.Data
         public DbSet<Employe> Employe { get; set; }
         public DbSet<EmployeChild> EmployeChild { get; set; }
         public DbSet<AnnualLeave> AnnualLeaves { get; set; }
+        public DbSet<EmployeSalary> EmployeSalary { get; set; }
+        public DbSet<StateObligation> StateObligation { get; set; }
+        public DbSet<StateObligationsEmploye> StateObligationEmploye { get; set; }
+        public DbSet<EmployeSalarySO> EmployeSalarySO { get; set; }
+        public DbSet<EmployeSalarySOE> EmployeSalarySOE { get; set; }
+
+
 
         public override int SaveChanges()
         {
@@ -88,6 +95,143 @@ namespace ADMitroSremEmploye.Data
                 AuditLogs.Add(auditLog);
             }
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // Postavljanje preciznosti i skale za EmployeeSalary entitet
+            modelBuilder.Entity<EmployeSalary>()
+                .Property(e => e.MealAllowance)
+                .HasColumnType("decimal(18,5)");
+            modelBuilder.Entity<EmployeSalary>()
+              .Property(e => e.Sickness100)
+              .HasColumnType("decimal(18,5)");
+            modelBuilder.Entity<EmployeSalary>()
+            .Property(e => e.Sickness60)
+            .HasColumnType("decimal(18,5)");
+            modelBuilder.Entity<EmployeSalary>()
+                .Property(e => e.HolidayBonus)
+                .HasColumnType("decimal(18,10)");
+            modelBuilder.Entity<EmployeSalary>()
+                .Property(e => e.Credits)
+                .HasColumnType("decimal(18,5)");
+            modelBuilder.Entity<EmployeSalary>()
+                .Property(e => e.DamageCompensation)
+                .HasColumnType("decimal(18,5)");
+
+            // Postavljanje preciznosti i skale za EmployeSalarySOCalculation entitet
+            modelBuilder.Entity<EmployeSalarySO>()
+                .Property(e => e.DeductionHealth)
+                .HasColumnType("decimal(18,5)");
+            modelBuilder.Entity<EmployeSalarySO>()
+                .Property(e => e.DeductionPension)
+                .HasColumnType("decimal(18,5)");
+            modelBuilder.Entity<EmployeSalarySO>()
+                .Property(e => e.GrossSalary)
+                .HasColumnType("decimal(18,5)");
+            modelBuilder.Entity<EmployeSalarySO>()
+                .Property(e => e.ExpenseOfTheEmployer)
+                .HasColumnType("decimal(18,5)");
+
+            // Postavljanje preciznosti i skale za EmployeeSalarySOECalculation entitet
+            modelBuilder.Entity<EmployeSalarySOE>()
+                .Property(e => e.DeductionHealth)
+                .HasColumnType("decimal(18,5)");
+            modelBuilder.Entity<EmployeSalarySOE>()
+                .Property(e => e.DeductionPension)
+                .HasColumnType("decimal(18,5)");
+            modelBuilder.Entity<EmployeSalarySOE>()
+                .Property(e => e.DeductionUnemployment)
+                .HasColumnType("decimal(18,5)");
+            modelBuilder.Entity<EmployeSalarySOE>()
+                .Property(e => e.DeductionTax)
+                .HasColumnType("decimal(18,5)");
+            modelBuilder.Entity<EmployeSalarySOE>()
+               .Property(e => e.DeductionTaxRelief)
+               .HasColumnType("decimal(18,5)");
+            modelBuilder.Entity<EmployeSalarySOE>()
+                .Property(e => e.GrossSalary)
+                .HasColumnType("decimal(18,5)");
+            modelBuilder.Entity<EmployeSalarySOE>()
+                .Property(e => e.NetoSalary)
+                .HasColumnType("decimal(18,5)");
+            modelBuilder.Entity<EmployeSalarySOE>()
+                .Property(e => e.ExpenseOfTheEmploye)
+                .HasColumnType("decimal(18,5)");
+
+            // Postavljanje preciznosti i skale za Employe entitet
+            modelBuilder.Entity<Employe>()
+                .Property(e => e.HourlyRate)
+                .HasColumnType("decimal(18,5)");
+
+            // Postavljanje preciznosti i skale za StateObligations entitet
+            modelBuilder.Entity<StateObligation>()
+                .Property(e => e.HealthCare)
+                .HasColumnType("decimal(18,5)");
+            modelBuilder.Entity<StateObligation>()
+                .Property(e => e.PIO)
+                .HasColumnType("decimal(18,5)");
+
+            // Postavljanje preciznosti i skale za StateObligationsEmploye entitet
+            modelBuilder.Entity<StateObligationsEmploye>()
+                .Property(e => e.Tax)
+                .HasColumnType("decimal(18,5)");
+            modelBuilder.Entity<StateObligationsEmploye>()
+                .Property(e => e.TaxRelief)
+                .HasColumnType("decimal(18,5)");
+            modelBuilder.Entity<StateObligationsEmploye>()
+                .Property(e => e.Unemployment)
+                .HasColumnType("decimal(18,5)");
+
+            // Dodavanje inicijalnih podataka za StateObligationsEmploye
+            modelBuilder.Entity<StateObligationsEmploye>().HasData(
+                new StateObligationsEmploye
+                {
+                    Id = Guid.NewGuid(),
+                    PIO = 0.14m,
+                    HealthCare = 0.0515m,
+                    Unemployment = 0.0075m,
+                    TaxRelief = 25000,
+                    Tax = 0.10m
+                }
+            );
+
+            // Dodavanje inicijalnih podataka za StateObligations
+            modelBuilder.Entity<StateObligation>().HasData(
+                new StateObligation
+                {
+                    Id = Guid.NewGuid(),
+                    PIO = 0.10m,
+                    HealthCare = 0.0515m
+                }
+            );
+
+            // Veza jedan-na-jedan između EmployeSalary i EmployeSalarySO
+            /*modelBuilder.Entity<EmployeSalary>()
+                .HasOne(es => es.EmployeSalarySO)
+                .WithOne(eso => eso.EmployeSalary)
+                .HasForeignKey<EmployeSalarySO>(eso => eso.EmployeSalaryId);
+            */
+            // Veza jedan-na-jedan između EmployeSalary i EmployeSalarySOE
+            /*modelBuilder.Entity<EmployeSalary>()
+                .HasOne(es => es.EmployeSalarySOE)
+                .WithOne(esoe => esoe.EmployeSalary)
+                .HasForeignKey<EmployeSalarySOE>(esoe => esoe.EmployeSalaryId);
+            /*
+            // Veza jedan-na-više između Employe i EmployeChild
+            /*modelBuilder.Entity<Employe>()
+                .HasMany(e => e.EmployeChild)
+                .WithOne(ec => ec.Employe)
+                .HasForeignKey(ec => ec.EmployeId);
+            */
+            // Veza jedan-na-više između Employe i EmployeSalary
+            /*modelBuilder.Entity<Employe>()
+                .HasMany(e => e.EmployeSalary)
+                .WithOne(es => es.EmployeId)
+                .HasForeignKey(es => es.EmployeId);
+        */
+            }
 
 
         private string SerializeObject(object obj)

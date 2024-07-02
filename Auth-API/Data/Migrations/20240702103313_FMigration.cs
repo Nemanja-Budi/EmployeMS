@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ADMitroSremEmploye.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class FirMigration : Migration
+    public partial class FMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -63,6 +63,7 @@ namespace ADMitroSremEmploye.Data.Migrations
                     NameOfParent = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     DateOfBirth = table.Column<DateOnly>(type: "date", nullable: false),
                     JMBG = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    HourlyRate = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
                     Gender = table.Column<string>(type: "nvarchar(1)", nullable: false),
                     IdentityCardNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     Phone = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
@@ -82,6 +83,23 @@ namespace ADMitroSremEmploye.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Employe", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "StateObligation",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PIO = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
+                    HealthCare = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
+                    Discriminator = table.Column<string>(type: "nvarchar(34)", maxLength: 34, nullable: false),
+                    Unemployment = table.Column<decimal>(type: "decimal(18,5)", nullable: true),
+                    TaxRelief = table.Column<decimal>(type: "decimal(18,5)", nullable: true),
+                    Tax = table.Column<decimal>(type: "decimal(18,5)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_StateObligation", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -270,6 +288,93 @@ namespace ADMitroSremEmploye.Data.Migrations
                         principalColumn: "Id");
                 });
 
+            migrationBuilder.CreateTable(
+                name: "EmployeSalary",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TotalNumberOfHours = table.Column<int>(type: "int", nullable: false),
+                    TotalNumberOfWorkingHours = table.Column<int>(type: "int", nullable: false),
+                    HolidayBonus = table.Column<decimal>(type: "decimal(18,10)", nullable: false),
+                    MealAllowance = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
+                    Sickness100 = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
+                    Sickness60 = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
+                    HoursOfAnnualVacation = table.Column<int>(type: "int", nullable: false),
+                    WorkingHoursForTheHoliday = table.Column<int>(type: "int", nullable: false),
+                    OvertimeHours = table.Column<int>(type: "int", nullable: false),
+                    Credits = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
+                    DamageCompensation = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
+                    EmployeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EmployeSalary", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_EmployeSalary_Employe_EmployeId",
+                        column: x => x.EmployeId,
+                        principalTable: "Employe",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EmployeSalarySO",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    GrossSalary = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
+                    DeductionPension = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
+                    DeductionHealth = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
+                    ExpenseOfTheEmployer = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
+                    EmployeSalaryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EmployeSalarySO", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_EmployeSalarySO_EmployeSalary_EmployeSalaryId",
+                        column: x => x.EmployeSalaryId,
+                        principalTable: "EmployeSalary",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EmployeSalarySOE",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    GrossSalary = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
+                    DeductionPension = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
+                    DeductionHealth = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
+                    DeductionUnemployment = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
+                    DeductionTaxRelief = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
+                    DeductionTax = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
+                    NetoSalary = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
+                    ExpenseOfTheEmploye = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
+                    EmployeSalaryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EmployeSalarySOE", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_EmployeSalarySOE_EmployeSalary_EmployeSalaryId",
+                        column: x => x.EmployeSalaryId,
+                        principalTable: "EmployeSalary",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "StateObligation",
+                columns: new[] { "Id", "Discriminator", "HealthCare", "PIO", "Tax", "TaxRelief", "Unemployment" },
+                values: new object[] { new Guid("8f59af64-24ef-452a-ae2d-d778c96dadc8"), "StateObligationsEmploye", 0.0515m, 0.14m, 0.10m, 25000m, 0.0075m });
+
+            migrationBuilder.InsertData(
+                table: "StateObligation",
+                columns: new[] { "Id", "Discriminator", "HealthCare", "PIO" },
+                values: new object[] { new Guid("d951c780-b167-4c77-808e-f9bda8eaed1e"), "StateObligation", 0.0515m, 0.10m });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AnnualLeaves_CreatedByUserId",
                 table: "AnnualLeaves",
@@ -328,6 +433,23 @@ namespace ADMitroSremEmploye.Data.Migrations
                 name: "IX_EmployeChild_EmployeId",
                 table: "EmployeChild",
                 column: "EmployeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EmployeSalary_EmployeId",
+                table: "EmployeSalary",
+                column: "EmployeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EmployeSalarySO_EmployeSalaryId",
+                table: "EmployeSalarySO",
+                column: "EmployeSalaryId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EmployeSalarySOE_EmployeSalaryId",
+                table: "EmployeSalarySOE",
+                column: "EmployeSalaryId",
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -358,10 +480,22 @@ namespace ADMitroSremEmploye.Data.Migrations
                 name: "EmployeChild");
 
             migrationBuilder.DropTable(
+                name: "EmployeSalarySO");
+
+            migrationBuilder.DropTable(
+                name: "EmployeSalarySOE");
+
+            migrationBuilder.DropTable(
+                name: "StateObligation");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "EmployeSalary");
 
             migrationBuilder.DropTable(
                 name: "Employe");

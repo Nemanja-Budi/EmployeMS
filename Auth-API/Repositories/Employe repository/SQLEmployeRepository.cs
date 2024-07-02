@@ -19,7 +19,13 @@ namespace ADMitroSremEmploye.Repositories.Employe_repository
 
         public async Task<IEnumerable<Employe>> GetEmployesAsync()
         {
-            return await userDbContext.Employe.Include(e => e.EmployeChild).ToListAsync();
+            return await userDbContext.Employe
+            .Include(e => e.EmployeChild)
+            .Include(e => e.EmployeSalary)
+                .ThenInclude(es => es.EmployeSalarySO) // Prvi nivo ThenInclude
+            .Include(e => e.EmployeSalary)
+                .ThenInclude(es => es.EmployeSalarySOE) // Drugi nivo ThenInclude
+            .ToListAsync();
 
         }
 

@@ -172,6 +172,9 @@ namespace ADMitroSremEmploye.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(1)");
 
+                    b.Property<decimal>("HourlyRate")
+                        .HasColumnType("decimal(18,5)");
+
                     b.Property<string>("IdentityCardNumber")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -245,6 +248,159 @@ namespace ADMitroSremEmploye.Data.Migrations
                     b.HasIndex("EmployeId");
 
                     b.ToTable("EmployeChild");
+                });
+
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.EmployeSalary", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Credits")
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<decimal>("DamageCompensation")
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<Guid>("EmployeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("HolidayBonus")
+                        .HasColumnType("decimal(18,10)");
+
+                    b.Property<int>("HoursOfAnnualVacation")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("MealAllowance")
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<int>("OvertimeHours")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Sickness100")
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<decimal>("Sickness60")
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<int>("TotalNumberOfHours")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalNumberOfWorkingHours")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WorkingHoursForTheHoliday")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeId");
+
+                    b.ToTable("EmployeSalary");
+                });
+
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.EmployeSalarySO", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("DeductionHealth")
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<decimal>("DeductionPension")
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<Guid>("EmployeSalaryId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("ExpenseOfTheEmployer")
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<decimal>("GrossSalary")
+                        .HasColumnType("decimal(18,5)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeSalaryId")
+                        .IsUnique();
+
+                    b.ToTable("EmployeSalarySO");
+                });
+
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.EmployeSalarySOE", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("DeductionHealth")
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<decimal>("DeductionPension")
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<decimal>("DeductionTax")
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<decimal>("DeductionTaxRelief")
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<decimal>("DeductionUnemployment")
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<Guid>("EmployeSalaryId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("ExpenseOfTheEmploye")
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<decimal>("GrossSalary")
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<decimal>("NetoSalary")
+                        .HasColumnType("decimal(18,5)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeSalaryId")
+                        .IsUnique();
+
+                    b.ToTable("EmployeSalarySOE");
+                });
+
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.StateObligation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(34)
+                        .HasColumnType("nvarchar(34)");
+
+                    b.Property<decimal>("HealthCare")
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<decimal>("PIO")
+                        .HasColumnType("decimal(18,5)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("StateObligation");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("StateObligation");
+
+                    b.UseTphMappingStrategy();
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("d951c780-b167-4c77-808e-f9bda8eaed1e"),
+                            HealthCare = 0.0515m,
+                            PIO = 0.10m
+                        });
                 });
 
             modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.User", b =>
@@ -456,6 +612,33 @@ namespace ADMitroSremEmploye.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.StateObligationsEmploye", b =>
+                {
+                    b.HasBaseType("ADMitroSremEmploye.Models.Domain.StateObligation");
+
+                    b.Property<decimal>("Tax")
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<decimal>("TaxRelief")
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<decimal>("Unemployment")
+                        .HasColumnType("decimal(18,5)");
+
+                    b.HasDiscriminator().HasValue("StateObligationsEmploye");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("8f59af64-24ef-452a-ae2d-d778c96dadc8"),
+                            HealthCare = 0.0515m,
+                            PIO = 0.14m,
+                            Tax = 0.10m,
+                            TaxRelief = 25000m,
+                            Unemployment = 0.0075m
+                        });
+                });
+
             modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.AnnualLeave", b =>
                 {
                     b.HasOne("ADMitroSremEmploye.Models.Domain.User", "CreatedByUser")
@@ -489,6 +672,33 @@ namespace ADMitroSremEmploye.Data.Migrations
                     b.HasOne("ADMitroSremEmploye.Models.Domain.Employe", null)
                         .WithMany("EmployeChild")
                         .HasForeignKey("EmployeId");
+                });
+
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.EmployeSalary", b =>
+                {
+                    b.HasOne("ADMitroSremEmploye.Models.Domain.Employe", null)
+                        .WithMany("EmployeSalary")
+                        .HasForeignKey("EmployeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.EmployeSalarySO", b =>
+                {
+                    b.HasOne("ADMitroSremEmploye.Models.Domain.EmployeSalary", null)
+                        .WithOne("EmployeSalarySO")
+                        .HasForeignKey("ADMitroSremEmploye.Models.Domain.EmployeSalarySO", "EmployeSalaryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.EmployeSalarySOE", b =>
+                {
+                    b.HasOne("ADMitroSremEmploye.Models.Domain.EmployeSalary", null)
+                        .WithOne("EmployeSalarySOE")
+                        .HasForeignKey("ADMitroSremEmploye.Models.Domain.EmployeSalarySOE", "EmployeSalaryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -545,6 +755,15 @@ namespace ADMitroSremEmploye.Data.Migrations
             modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.Employe", b =>
                 {
                     b.Navigation("EmployeChild");
+
+                    b.Navigation("EmployeSalary");
+                });
+
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.EmployeSalary", b =>
+                {
+                    b.Navigation("EmployeSalarySO");
+
+                    b.Navigation("EmployeSalarySOE");
                 });
 #pragma warning restore 612, 618
         }

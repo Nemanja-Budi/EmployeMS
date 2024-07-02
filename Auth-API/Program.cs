@@ -21,6 +21,7 @@ using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json.Serialization;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -55,6 +56,7 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<JWTService>();
 builder.Services.AddScoped<ContextSeedService>();
+builder.Services.AddScoped<SalaryCalculatorService>();
 
 builder.Services.AddIdentityCore<User>(options =>
     {
@@ -73,6 +75,19 @@ builder.Services.AddIdentityCore<User>(options =>
 .AddSignInManager<SignInManager<User>>()
 .AddUserManager<UserManager<User>>()
 .AddDefaultTokenProviders();
+
+/*builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+});
+*/
+
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    });
+
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
