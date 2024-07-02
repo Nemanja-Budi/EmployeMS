@@ -24,7 +24,7 @@ namespace ADMitroSremEmploye.Controllers
             this.userDbContext = userDbContext;
         }
 
-        [HttpPost("calculate")]
+        [HttpPost("create-employe-salary")]
         public IActionResult CalculateSalary([FromBody] EmployeSalary employeSalary)
         {
             if (employeSalary == null || employeSalary.EmployeId == Guid.Empty)

@@ -8,7 +8,7 @@ namespace ADMitroSremEmploye.Models.Domain
         public Guid Id { get; set; }
         public int TotalNumberOfHours { get; set; }
         public int TotalNumberOfWorkingHours { get; set; }
-        public decimal HolidayBonus { get; set; } = 3.1345849938m;
+        public decimal HolidayBonus { get; set; } = 1426.53m;
         public decimal MealAllowance { get; set; } = 42.8m;
         public decimal Sickness100 { get; set; } = 0;
         public decimal Sickness60 { get; set; } = 0;
