@@ -349,7 +349,6 @@ namespace ADMitroSremEmploye.Data.Migrations
                     DeductionHealth = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
                     DeductionUnemployment = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
                     DeductionTaxRelief = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
-                    DeductionTax = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
                     NetoSalary = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
                     ExpenseOfTheEmploye = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
                     EmployeSalaryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
@@ -365,15 +364,44 @@ namespace ADMitroSremEmploye.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.InsertData(
-                table: "StateObligation",
-                columns: new[] { "Id", "Discriminator", "HealthCare", "PIO", "Tax", "TaxRelief", "Unemployment" },
-                values: new object[] { new Guid("8f59af64-24ef-452a-ae2d-d778c96dadc8"), "StateObligationsEmploye", 0.0515m, 0.14m, 0.10m, 25000m, 0.0075m });
+            migrationBuilder.CreateTable(
+                name: "IncomeFromWork",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    WorkinHours = table.Column<decimal>(type: "decimal(18,5)", precision: 18, scale: 5, nullable: false),
+                    Sickness60 = table.Column<decimal>(type: "decimal(18,5)", precision: 18, scale: 5, nullable: false),
+                    Sickness100 = table.Column<decimal>(type: "decimal(18,5)", precision: 18, scale: 5, nullable: false),
+                    AnnualVacation = table.Column<decimal>(type: "decimal(18,5)", precision: 18, scale: 5, nullable: false),
+                    HolidayHours = table.Column<decimal>(type: "decimal(18,5)", precision: 18, scale: 5, nullable: false),
+                    OvertimeHours = table.Column<decimal>(type: "decimal(18,5)", precision: 18, scale: 5, nullable: false),
+                    Credit = table.Column<decimal>(type: "decimal(18,5)", precision: 18, scale: 5, nullable: false),
+                    Demage = table.Column<decimal>(type: "decimal(18,5)", precision: 18, scale: 5, nullable: false),
+                    HotMeal = table.Column<decimal>(type: "decimal(18,5)", precision: 18, scale: 5, nullable: false),
+                    Regres = table.Column<decimal>(type: "decimal(18,5)", precision: 18, scale: 5, nullable: false),
+                    GrossSalary = table.Column<decimal>(type: "decimal(18,5)", precision: 18, scale: 5, nullable: false),
+                    EmployeSalaryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_IncomeFromWork", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_IncomeFromWork_EmployeSalary_EmployeSalaryId",
+                        column: x => x.EmployeSalaryId,
+                        principalTable: "EmployeSalary",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
 
             migrationBuilder.InsertData(
                 table: "StateObligation",
                 columns: new[] { "Id", "Discriminator", "HealthCare", "PIO" },
-                values: new object[] { new Guid("d951c780-b167-4c77-808e-f9bda8eaed1e"), "StateObligation", 0.0515m, 0.10m });
+                values: new object[] { new Guid("329dd0dd-19a8-4aff-9cbb-fa5fa9087d9c"), "StateObligation", 0.0515m, 0.10m });
+
+            migrationBuilder.InsertData(
+                table: "StateObligation",
+                columns: new[] { "Id", "Discriminator", "HealthCare", "PIO", "Tax", "TaxRelief", "Unemployment" },
+                values: new object[] { new Guid("3983fe54-9a09-45f4-8327-bb68db799ff8"), "StateObligationsEmploye", 0.0515m, 0.14m, 0.10m, 25000m, 0.0075m });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AnnualLeaves_CreatedByUserId",
@@ -450,6 +478,12 @@ namespace ADMitroSremEmploye.Data.Migrations
                 table: "EmployeSalarySOE",
                 column: "EmployeSalaryId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_IncomeFromWork_EmployeSalaryId",
+                table: "IncomeFromWork",
+                column: "EmployeSalaryId",
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -484,6 +518,9 @@ namespace ADMitroSremEmploye.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "EmployeSalarySOE");
+
+            migrationBuilder.DropTable(
+                name: "IncomeFromWork");
 
             migrationBuilder.DropTable(
                 name: "StateObligation");

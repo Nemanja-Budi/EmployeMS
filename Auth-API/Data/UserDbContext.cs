@@ -28,8 +28,7 @@ namespace ADMitroSremEmploye.Data
         public DbSet<StateObligationsEmploye> StateObligationEmploye { get; set; }
         public DbSet<EmployeSalarySO> EmployeSalarySO { get; set; }
         public DbSet<EmployeSalarySOE> EmployeSalarySOE { get; set; }
-
-
+        public DbSet<IncomeFromWork> IncomeFromWork { get; set; }
 
         public override int SaveChanges()
         {
@@ -145,9 +144,6 @@ namespace ADMitroSremEmploye.Data
                 .Property(e => e.DeductionUnemployment)
                 .HasColumnType("decimal(18,5)");
             modelBuilder.Entity<EmployeSalarySOE>()
-                .Property(e => e.DeductionTax)
-                .HasColumnType("decimal(18,5)");
-            modelBuilder.Entity<EmployeSalarySOE>()
                .Property(e => e.DeductionTaxRelief)
                .HasColumnType("decimal(18,5)");
             modelBuilder.Entity<EmployeSalarySOE>()
@@ -183,6 +179,21 @@ namespace ADMitroSremEmploye.Data
             modelBuilder.Entity<StateObligationsEmploye>()
                 .Property(e => e.Unemployment)
                 .HasColumnType("decimal(18,5)");
+
+            modelBuilder.Entity<IncomeFromWork>(entity =>
+            {
+                entity.Property(e => e.WorkinHours).HasPrecision(18, 5);
+                entity.Property(e => e.Sickness60).HasPrecision(18, 5);
+                entity.Property(e => e.Sickness100).HasPrecision(18, 5);
+                entity.Property(e => e.AnnualVacation).HasPrecision(18, 5);
+                entity.Property(e => e.HolidayHours).HasPrecision(18, 5);
+                entity.Property(e => e.OvertimeHours).HasPrecision(18, 5);
+                entity.Property(e => e.Credit).HasPrecision(18, 5);
+                entity.Property(e => e.Demage).HasPrecision(18, 5);
+                entity.Property(e => e.HotMeal).HasPrecision(18, 5);
+                entity.Property(e => e.Regres).HasPrecision(18, 5);
+                entity.Property(e => e.GrossSalary).HasPrecision(18, 5);
+            });
 
             // Dodavanje inicijalnih podataka za StateObligationsEmploye
             modelBuilder.Entity<StateObligationsEmploye>().HasData(

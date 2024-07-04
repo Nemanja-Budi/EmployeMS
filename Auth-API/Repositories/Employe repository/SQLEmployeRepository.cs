@@ -22,9 +22,9 @@ namespace ADMitroSremEmploye.Repositories.Employe_repository
             return await userDbContext.Employe
             .Include(e => e.EmployeChild)
             .Include(e => e.EmployeSalary)
-                .ThenInclude(es => es.EmployeSalarySO) // Prvi nivo ThenInclude
+                .ThenInclude(es => es.EmployeSalarySO)
             .Include(e => e.EmployeSalary)
-                .ThenInclude(es => es.EmployeSalarySOE) // Drugi nivo ThenInclude
+                .ThenInclude(es => es.EmployeSalarySOE)
             .ToListAsync();
 
         }

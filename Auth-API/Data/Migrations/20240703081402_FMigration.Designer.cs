@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ADMitroSremEmploye.Data.Migrations
 {
     [DbContext(typeof(UserDbContext))]
-    [Migration("20240702103313_FMigration")]
+    [Migration("20240703081402_FMigration")]
     partial class FMigration
     {
         /// <inheritdoc />
@@ -343,9 +343,6 @@ namespace ADMitroSremEmploye.Data.Migrations
                     b.Property<decimal>("DeductionPension")
                         .HasColumnType("decimal(18,5)");
 
-                    b.Property<decimal>("DeductionTax")
-                        .HasColumnType("decimal(18,5)");
-
                     b.Property<decimal>("DeductionTaxRelief")
                         .HasColumnType("decimal(18,5)");
 
@@ -370,6 +367,67 @@ namespace ADMitroSremEmploye.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("EmployeSalarySOE");
+                });
+
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.IncomeFromWork", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("AnnualVacation")
+                        .HasPrecision(18, 5)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<decimal>("Credit")
+                        .HasPrecision(18, 5)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<decimal>("Demage")
+                        .HasPrecision(18, 5)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<Guid>("EmployeSalaryId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("GrossSalary")
+                        .HasPrecision(18, 5)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<decimal>("HolidayHours")
+                        .HasPrecision(18, 5)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<decimal>("HotMeal")
+                        .HasPrecision(18, 5)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<decimal>("OvertimeHours")
+                        .HasPrecision(18, 5)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<decimal>("Regres")
+                        .HasPrecision(18, 5)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<decimal>("Sickness100")
+                        .HasPrecision(18, 5)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<decimal>("Sickness60")
+                        .HasPrecision(18, 5)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<decimal>("WorkinHours")
+                        .HasPrecision(18, 5)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeSalaryId")
+                        .IsUnique();
+
+                    b.ToTable("IncomeFromWork");
                 });
 
             modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.StateObligation", b =>
@@ -400,7 +458,7 @@ namespace ADMitroSremEmploye.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("d951c780-b167-4c77-808e-f9bda8eaed1e"),
+                            Id = new Guid("329dd0dd-19a8-4aff-9cbb-fa5fa9087d9c"),
                             HealthCare = 0.0515m,
                             PIO = 0.10m
                         });
@@ -633,7 +691,7 @@ namespace ADMitroSremEmploye.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("8f59af64-24ef-452a-ae2d-d778c96dadc8"),
+                            Id = new Guid("3983fe54-9a09-45f4-8327-bb68db799ff8"),
                             HealthCare = 0.0515m,
                             PIO = 0.14m,
                             Tax = 0.10m,
@@ -704,6 +762,15 @@ namespace ADMitroSremEmploye.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.IncomeFromWork", b =>
+                {
+                    b.HasOne("ADMitroSremEmploye.Models.Domain.EmployeSalary", null)
+                        .WithOne("IncomeFromWork")
+                        .HasForeignKey("ADMitroSremEmploye.Models.Domain.IncomeFromWork", "EmployeSalaryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -767,6 +834,8 @@ namespace ADMitroSremEmploye.Data.Migrations
                     b.Navigation("EmployeSalarySO");
 
                     b.Navigation("EmployeSalarySOE");
+
+                    b.Navigation("IncomeFromWork");
                 });
 #pragma warning restore 612, 618
         }

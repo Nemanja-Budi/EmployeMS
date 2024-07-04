@@ -82,13 +82,14 @@ builder.Services.AddIdentityCore<User>(options =>
 });
 */
 
-builder.Services.AddControllers()
+//OVO JE KOMENTARISANO ZBOG RESAVANJA CIKLICNIH VEZA KOJE RADE SAD BEZ OVOGA
+/*builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     });
 
-
+*/
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {

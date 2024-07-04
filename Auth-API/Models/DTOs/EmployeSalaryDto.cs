@@ -1,9 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+﻿using ADMitroSremEmploye.Models.Domain;
 
-namespace ADMitroSremEmploye.Models.Domain
+namespace ADMitroSremEmploye.Models.DTOs
 {
-    public class EmployeSalary
+    public class EmployeSalaryDto
     {
         public Guid Id { get; set; }
         public int TotalNumberOfHours { get; set; }
@@ -21,6 +20,5 @@ namespace ADMitroSremEmploye.Models.Domain
         public EmployeSalarySO? EmployeSalarySO { get; set; }
         public EmployeSalarySOE? EmployeSalarySOE { get; set; }
         public IncomeFromWork? IncomeFromWork { get; set; }
-
     }
 }

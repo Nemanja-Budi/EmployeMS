@@ -8,6 +8,8 @@ using System;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using System.Threading.Tasks;
+using ADMitroSremEmploye.Models.DTOs;
+using AutoMapper;
 
 namespace ADMitroSremEmploye.Controllers
 {
@@ -15,52 +17,85 @@ namespace ADMitroSremEmploye.Controllers
     [ApiController]
     public class EmployeSalaryController : ControllerBase
     {
+        private readonly IMapper mapper;
         private readonly SalaryCalculatorService _salaryCalculatorService;
-        private readonly UserDbContext userDbContext;
 
-        public EmployeSalaryController(SalaryCalculatorService salaryCalculatorService, UserDbContext userDbContext)
+        public EmployeSalaryController(IMapper mapper, SalaryCalculatorService salaryCalculatorService)
         {
+            this.mapper = mapper;
             _salaryCalculatorService = salaryCalculatorService;
-            this.userDbContext = userDbContext;
         }
 
         [HttpPost("create-employe-salary")]
-        public IActionResult CalculateSalary([FromBody] EmployeSalary employeSalary)
+        public async Task<IActionResult> CalculateSalary([FromBody] EmployeSalaryDto employeSalaryDto)
         {
+            var employeSalary = mapper.Map<EmployeSalary>(employeSalaryDto);
+
             if (employeSalary == null || employeSalary.EmployeId == Guid.Empty)
             {
                 return BadRequest("Invalid employe salary data. EmployeId is required.");
             }
 
-            var employe = userDbContext.Employe.FirstOrDefault(e => e.Id == employeSalary.EmployeId);
-            if (employe == null)
+            var calculatedSalary = await _salaryCalculatorService.CalculateSalary(employeSalary.EmployeId, employeSalary);
+
+            if (calculatedSalary == null)
             {
-                return BadRequest($"Employee with Id {employeSalary.EmployeId} not found.");
+                return NotFound($"Employee with Id {employeSalary.EmployeId} not found.");
             }
 
-            try
-            {
-                var options = new JsonSerializerOptions
-                {
-                    ReferenceHandler = ReferenceHandler.Preserve
-                };
-
-                string json = JsonSerializer.Serialize(employeSalary, options);
-                EmployeSalary calculatedSalary = _salaryCalculatorService.CalculateSalary(employeSalary.EmployeId, employeSalary);
-                return Ok(calculatedSalary);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
+            return Ok(mapper.Map<EmployeSalaryDto>(calculatedSalary));
         }
 
-        [HttpGet("get-employe-salary")]
-        public ActionResult GetEmployeSalary()
+        [HttpGet("employe-salarys/{employeId}")]
+        public async Task<IActionResult> GetEmployeSalarys(Guid employeId)
         {
-            var employeSalary = userDbContext.EmployeSalary.Include(e => e.EmployeSalarySO).Include(e => e.EmployeSalarySOE).ToList();
+            var employeSalarys = await _salaryCalculatorService.GetEmployeSalarys(employeId);
 
-            return Ok(employeSalary);
+            if (employeSalarys == null)
+            {
+                return NotFound($"Employee with Id {employeId} not found.");
+            }
+
+            return Ok(mapper.Map<List<EmployeSalaryDto>>(employeSalarys)); 
+        }
+
+        [HttpGet("employe-salary/{employesalaryId}")]
+        public async Task<IActionResult> GetEmployeSalary(Guid employesalaryId)
+        {
+            var employeSalary = await _salaryCalculatorService.GetEmployeSalary(employesalaryId);
+
+            if (employeSalary == null)
+            {
+                return NotFound($"Employee with Id {employesalaryId} not found.");
+            }
+
+            return Ok(mapper.Map<EmployeSalaryDto>(employeSalary));
+        }
+
+        [HttpDelete("delete-employe-salarys/{employeId}")]
+        public async Task<IActionResult> DeleteEmployeSalarys(Guid employeId)
+        {
+            var result = await _salaryCalculatorService.DeleteEmployeSalarys(employeId);
+
+            if (!result)
+            {
+                return NotFound($"Employee with Id {employeId} not found or no salaries found.");
+            }
+
+            return Ok($"Successfully deleted salaries for Employee with Id {employeId}.");
+        }
+
+        [HttpDelete("delete-employe-salary/{employeSalaryId}")]
+        public async Task<IActionResult> DeleteEmployeSalary(Guid employeSalaryId)
+        {
+            var result = await _salaryCalculatorService.DeleteEmployeSalary(employeSalaryId);
+
+            if (!result)
+            {
+                return NotFound($"EmployeSalary with Id {employeSalaryId} not found.");
+            }
+
+            return Ok($"Successfully deleted EmployeSalary with Id {employeSalaryId}.");
         }
 
     }
