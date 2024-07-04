@@ -36,7 +36,7 @@ namespace ADMitroSremEmploye.Controllers
                 return BadRequest("Invalid employe salary data. EmployeId is required.");
             }
 
-            var calculatedSalary = await _salaryCalculatorService.CalculateSalary(employeSalary.EmployeId, employeSalary);
+            var calculatedSalary = await _salaryCalculatorService.CalculateOrUpdateSalary(employeSalary.EmployeId, employeSalary);
 
             if (calculatedSalary == null)
             {
@@ -96,6 +96,26 @@ namespace ADMitroSremEmploye.Controllers
             }
 
             return Ok($"Successfully deleted EmployeSalary with Id {employeSalaryId}.");
+        }
+
+        [HttpPut("update-employe-salary/{employeId}")]
+        public async Task<IActionResult> UpdateEmployeSalary(Guid employeId, [FromBody] EmployeSalaryDto employeSalaryDto)
+        {
+            var updatedSalary = mapper.Map<EmployeSalary>(employeSalaryDto);
+
+            if (updatedSalary == null || updatedSalary.Id == Guid.Empty)
+            {
+                return BadRequest("Invalid employe salary data.");
+            }
+
+            var result = await _salaryCalculatorService.CalculateOrUpdateSalary(employeId, updatedSalary);
+
+            if (result == null)
+            {
+                return NotFound($"Employee or salary not found for EmployeId {employeId} and SalaryId {updatedSalary.Id}.");
+            }
+
+            return Ok(mapper.Map<EmployeSalaryDto>(result));
         }
 
     }
