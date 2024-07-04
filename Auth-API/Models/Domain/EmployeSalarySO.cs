@@ -10,6 +10,5 @@ namespace ADMitroSremEmploye.Models.Domain
         public decimal DeductionHealth { get; set; }
         public decimal ExpenseOfTheEmployer{ get; set; }
         public Guid EmployeSalaryId { get; set; }
-        //public EmployeSalary? EmployeSalary { get; set; }
     }
 }

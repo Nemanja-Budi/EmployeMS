@@ -90,12 +90,12 @@ namespace ADMitroSremEmploye.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    PIO = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
-                    HealthCare = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
+                    PIO = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    HealthCare = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
                     Discriminator = table.Column<string>(type: "nvarchar(34)", maxLength: 34, nullable: false),
-                    Unemployment = table.Column<decimal>(type: "decimal(18,5)", nullable: true),
-                    TaxRelief = table.Column<decimal>(type: "decimal(18,5)", nullable: true),
-                    Tax = table.Column<decimal>(type: "decimal(18,5)", nullable: true)
+                    Unemployment = table.Column<decimal>(type: "decimal(18,4)", nullable: true),
+                    TaxRelief = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    Tax = table.Column<decimal>(type: "decimal(18,2)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -295,15 +295,15 @@ namespace ADMitroSremEmploye.Data.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     TotalNumberOfHours = table.Column<int>(type: "int", nullable: false),
                     TotalNumberOfWorkingHours = table.Column<int>(type: "int", nullable: false),
-                    HolidayBonus = table.Column<decimal>(type: "decimal(18,10)", nullable: false),
-                    MealAllowance = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
-                    Sickness100 = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
-                    Sickness60 = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
+                    Sickness100 = table.Column<int>(type: "int", nullable: false),
+                    Sickness60 = table.Column<int>(type: "int", nullable: false),
                     HoursOfAnnualVacation = table.Column<int>(type: "int", nullable: false),
                     WorkingHoursForTheHoliday = table.Column<int>(type: "int", nullable: false),
                     OvertimeHours = table.Column<int>(type: "int", nullable: false),
-                    Credits = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
-                    DamageCompensation = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
+                    Credits = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    DamageCompensation = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    HolidayBonus = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    MealAllowance = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     EmployeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -322,10 +322,10 @@ namespace ADMitroSremEmploye.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    GrossSalary = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
-                    DeductionPension = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
-                    DeductionHealth = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
-                    ExpenseOfTheEmployer = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
+                    GrossSalary = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    DeductionPension = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    DeductionHealth = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    ExpenseOfTheEmployer = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     EmployeSalaryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -344,13 +344,13 @@ namespace ADMitroSremEmploye.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    GrossSalary = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
-                    DeductionPension = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
-                    DeductionHealth = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
-                    DeductionUnemployment = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
-                    DeductionTaxRelief = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
-                    NetoSalary = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
-                    ExpenseOfTheEmploye = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
+                    GrossSalary = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    DeductionPension = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    DeductionHealth = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    DeductionUnemployment = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    DeductionTaxRelief = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    NetoSalary = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    ExpenseOfTheEmploye = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     EmployeSalaryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -369,17 +369,17 @@ namespace ADMitroSremEmploye.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    WorkinHours = table.Column<decimal>(type: "decimal(18,5)", precision: 18, scale: 5, nullable: false),
-                    Sickness60 = table.Column<decimal>(type: "decimal(18,5)", precision: 18, scale: 5, nullable: false),
-                    Sickness100 = table.Column<decimal>(type: "decimal(18,5)", precision: 18, scale: 5, nullable: false),
-                    AnnualVacation = table.Column<decimal>(type: "decimal(18,5)", precision: 18, scale: 5, nullable: false),
-                    HolidayHours = table.Column<decimal>(type: "decimal(18,5)", precision: 18, scale: 5, nullable: false),
-                    OvertimeHours = table.Column<decimal>(type: "decimal(18,5)", precision: 18, scale: 5, nullable: false),
-                    Credit = table.Column<decimal>(type: "decimal(18,5)", precision: 18, scale: 5, nullable: false),
-                    Demage = table.Column<decimal>(type: "decimal(18,5)", precision: 18, scale: 5, nullable: false),
-                    HotMeal = table.Column<decimal>(type: "decimal(18,5)", precision: 18, scale: 5, nullable: false),
-                    Regres = table.Column<decimal>(type: "decimal(18,5)", precision: 18, scale: 5, nullable: false),
-                    GrossSalary = table.Column<decimal>(type: "decimal(18,5)", precision: 18, scale: 5, nullable: false),
+                    WorkinHours = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    Sickness60 = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    Sickness100 = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    AnnualVacation = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    HolidayHours = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    OvertimeHours = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    Credit = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    Demage = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    HotMeal = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    Regres = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    GrossSalary = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     EmployeSalaryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -395,13 +395,13 @@ namespace ADMitroSremEmploye.Data.Migrations
 
             migrationBuilder.InsertData(
                 table: "StateObligation",
-                columns: new[] { "Id", "Discriminator", "HealthCare", "PIO" },
-                values: new object[] { new Guid("329dd0dd-19a8-4aff-9cbb-fa5fa9087d9c"), "StateObligation", 0.0515m, 0.10m });
+                columns: new[] { "Id", "Discriminator", "HealthCare", "PIO", "Tax", "TaxRelief", "Unemployment" },
+                values: new object[] { new Guid("629402ca-32e1-4931-887e-5db327bc5ace"), "StateObligationsEmploye", 0.0515m, 0.14m, 0.10m, 25000m, 0.0075m });
 
             migrationBuilder.InsertData(
                 table: "StateObligation",
-                columns: new[] { "Id", "Discriminator", "HealthCare", "PIO", "Tax", "TaxRelief", "Unemployment" },
-                values: new object[] { new Guid("3983fe54-9a09-45f4-8327-bb68db799ff8"), "StateObligationsEmploye", 0.0515m, 0.14m, 0.10m, 25000m, 0.0075m });
+                columns: new[] { "Id", "Discriminator", "HealthCare", "PIO" },
+                values: new object[] { new Guid("cfa5c4e7-9a4f-4596-955c-7be2785cba80"), "StateObligation", 0.0515m, 0.10m });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AnnualLeaves_CreatedByUserId",

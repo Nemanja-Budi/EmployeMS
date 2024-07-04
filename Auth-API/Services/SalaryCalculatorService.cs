@@ -34,7 +34,6 @@ namespace ADMitroSremEmploye.Services
 
             if (existingSalary != null)
             {
-                // Update existing salary
                 existingSalary.TotalNumberOfHours = input.TotalNumberOfHours;
                 existingSalary.TotalNumberOfWorkingHours = input.TotalNumberOfWorkingHours;
                 existingSalary.HolidayBonus = input.HolidayBonus;
@@ -53,7 +52,6 @@ namespace ADMitroSremEmploye.Services
             }
             else
             {
-                // Create new salary
                 var employeSalary = new EmployeSalary
                 {
                     EmployeId = employeId,

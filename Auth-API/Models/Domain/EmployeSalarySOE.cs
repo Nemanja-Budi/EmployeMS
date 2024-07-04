@@ -13,6 +13,5 @@ namespace ADMitroSremEmploye.Models.Domain
         public decimal NetoSalary { get; set; }
         public decimal ExpenseOfTheEmploye { get; set; }
         public Guid EmployeSalaryId { get; set; }
-        //public EmployeSalary? EmployeSalary { get; set; }
     }
 }

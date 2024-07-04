@@ -257,31 +257,31 @@ namespace ADMitroSremEmploye.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("Credits")
-                        .HasColumnType("decimal(18,5)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("DamageCompensation")
-                        .HasColumnType("decimal(18,5)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<Guid>("EmployeId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("HolidayBonus")
-                        .HasColumnType("decimal(18,10)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("HoursOfAnnualVacation")
                         .HasColumnType("int");
 
                     b.Property<decimal>("MealAllowance")
-                        .HasColumnType("decimal(18,5)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("OvertimeHours")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("Sickness100")
-                        .HasColumnType("decimal(18,5)");
+                    b.Property<int>("Sickness100")
+                        .HasColumnType("int");
 
-                    b.Property<decimal>("Sickness60")
-                        .HasColumnType("decimal(18,5)");
+                    b.Property<int>("Sickness60")
+                        .HasColumnType("int");
 
                     b.Property<int>("TotalNumberOfHours")
                         .HasColumnType("int");
@@ -306,19 +306,19 @@ namespace ADMitroSremEmploye.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("DeductionHealth")
-                        .HasColumnType("decimal(18,5)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("DeductionPension")
-                        .HasColumnType("decimal(18,5)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<Guid>("EmployeSalaryId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("ExpenseOfTheEmployer")
-                        .HasColumnType("decimal(18,5)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("GrossSalary")
-                        .HasColumnType("decimal(18,5)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
@@ -335,28 +335,28 @@ namespace ADMitroSremEmploye.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("DeductionHealth")
-                        .HasColumnType("decimal(18,5)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("DeductionPension")
-                        .HasColumnType("decimal(18,5)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("DeductionTaxRelief")
-                        .HasColumnType("decimal(18,5)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("DeductionUnemployment")
-                        .HasColumnType("decimal(18,5)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<Guid>("EmployeSalaryId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("ExpenseOfTheEmploye")
-                        .HasColumnType("decimal(18,5)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("GrossSalary")
-                        .HasColumnType("decimal(18,5)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("NetoSalary")
-                        .HasColumnType("decimal(18,5)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
@@ -373,51 +373,51 @@ namespace ADMitroSremEmploye.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("AnnualVacation")
-                        .HasPrecision(18, 5)
-                        .HasColumnType("decimal(18,5)");
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("Credit")
-                        .HasPrecision(18, 5)
-                        .HasColumnType("decimal(18,5)");
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("Demage")
-                        .HasPrecision(18, 5)
-                        .HasColumnType("decimal(18,5)");
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<Guid>("EmployeSalaryId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("GrossSalary")
-                        .HasPrecision(18, 5)
-                        .HasColumnType("decimal(18,5)");
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("HolidayHours")
-                        .HasPrecision(18, 5)
-                        .HasColumnType("decimal(18,5)");
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("HotMeal")
-                        .HasPrecision(18, 5)
-                        .HasColumnType("decimal(18,5)");
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("OvertimeHours")
-                        .HasPrecision(18, 5)
-                        .HasColumnType("decimal(18,5)");
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("Regres")
-                        .HasPrecision(18, 5)
-                        .HasColumnType("decimal(18,5)");
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("Sickness100")
-                        .HasPrecision(18, 5)
-                        .HasColumnType("decimal(18,5)");
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("Sickness60")
-                        .HasPrecision(18, 5)
-                        .HasColumnType("decimal(18,5)");
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("WorkinHours")
-                        .HasPrecision(18, 5)
-                        .HasColumnType("decimal(18,5)");
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
@@ -439,10 +439,10 @@ namespace ADMitroSremEmploye.Data.Migrations
                         .HasColumnType("nvarchar(34)");
 
                     b.Property<decimal>("HealthCare")
-                        .HasColumnType("decimal(18,5)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<decimal>("PIO")
-                        .HasColumnType("decimal(18,5)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
@@ -455,7 +455,7 @@ namespace ADMitroSremEmploye.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("329dd0dd-19a8-4aff-9cbb-fa5fa9087d9c"),
+                            Id = new Guid("cfa5c4e7-9a4f-4596-955c-7be2785cba80"),
                             HealthCare = 0.0515m,
                             PIO = 0.10m
                         });
@@ -675,20 +675,20 @@ namespace ADMitroSremEmploye.Data.Migrations
                     b.HasBaseType("ADMitroSremEmploye.Models.Domain.StateObligation");
 
                     b.Property<decimal>("Tax")
-                        .HasColumnType("decimal(18,5)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("TaxRelief")
-                        .HasColumnType("decimal(18,5)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("Unemployment")
-                        .HasColumnType("decimal(18,5)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.HasDiscriminator().HasValue("StateObligationsEmploye");
 
                     b.HasData(
                         new
                         {
-                            Id = new Guid("3983fe54-9a09-45f4-8327-bb68db799ff8"),
+                            Id = new Guid("629402ca-32e1-4931-887e-5db327bc5ace"),
                             HealthCare = 0.0515m,
                             PIO = 0.14m,
                             Tax = 0.10m,
