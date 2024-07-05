@@ -396,12 +396,12 @@ namespace ADMitroSremEmploye.Data.Migrations
             migrationBuilder.InsertData(
                 table: "StateObligation",
                 columns: new[] { "Id", "Discriminator", "HealthCare", "PIO", "Tax", "TaxRelief", "Unemployment" },
-                values: new object[] { new Guid("629402ca-32e1-4931-887e-5db327bc5ace"), "StateObligationsEmploye", 0.0515m, 0.14m, 0.10m, 25000m, 0.0075m });
+                values: new object[] { new Guid("6058d773-6997-4ab8-9e05-a89839574754"), "StateObligationsEmploye", 0.0515m, 0.14m, 0.10m, 25000m, 0.0075m });
 
             migrationBuilder.InsertData(
                 table: "StateObligation",
                 columns: new[] { "Id", "Discriminator", "HealthCare", "PIO" },
-                values: new object[] { new Guid("cfa5c4e7-9a4f-4596-955c-7be2785cba80"), "StateObligation", 0.0515m, 0.10m });
+                values: new object[] { new Guid("a4d23e9e-5eb3-4929-bb75-764a1e0cdc7c"), "StateObligation", 0.0515m, 0.10m });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AnnualLeaves_CreatedByUserId",

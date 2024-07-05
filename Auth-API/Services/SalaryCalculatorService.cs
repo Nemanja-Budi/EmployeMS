@@ -27,70 +27,86 @@ namespace ADMitroSremEmploye.Services
             this.salaryServiceRepository = salaryServiceRepository ?? throw new ArgumentNullException(nameof(salaryServiceRepository));
         }
 
-        public async Task<EmployeSalary?> CalculateOrUpdateSalary(Guid employeId, EmployeSalary employeSalary)
+        public async Task<EmployeSalary?> CalculateSalary(EmployeSalary employeSalary)
         {
-            var employe = await employeSalaryRepository.GetEmployeByIdAsync(employeId);
-            if (employe == null)
-                return null;
+            var employe = await employeSalaryRepository.GetEmployeByIdAsync(employeSalary.EmployeId);
+            
+            if (employe == null) return null;
 
             var existingSalary = await employeSalaryRepository.GetEmployeSalaryById(employeSalary.Id);
+
+            if(existingSalary != null) return null;
 
             var incomeFromWork = CalculateGrossSalary(employeSalary, employe); 
             decimal grossSalary = incomeFromWork.GrossSalary;
 
-            if (existingSalary != null)
+            var EmployeSalary = new EmployeSalary
             {
-                existingSalary.TotalNumberOfHours = employeSalary.TotalNumberOfHours;
-                existingSalary.TotalNumberOfWorkingHours = employeSalary.TotalNumberOfWorkingHours;
-                existingSalary.HolidayBonus = employeSalary.HolidayBonus;
-                existingSalary.MealAllowance = employeSalary.MealAllowance;
-                existingSalary.Sickness100 = employeSalary.Sickness100;
-                existingSalary.Sickness60 = employeSalary.Sickness60;
-                existingSalary.HoursOfAnnualVacation = employeSalary.HoursOfAnnualVacation;
-                existingSalary.WorkingHoursForTheHoliday = employeSalary.WorkingHoursForTheHoliday;
-                existingSalary.OvertimeHours = employeSalary.OvertimeHours;
-                existingSalary.Credits = employeSalary.Credits;
-                existingSalary.DamageCompensation = employeSalary.DamageCompensation;
+                EmployeId = employeSalary.EmployeId,
+                TotalNumberOfHours = employeSalary.TotalNumberOfHours,
+                TotalNumberOfWorkingHours = employeSalary.TotalNumberOfWorkingHours,
+                HolidayBonus = employeSalary.HolidayBonus,
+                MealAllowance = employeSalary.MealAllowance,
+                Sickness100 = employeSalary.Sickness100,
+                Sickness60 = employeSalary.Sickness60,
+                HoursOfAnnualVacation = employeSalary.HoursOfAnnualVacation,
+                WorkingHoursForTheHoliday = employeSalary.WorkingHoursForTheHoliday,
+                OvertimeHours = employeSalary.OvertimeHours,
+                Credits = employeSalary.Credits,
+                DamageCompensation = employeSalary.DamageCompensation
+            };
 
-                existingSalary.EmployeSalarySO = await SaveSalarySO(existingSalary.Id, grossSalary, true);
-                existingSalary.EmployeSalarySOE = await SaveSalarySOE(existingSalary.Id, grossSalary, true);
-                existingSalary.IncomeFromWork = await SaveIncomeFromWork(existingSalary.Id, incomeFromWork, true);
-            }
-            else
-            {
-                var EmployeSalary = new EmployeSalary
-                {
-                    EmployeId = employeId,
-                    TotalNumberOfHours = employeSalary.TotalNumberOfHours,
-                    TotalNumberOfWorkingHours = employeSalary.TotalNumberOfWorkingHours,
-                    HolidayBonus = employeSalary.HolidayBonus,
-                    MealAllowance = employeSalary.MealAllowance,
-                    Sickness100 = employeSalary.Sickness100,
-                    Sickness60 = employeSalary.Sickness60,
-                    HoursOfAnnualVacation = employeSalary.HoursOfAnnualVacation,
-                    WorkingHoursForTheHoliday = employeSalary.WorkingHoursForTheHoliday,
-                    OvertimeHours = employeSalary.OvertimeHours,
-                    Credits = employeSalary.Credits,
-                    DamageCompensation = employeSalary.DamageCompensation
-                };
+            await employeSalaryRepository.AddEmployeSalaryAsync(EmployeSalary);
 
-                await employeSalaryRepository.AddEmployeSalaryAsync(EmployeSalary);
+            EmployeSalary.EmployeSalarySO = await SaveSalarySO(EmployeSalary.Id, grossSalary);
+            EmployeSalary.EmployeSalarySOE = await SaveSalarySOE(EmployeSalary.Id, grossSalary);
+            EmployeSalary.IncomeFromWork = await SaveIncomeFromWork(EmployeSalary.Id, incomeFromWork);
 
-                EmployeSalary.EmployeSalarySO = await SaveSalarySO(EmployeSalary.Id, grossSalary);
-                EmployeSalary.EmployeSalarySOE = await SaveSalarySOE(EmployeSalary.Id, grossSalary);
-                EmployeSalary.IncomeFromWork = await SaveIncomeFromWork(EmployeSalary.Id, incomeFromWork);
+            await employeSalaryRepository.SaveEmployeSalaryAsync();
 
-                await employeSalaryRepository.SaveEmployeSalaryAsync();
+            return EmployeSalary;
+        }
 
-                return EmployeSalary;
-            }
+        public async Task<EmployeSalary?> UpdateSalary(EmployeSalary employeSalary)
+        {
+            var employe = await employeSalaryRepository.GetEmployeByIdAsync(employeSalary.EmployeId);
+
+            if (employe == null) return null;
+
+            var existingSalary = await employeSalaryRepository.GetEmployeSalaryById(employeSalary.Id);
+
+            if (existingSalary == null) return null;
+
+            if (employeSalary.EmployeId != existingSalary.EmployeId) return null;
+
+
+            var incomeFromWork = CalculateGrossSalary(employeSalary, employe);
+            decimal grossSalary = incomeFromWork.GrossSalary;
+
+            existingSalary.TotalNumberOfHours = employeSalary.TotalNumberOfHours;
+            existingSalary.TotalNumberOfWorkingHours = employeSalary.TotalNumberOfWorkingHours;
+            existingSalary.HolidayBonus = employeSalary.HolidayBonus;
+            existingSalary.MealAllowance = employeSalary.MealAllowance;
+            existingSalary.Sickness100 = employeSalary.Sickness100;
+            existingSalary.Sickness60 = employeSalary.Sickness60;
+            existingSalary.HoursOfAnnualVacation = employeSalary.HoursOfAnnualVacation;
+            existingSalary.WorkingHoursForTheHoliday = employeSalary.WorkingHoursForTheHoliday;
+            existingSalary.OvertimeHours = employeSalary.OvertimeHours;
+            existingSalary.Credits = employeSalary.Credits;
+            existingSalary.DamageCompensation = employeSalary.DamageCompensation;
+
+            existingSalary.EmployeSalarySO = await SaveSalarySO(existingSalary.Id, grossSalary, true);
+            existingSalary.EmployeSalarySOE = await SaveSalarySOE(existingSalary.Id, grossSalary, true);
+            existingSalary.IncomeFromWork = await SaveIncomeFromWork(existingSalary.Id, incomeFromWork, true);
 
             await employeSalaryRepository.SaveEmployeSalaryAsync();
 
             return existingSalary;
         }
 
-        public async Task<List<EmployeSalary>?> GetEmployeSalarys(Guid employeId)
+
+
+            public async Task<List<EmployeSalary>?> GetEmployeSalarys(Guid employeId)
         {
             var employe = await employeSalaryRepository.GetEmployeByIdAsync(employeId);
 
