@@ -66,7 +66,7 @@ namespace ADMitroSremEmploye.Controllers
 
             if (employeSalary == null)
             {
-                return NotFound($"Employee with Id {employesalaryId} not found.");
+                return NotFound($"Employee salary with Id {employesalaryId} not found.");
             }
 
             return Ok(mapper.Map<EmployeSalaryDto>(employeSalary));

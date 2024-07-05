@@ -5,84 +5,121 @@ using System.Linq;
 using static System.Net.Mime.MediaTypeNames;
 using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
+using ADMitroSremEmploye.Repositories.Employe_Salary_repository;
+using ADMitroSremEmploye.Repositories.State_obligation_repository;
+using ADMitroSremEmploye.Repositories.Salary_Service_repository;
 
 namespace ADMitroSremEmploye.Services
 {
     public class SalaryCalculatorService
     {
-        private readonly UserDbContext _dbContext;
+        private readonly IEmployeSalaryRepository employeSalaryRepository;
+        private readonly IStateObligationRepository stateObligationRepository;
+        private readonly ISalaryServiceRepository salaryServiceRepository;
 
-        public SalaryCalculatorService(UserDbContext dbContext)
+        public SalaryCalculatorService(
+            IEmployeSalaryRepository employeSalaryRepository, 
+            IStateObligationRepository stateObligationRepository, 
+            ISalaryServiceRepository salaryServiceRepository)
         {
-            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+            this.employeSalaryRepository = employeSalaryRepository ?? throw new ArgumentNullException(nameof(employeSalaryRepository));
+            this.stateObligationRepository = stateObligationRepository ?? throw new ArgumentNullException(nameof(stateObligationRepository));
+            this.salaryServiceRepository = salaryServiceRepository ?? throw new ArgumentNullException(nameof(salaryServiceRepository));
         }
 
-        public async Task<EmployeSalary?> CalculateOrUpdateSalary(Guid employeId, EmployeSalary input)
+        public async Task<EmployeSalary?> CalculateOrUpdateSalary(Guid employeId, EmployeSalary employeSalary)
         {
-            var employe = await _dbContext.Employe.FirstOrDefaultAsync(e => e.Id == employeId);
+            var employe = await employeSalaryRepository.GetEmployeByIdAsync(employeId);
             if (employe == null)
                 return null;
 
-            var existingSalary = await _dbContext.EmployeSalary
-                .Include(e => e.EmployeSalarySO)
-                .Include(e => e.EmployeSalarySOE)
-                .Include(e => e.IncomeFromWork)
-                .FirstOrDefaultAsync(e => e.Id == input.Id);
+            var existingSalary = await employeSalaryRepository.GetEmployeSalaryById(employeSalary.Id);
 
-            var incomeFromWork = CalculateGrossSalary(input, employe);
+            var incomeFromWork = CalculateGrossSalary(employeSalary, employe); 
             decimal grossSalary = incomeFromWork.GrossSalary;
 
             if (existingSalary != null)
             {
-                existingSalary.TotalNumberOfHours = input.TotalNumberOfHours;
-                existingSalary.TotalNumberOfWorkingHours = input.TotalNumberOfWorkingHours;
-                existingSalary.HolidayBonus = input.HolidayBonus;
-                existingSalary.MealAllowance = input.MealAllowance;
-                existingSalary.Sickness100 = input.Sickness100;
-                existingSalary.Sickness60 = input.Sickness60;
-                existingSalary.HoursOfAnnualVacation = input.HoursOfAnnualVacation;
-                existingSalary.WorkingHoursForTheHoliday = input.WorkingHoursForTheHoliday;
-                existingSalary.OvertimeHours = input.OvertimeHours;
-                existingSalary.Credits = input.Credits;
-                existingSalary.DamageCompensation = input.DamageCompensation;
+                existingSalary.TotalNumberOfHours = employeSalary.TotalNumberOfHours;
+                existingSalary.TotalNumberOfWorkingHours = employeSalary.TotalNumberOfWorkingHours;
+                existingSalary.HolidayBonus = employeSalary.HolidayBonus;
+                existingSalary.MealAllowance = employeSalary.MealAllowance;
+                existingSalary.Sickness100 = employeSalary.Sickness100;
+                existingSalary.Sickness60 = employeSalary.Sickness60;
+                existingSalary.HoursOfAnnualVacation = employeSalary.HoursOfAnnualVacation;
+                existingSalary.WorkingHoursForTheHoliday = employeSalary.WorkingHoursForTheHoliday;
+                existingSalary.OvertimeHours = employeSalary.OvertimeHours;
+                existingSalary.Credits = employeSalary.Credits;
+                existingSalary.DamageCompensation = employeSalary.DamageCompensation;
 
-                existingSalary.EmployeSalarySO = SaveSalarySO(existingSalary.Id, grossSalary, true);
-                existingSalary.EmployeSalarySOE = SaveSalarySOE(existingSalary.Id, grossSalary, true);
-                existingSalary.IncomeFromWork = SaveIncomeFromWork(existingSalary.Id, incomeFromWork, true);
+                existingSalary.EmployeSalarySO = await SaveSalarySO(existingSalary.Id, grossSalary, true);
+                existingSalary.EmployeSalarySOE = await SaveSalarySOE(existingSalary.Id, grossSalary, true);
+                existingSalary.IncomeFromWork = await SaveIncomeFromWork(existingSalary.Id, incomeFromWork, true);
             }
             else
             {
-                var employeSalary = new EmployeSalary
+                var EmployeSalary = new EmployeSalary
                 {
                     EmployeId = employeId,
-                    TotalNumberOfHours = input.TotalNumberOfHours,
-                    TotalNumberOfWorkingHours = input.TotalNumberOfWorkingHours,
-                    HolidayBonus = input.HolidayBonus,
-                    MealAllowance = input.MealAllowance,
-                    Sickness100 = input.Sickness100,
-                    Sickness60 = input.Sickness60,
-                    HoursOfAnnualVacation = input.HoursOfAnnualVacation,
-                    WorkingHoursForTheHoliday = input.WorkingHoursForTheHoliday,
-                    OvertimeHours = input.OvertimeHours,
-                    Credits = input.Credits,
-                    DamageCompensation = input.DamageCompensation
+                    TotalNumberOfHours = employeSalary.TotalNumberOfHours,
+                    TotalNumberOfWorkingHours = employeSalary.TotalNumberOfWorkingHours,
+                    HolidayBonus = employeSalary.HolidayBonus,
+                    MealAllowance = employeSalary.MealAllowance,
+                    Sickness100 = employeSalary.Sickness100,
+                    Sickness60 = employeSalary.Sickness60,
+                    HoursOfAnnualVacation = employeSalary.HoursOfAnnualVacation,
+                    WorkingHoursForTheHoliday = employeSalary.WorkingHoursForTheHoliday,
+                    OvertimeHours = employeSalary.OvertimeHours,
+                    Credits = employeSalary.Credits,
+                    DamageCompensation = employeSalary.DamageCompensation
                 };
 
-                await _dbContext.EmployeSalary.AddAsync(employeSalary);
-                await _dbContext.SaveChangesAsync();
+                await employeSalaryRepository.AddEmployeSalaryAsync(EmployeSalary);
 
-                employeSalary.EmployeSalarySO = SaveSalarySO(employeSalary.Id, grossSalary);
-                employeSalary.EmployeSalarySOE = SaveSalarySOE(employeSalary.Id, grossSalary);
-                employeSalary.IncomeFromWork = SaveIncomeFromWork(employeSalary.Id, incomeFromWork);
+                EmployeSalary.EmployeSalarySO = await SaveSalarySO(EmployeSalary.Id, grossSalary);
+                EmployeSalary.EmployeSalarySOE = await SaveSalarySOE(EmployeSalary.Id, grossSalary);
+                EmployeSalary.IncomeFromWork = await SaveIncomeFromWork(EmployeSalary.Id, incomeFromWork);
 
-                await _dbContext.SaveChangesAsync();
+                await employeSalaryRepository.SaveEmployeSalaryAsync();
 
-                return employeSalary;
+                return EmployeSalary;
             }
 
-            await _dbContext.SaveChangesAsync();
+            await employeSalaryRepository.SaveEmployeSalaryAsync();
+
             return existingSalary;
         }
+
+        public async Task<List<EmployeSalary>?> GetEmployeSalarys(Guid employeId)
+        {
+            var employe = await employeSalaryRepository.GetEmployeByIdAsync(employeId);
+
+            if (employe == null) return null;
+
+            var employeSalary = await employeSalaryRepository.GetEmployeSalarysByEmployeIdAsync(employeId);
+
+            return employeSalary;
+        }
+
+        public async Task<EmployeSalary?> GetEmployeSalary(Guid employeSalaryId)
+        {
+            var employeSalary = await employeSalaryRepository.GetEmployeSalaryById(employeSalaryId);
+            if (employeSalary == null) return null;
+
+            return employeSalary;
+        }
+
+        public async Task<bool> DeleteEmployeSalarys(Guid employeId)
+        {
+            return await employeSalaryRepository.DeleteEmployeSalarysByEmployeIdAsync(employeId);
+        }
+
+        public async Task<bool> DeleteEmployeSalary(Guid employeSalaryId)
+        {
+            return await employeSalaryRepository.DeleteEmployeSalaryByEmployeSalaryIdAsync(employeSalaryId);
+        }
+
+
 
         private IncomeFromWork CalculateGrossSalary(EmployeSalary input, Employe employe)
         {
@@ -117,189 +154,30 @@ namespace ADMitroSremEmploye.Services
             return incomeFromWork;
         }
 
-        private decimal CalculateNetoSalary(decimal grossSalary, StateObligationsEmploye input)
+        private async Task<IncomeFromWork> SaveIncomeFromWork(Guid employeSalaryId, IncomeFromWork input, bool isUpdate = false)
         {
-            decimal netoSalary = 0;
-            if (grossSalary > 0)
-                netoSalary = (grossSalary * input.PIO)
-                                       + (grossSalary * input.HealthCare)
-                                       + (grossSalary * input.Unemployment)
-                                       + ((grossSalary - input.TaxRelief)
-                                       * input.Tax);
-
-            return netoSalary;
-        }
-
-        private IncomeFromWork SaveIncomeFromWork(Guid employeSalaryId, IncomeFromWork input, bool isUpdate = false)
-        {
-            var incomeFromWork = _dbContext.IncomeFromWork.FirstOrDefault(i => i.EmployeSalaryId == employeSalaryId);
-
-            if (incomeFromWork == null && isUpdate)
-            {
-                throw new Exception("IncomeFromWork not found for update");
-            }
-            else if (incomeFromWork == null)
-            {
-                incomeFromWork = new IncomeFromWork { EmployeSalaryId = employeSalaryId };
-                _dbContext.IncomeFromWork.Add(incomeFromWork);
-            }
-
-            incomeFromWork.WorkinHours = input.WorkinHours;
-            incomeFromWork.Sickness60 = input.Sickness60;
-            incomeFromWork.Sickness100 = input.Sickness100;
-            incomeFromWork.AnnualVacation = input.AnnualVacation;
-            incomeFromWork.HolidayHours = input.HolidayHours;
-            incomeFromWork.OvertimeHours = input.OvertimeHours;
-            incomeFromWork.Credit = input.Credit;
-            incomeFromWork.Demage = input.Demage;
-            incomeFromWork.HotMeal = input.HotMeal;
-            incomeFromWork.Regres = input.Regres;
-            incomeFromWork.GrossSalary = input.GrossSalary;
-
-            _dbContext.SaveChanges();
+            var incomeFromWork = await salaryServiceRepository.SaveIncomeFromWorkAsync(employeSalaryId, input, isUpdate);
 
             return incomeFromWork;
         }
 
-        private EmployeSalarySOE SaveSalarySOE(Guid employeSalaryId, decimal grossSalary, bool isUpdate = false)
+        private async Task<EmployeSalarySOE> SaveSalarySOE(Guid employeSalaryId, decimal grossSalary, bool isUpdate = false)
         {
-            var stateObligationsEmploye = _dbContext.StateObligationEmploye.FirstOrDefault();
-            var salarySOE = _dbContext.EmployeSalarySOE.FirstOrDefault(s => s.EmployeSalaryId == employeSalaryId);
+            var stateObligationsEmploye = await stateObligationRepository.GetStateObligationEmployeAsync() ?? throw new InvalidOperationException("StateObligationsEmploye is not found.");
 
-            if (salarySOE == null && isUpdate)
-            {
-                throw new Exception("EmployeSalarySOE not found for update");
-            }
-            else if (salarySOE == null)
-            {
-                salarySOE = new EmployeSalarySOE { EmployeSalaryId = employeSalaryId };
-                _dbContext.EmployeSalarySOE.Add(salarySOE);
-            }
-
-            salarySOE.GrossSalary = grossSalary;
-            salarySOE.DeductionPension = grossSalary * stateObligationsEmploye.PIO;
-            salarySOE.DeductionHealth = grossSalary * stateObligationsEmploye.HealthCare;
-            salarySOE.DeductionUnemployment = grossSalary * stateObligationsEmploye.Unemployment;
-            salarySOE.DeductionTaxRelief = (grossSalary - stateObligationsEmploye.TaxRelief) * stateObligationsEmploye.Tax;
-            salarySOE.NetoSalary = grossSalary - CalculateNetoSalary(grossSalary, stateObligationsEmploye);
-            salarySOE.ExpenseOfTheEmploye = CalculateNetoSalary(grossSalary, stateObligationsEmploye);
-
-            _dbContext.SaveChanges();
+            var salarySOE = await salaryServiceRepository.SaveSalarySOEAsync(employeSalaryId, grossSalary, stateObligationsEmploye, isUpdate);
 
             return salarySOE;
         }
 
-        private EmployeSalarySO SaveSalarySO(Guid employeSalaryId, decimal grossSalary, bool isUpdate = false)
+        private async Task<EmployeSalarySO> SaveSalarySO(Guid employeSalaryId, decimal grossSalary, bool isUpdate = false)
         {
-            var stateObligations = _dbContext.StateObligation.FirstOrDefault(o => o.PIO == 0.1m);
-            var salarySO = _dbContext.EmployeSalarySO.FirstOrDefault(s => s.EmployeSalaryId == employeSalaryId);
-
-            if (salarySO == null && isUpdate)
-            {
-                throw new Exception("EmployeSalarySO not found for update");
-            }
-            else if (salarySO == null)
-            {
-                salarySO = new EmployeSalarySO { EmployeSalaryId = employeSalaryId };
-                _dbContext.EmployeSalarySO.Add(salarySO);
-            }
-
-            salarySO.GrossSalary = grossSalary;
-            salarySO.DeductionPension = grossSalary * stateObligations.PIO;
-            salarySO.DeductionHealth = grossSalary * stateObligations.HealthCare;
-            salarySO.ExpenseOfTheEmployer = (grossSalary * stateObligations.PIO) + (grossSalary * stateObligations.HealthCare);
-
-            _dbContext.SaveChanges();
+            var stateObligations = await stateObligationRepository.GetStateObligationAsync() ?? throw new InvalidOperationException("StateObligations is not found.");
+            var salarySO = await salaryServiceRepository.SaveSalarySOAsync(employeSalaryId, grossSalary, stateObligations, isUpdate);
 
             return salarySO;
         }
 
-        public async Task<List<EmployeSalary>?> GetEmployeSalarys(Guid employeId)
-        {
-            var employe = await _dbContext.Employe.FirstOrDefaultAsync(x => x.Id == employeId);
-            if (employe == null) return null;
-
-            var employeSalary = await _dbContext.EmployeSalary
-                .Where(x => x.EmployeId == employeId)
-                .Include(e => e.EmployeSalarySO)
-                .Include(e => e.EmployeSalarySOE)
-                .Include(e => e.IncomeFromWork)
-                .ToListAsync();
-            
-
-            return employeSalary;
-        }
-
-        public async Task<EmployeSalary?> GetEmployeSalary(Guid employeSalaryId)
-        {
-            var employeSalary = await _dbContext.EmployeSalary
-                .Include(e => e.EmployeSalarySO)
-                .Include(e => e.EmployeSalarySOE)
-                .Include(e => e.IncomeFromWork)
-                .FirstOrDefaultAsync(x => x.Id == employeSalaryId);
-            if (employeSalary == null) return null;
-
-            return employeSalary;
-        }
-
-        public async Task<bool> DeleteEmployeSalarys(Guid employeId)
-        {
-            var employe = await _dbContext.Employe.FirstOrDefaultAsync(x => x.Id == employeId);
-            if (employe == null) return false;
-
-            var employeSalaries = await _dbContext.EmployeSalary
-                .Where(x => x.EmployeId == employeId)
-                .ToListAsync();
-
-            if (employeSalaries.Count == 0) return false;
-
-            _dbContext.EmployeSalary.RemoveRange(employeSalaries);
-            await _dbContext.SaveChangesAsync();
-
-            return true;
-        }
-
-        public async Task<bool> DeleteEmployeSalary(Guid employeSalaryId)
-        {
-            var employeSalary = await _dbContext.EmployeSalary
-                .FirstOrDefaultAsync(x => x.Id == employeSalaryId);
-
-            if (employeSalary == null) return false;
-
-            _dbContext.EmployeSalary.Remove(employeSalary);
-            await _dbContext.SaveChangesAsync();
-
-            return true;
-        }
-
-        public async Task<EmployeSalary?> UpdateEmployeSalary(Guid employeId, EmployeSalary updatedSalary)
-        {
-            var employe = await _dbContext.Employe.FirstOrDefaultAsync(x => x.Id == employeId);
-            if (employe == null) return null;
-
-            var employeSalary = await _dbContext.EmployeSalary.FirstOrDefaultAsync(x => x.Id == updatedSalary.Id && x.EmployeId == employeId);
-            if (employeSalary == null) return null;
-
-            employeSalary.TotalNumberOfHours = updatedSalary.TotalNumberOfHours;
-            employeSalary.TotalNumberOfWorkingHours = updatedSalary.TotalNumberOfWorkingHours;
-            employeSalary.HolidayBonus = updatedSalary.HolidayBonus;
-            employeSalary.MealAllowance = updatedSalary.MealAllowance;
-            employeSalary.Sickness100 = updatedSalary.Sickness100;
-            employeSalary.Sickness60 = updatedSalary.Sickness60;
-            employeSalary.HoursOfAnnualVacation = updatedSalary.HoursOfAnnualVacation;
-            employeSalary.WorkingHoursForTheHoliday = updatedSalary.WorkingHoursForTheHoliday;
-            employeSalary.OvertimeHours = updatedSalary.OvertimeHours;
-            employeSalary.Credits = updatedSalary.Credits;
-            employeSalary.DamageCompensation = updatedSalary.DamageCompensation;
-            employeSalary.EmployeSalarySO = updatedSalary.EmployeSalarySO;
-            employeSalary.EmployeSalarySOE = updatedSalary.EmployeSalarySOE;
-            employeSalary.IncomeFromWork = updatedSalary.IncomeFromWork;
-
-            _dbContext.EmployeSalary.Update(employeSalary);
-            await _dbContext.SaveChangesAsync();
-
-            return employeSalary;
-        }
 
     }
 }
