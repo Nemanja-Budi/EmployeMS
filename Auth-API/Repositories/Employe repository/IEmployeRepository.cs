@@ -8,7 +8,7 @@ namespace ADMitroSremEmploye.Repositories.Employe_repository
         Task<IEnumerable<Employe>> GetEmployesAsync();
         Task<Employe> GetEmployeAsync(Guid id);
         Task<Employe> CreateEmployeAsync(Employe employe);
-        Task<bool> UpdateEmployeAsync(Employe employe);
+        Task<Employe> UpdateEmployeAsync(Employe employe);
         Task<bool> DeleteEmployeAsync(Guid id);
         Task<bool> EmployeExistsAsync(Guid id);
 

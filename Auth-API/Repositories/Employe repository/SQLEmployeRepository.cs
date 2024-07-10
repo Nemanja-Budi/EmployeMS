@@ -42,7 +42,62 @@ namespace ADMitroSremEmploye.Repositories.Employe_repository
             return employe;
         }
 
-        public async Task<bool> UpdateEmployeAsync(Employe employe)
+        public async Task<Employe> UpdateEmployeAsync(Employe employe)
+        {
+            var existingEmploye = await userDbContext.Employe
+                .Include(e => e.EmployeChild)
+                .FirstOrDefaultAsync(e => e.Id == employe.Id);
+
+            if (existingEmploye == null)
+            {
+                return null; // ili možete baciti izuzetak ili vratiti neki drugi rezultat
+            }
+
+            userDbContext.Entry(existingEmploye).CurrentValues.SetValues(employe);
+
+            // Update EmployeChild entities
+            foreach (var existingChild in existingEmploye.EmployeChild.ToList())
+            {
+                if (!employe.EmployeChild.Any(c => c.Id == existingChild.Id))
+                {
+                    userDbContext.EmployeChild.Remove(existingChild);
+                }
+            }
+
+            foreach (var child in employe.EmployeChild)
+            {
+                var existingChild = existingEmploye.EmployeChild
+                    .FirstOrDefault(c => c.Id == child.Id);
+
+                if (existingChild != null)
+                {
+                    userDbContext.Entry(existingChild).CurrentValues.SetValues(child);
+                }
+                else
+                {
+                    existingEmploye.EmployeChild.Add(child);
+                }
+            }
+
+            try
+            {
+                await userDbContext.SaveChangesAsync();
+                return existingEmploye; // Vratite ažurirani entitet
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!await EmployeExistsAsync(employe.Id))
+                {
+                    return null; // ili možete baciti izuzetak ili vratiti neki drugi rezultat
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        /*public async Task<bool> UpdateEmployeAsync(Employe employe)
         {
             var existingEmploye = await userDbContext.Employe
                 .Include(e => e.EmployeChild)
@@ -96,7 +151,7 @@ namespace ADMitroSremEmploye.Repositories.Employe_repository
                 }
             }
         }
-
+        */
         public async Task<bool> DeleteEmployeAsync(Guid id)
         {
             var employe = await userDbContext.Employe

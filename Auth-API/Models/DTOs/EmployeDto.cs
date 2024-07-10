@@ -86,7 +86,7 @@ namespace ADMitroSremEmploye.Models.DTOs
         public int CurrentAccount { get; set; }
 
         public ICollection<EmployeChild>? EmployeChild { get; set; }
-        public List<EmployeSalary>? EmployeSalary { get; set; }
+        //public List<EmployeSalary>? EmployeSalary { get; set; }
 
     }
 }

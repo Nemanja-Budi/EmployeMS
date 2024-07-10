@@ -52,14 +52,14 @@ namespace ADMitroSremEmploye.Controllers
 
             var employeDomain = mapper.Map<Employe>(employeDto);
 
-            var updated = await employeRepository.UpdateEmployeAsync(employeDomain);
+            var updatedEmploye = await employeRepository.UpdateEmployeAsync(employeDomain);
 
-            if (!updated)
+            if (updatedEmploye == null)
             {
                 return NotFound();
             }
 
-            return NoContent();
+            return Ok(mapper.Map<EmployeDto>(updatedEmploye));
         }
 
         // POST: api/Employe/create-employe
