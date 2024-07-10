@@ -9,10 +9,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace ADMitroSremEmploye.Data.Migrations
+namespace ADMitroSremEmploye.Migrations
 {
     [DbContext(typeof(UserDbContext))]
-    [Migration("20240705215410_FMigration")]
+    [Migration("20240708082553_FMigration")]
     partial class FMigration
     {
         /// <inheritdoc />
@@ -458,7 +458,7 @@ namespace ADMitroSremEmploye.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("a4d23e9e-5eb3-4929-bb75-764a1e0cdc7c"),
+                            Id = new Guid("a984cbb6-4e3a-4617-bc92-b4fb91489cea"),
                             HealthCare = 0.0515m,
                             PIO = 0.10m
                         });
@@ -691,7 +691,7 @@ namespace ADMitroSremEmploye.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("6058d773-6997-4ab8-9e05-a89839574754"),
+                            Id = new Guid("72eb62be-6f13-4a97-8e90-2e94767e1f56"),
                             HealthCare = 0.0515m,
                             PIO = 0.14m,
                             Tax = 0.10m,

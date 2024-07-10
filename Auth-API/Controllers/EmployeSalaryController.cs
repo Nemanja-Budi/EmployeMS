@@ -46,6 +46,19 @@ namespace ADMitroSremEmploye.Controllers
             return Ok(mapper.Map<EmployeSalaryDto>(calculatedSalary));
         }
 
+        [HttpGet("employe-salarys")]
+        public async Task<IActionResult> GetAllEmployeSalarys()
+        {
+            var employeSalarys = await _salaryCalculatorService.GetAllEmployeSalarys();
+
+            if (employeSalarys == null)
+            {
+                return NotFound($"Employee with Id {employeSalarys} not found.");
+            }
+
+            return Ok(mapper.Map<List<EmployeSalaryDto>>(employeSalarys));
+        }
+
         [HttpGet("employe-salarys/{employeId}")]
         public async Task<IActionResult> GetEmployeSalarys(Guid employeId)
         {

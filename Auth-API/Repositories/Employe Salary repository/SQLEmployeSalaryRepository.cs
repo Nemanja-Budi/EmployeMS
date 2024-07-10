@@ -18,6 +18,15 @@ namespace ADMitroSremEmploye.Repositories.Employe_Salary_repository
             return await userDbContext.Employe.FirstOrDefaultAsync(x => x.Id == employeId);
         }
 
+        public async Task<List<EmployeSalary>> GetAllEmployeSalarysAsync()
+        {
+            return await userDbContext.EmployeSalary
+                .Include(e => e.EmployeSalarySO)
+                .Include(e => e.EmployeSalarySOE)
+                .Include(e => e.IncomeFromWork)
+                .ToListAsync();
+        }
+
         public async Task<EmployeSalary?> GetEmployeSalaryById(Guid employeSalaryId)
         {
             return await userDbContext.EmployeSalary
@@ -79,6 +88,5 @@ namespace ADMitroSremEmploye.Repositories.Employe_Salary_repository
             await userDbContext.SaveChangesAsync();
         }
 
-      
     }
 }

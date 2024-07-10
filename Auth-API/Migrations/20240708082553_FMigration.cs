@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace ADMitroSremEmploye.Data.Migrations
+namespace ADMitroSremEmploye.Migrations
 {
     /// <inheritdoc />
     public partial class FMigration : Migration
@@ -396,12 +396,12 @@ namespace ADMitroSremEmploye.Data.Migrations
             migrationBuilder.InsertData(
                 table: "StateObligation",
                 columns: new[] { "Id", "Discriminator", "HealthCare", "PIO", "Tax", "TaxRelief", "Unemployment" },
-                values: new object[] { new Guid("6058d773-6997-4ab8-9e05-a89839574754"), "StateObligationsEmploye", 0.0515m, 0.14m, 0.10m, 25000m, 0.0075m });
+                values: new object[] { new Guid("72eb62be-6f13-4a97-8e90-2e94767e1f56"), "StateObligationsEmploye", 0.0515m, 0.14m, 0.10m, 25000m, 0.0075m });
 
             migrationBuilder.InsertData(
                 table: "StateObligation",
                 columns: new[] { "Id", "Discriminator", "HealthCare", "PIO" },
-                values: new object[] { new Guid("a4d23e9e-5eb3-4929-bb75-764a1e0cdc7c"), "StateObligation", 0.0515m, 0.10m });
+                values: new object[] { new Guid("a984cbb6-4e3a-4617-bc92-b4fb91489cea"), "StateObligation", 0.0515m, 0.10m });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AnnualLeaves_CreatedByUserId",
