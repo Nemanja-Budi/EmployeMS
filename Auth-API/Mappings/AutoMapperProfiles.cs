@@ -10,6 +10,7 @@ namespace ADMitroSremEmploye.Mappings
         {
             CreateMap<AnnualLeave, AnnualLeaveDto>().ReverseMap();
             CreateMap<Employe, EmployeDto>().ReverseMap();
+            CreateMap<EmployeChild, EmployeChildDto>().ReverseMap();
             CreateMap<AuditLog, AuditLogDto>().ReverseMap();
             CreateMap<EmployeSalary, EmployeSalaryDto>().ReverseMap();
         }

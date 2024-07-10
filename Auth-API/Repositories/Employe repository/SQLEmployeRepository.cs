@@ -44,7 +44,40 @@ namespace ADMitroSremEmploye.Repositories.Employe_repository
 
         public async Task<bool> UpdateEmployeAsync(Employe employe)
         {
-            userDbContext.Entry(employe).State = EntityState.Modified;
+            var existingEmploye = await userDbContext.Employe
+                .Include(e => e.EmployeChild)
+                .FirstOrDefaultAsync(e => e.Id == employe.Id);
+
+            if (existingEmploye == null)
+            {
+                return false;
+            }
+
+            userDbContext.Entry(existingEmploye).CurrentValues.SetValues(employe);
+
+            // Update EmployeChild entities
+            foreach (var existingChild in existingEmploye.EmployeChild.ToList())
+            {
+                if (!employe.EmployeChild.Any(c => c.Id == existingChild.Id))
+                {
+                    userDbContext.EmployeChild.Remove(existingChild);
+                }
+            }
+
+            foreach (var child in employe.EmployeChild)
+            {
+                var existingChild = existingEmploye.EmployeChild
+                    .FirstOrDefault(c => c.Id == child.Id);
+
+                if (existingChild != null)
+                {
+                    userDbContext.Entry(existingChild).CurrentValues.SetValues(child);
+                }
+                else
+                {
+                    existingEmploye.EmployeChild.Add(child);
+                }
+            }
 
             try
             {
@@ -53,8 +86,7 @@ namespace ADMitroSremEmploye.Repositories.Employe_repository
             }
             catch (DbUpdateConcurrencyException)
             {
-                var exists = await EmployeExistsAsync(employe.Id);
-                if (!exists)
+                if (!await EmployeExistsAsync(employe.Id))
                 {
                     return false;
                 }
