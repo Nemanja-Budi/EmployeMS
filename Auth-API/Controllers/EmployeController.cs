@@ -21,10 +21,17 @@ namespace ADMitroSremEmploye.Controllers
 
         // GET: api/Employe/get-employes
         [HttpGet("get-employes")]
-        public async Task<ActionResult<IEnumerable<EmployeDto>>> GetEmployes()
+        public async Task<ActionResult<IEnumerable<EmployeDto>>> GetEmployes(
+            [FromQuery] EmployeFilterDto filterDto,
+            string? sortBy = null, 
+            bool isAscending = true, 
+            int pageNumber = 1,
+            int pageSize = 1000)
         {
-            var employeDomain = await employeRepository.GetEmployesAsync();
-            return Ok(mapper.Map<IEnumerable<EmployeDto>>(employeDomain));
+            var employes = await employeRepository.GetEmployesAsync(filterDto, sortBy, isAscending, pageNumber, pageSize);
+            var totalEmployesCount = await employeRepository.GetTotalEmployesCountAsync(filterDto);
+
+            return Ok(new { Employes = mapper.Map<IEnumerable<EmployeDto>>(employes), TotalCount = totalEmployesCount });
         }
 
         // GET: api/Employe/get-employe/id
