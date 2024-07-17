@@ -113,30 +113,34 @@ namespace ADMitroSremEmploye.Repositories.Employe_repository
 
             if (existingEmploye == null)
             {
-                return null; 
+                return null;
             }
 
+            // Update existing employe with new values
             userDbContext.Entry(existingEmploye).CurrentValues.SetValues(employe);
 
+            // Remove children that are not present in the updated employe
             foreach (var existingChild in existingEmploye.EmployeChild.ToList())
             {
-                if (!employe.EmployeChild.Any(c => c.Id == existingChild.Id))
+                if (!employe.EmployeChild.Any(c => c.Name == existingChild.Name))
                 {
                     userDbContext.EmployeChild.Remove(existingChild);
                 }
             }
 
+            // Update or add new children
             foreach (var child in employe.EmployeChild)
             {
-                var existingChild = existingEmploye.EmployeChild
-                    .FirstOrDefault(c => c.Id == child.Id);
+                var existingChild = existingEmploye.EmployeChild.FirstOrDefault(c => c.Name == child.Name);
 
                 if (existingChild != null)
                 {
+                    // Update existing child with new values
                     userDbContext.Entry(existingChild).CurrentValues.SetValues(child);
                 }
                 else
                 {
+                    // Add new child to existing employe
                     existingEmploye.EmployeChild.Add(child);
                 }
             }
@@ -144,7 +148,7 @@ namespace ADMitroSremEmploye.Repositories.Employe_repository
             try
             {
                 await userDbContext.SaveChangesAsync();
-                return existingEmploye; 
+                return existingEmploye;
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -159,6 +163,7 @@ namespace ADMitroSremEmploye.Repositories.Employe_repository
             }
         }
 
+
         public async Task<bool> DeleteEmployeAsync(Guid id)
         {
             var employe = await userDbContext.Employe
@@ -170,12 +175,10 @@ namespace ADMitroSremEmploye.Repositories.Employe_repository
                 return false;
             }
 
-            var employeChildren = await userDbContext.EmployeChild
-                .Where(c => c.Id == id)
-                .ToListAsync();
+            // Izbriši decu zaposlenog
+            userDbContext.EmployeChild.RemoveRange(employe.EmployeChild);
 
-            userDbContext.EmployeChild.RemoveRange(employeChildren);
-
+            // Izbriši zaposlenog
             userDbContext.Employe.Remove(employe);
 
             await userDbContext.SaveChangesAsync();
