@@ -10,8 +10,8 @@ namespace ADMitroSremEmploye.Models.DTOs
         [Required]
         public required Guid EmployeId { get; set; }
 
-        [Required]
-        public required Employe Employe { get; set; }
+        //[Required]
+        //public required Employe Employe { get; set; }
 
         [Required]
         public required DateTime StartDate { get; set; }
@@ -53,7 +53,7 @@ namespace ADMitroSremEmploye.Models.DTOs
 
         public User? CreatedByUser { get; set; }
 
-        [Required]
-        public required DateTime CreatedDate { get; set; }
+        //[Required]
+        public DateTime? CreatedDate { get; set; }
     }
 }
