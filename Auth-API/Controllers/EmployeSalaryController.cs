@@ -56,10 +56,11 @@ namespace ADMitroSremEmploye.Controllers
             var employeSalarys = await employeSalaryRepository.GetAllEmployeSalarysAsync(filterDto, sortBy, isAscending, pageNumber, pageSize);
             var totalEmployesCount = await employeSalaryRepository.GetTotalEmployeSalariesCountAsync(filterDto);
 
-            if (employeSalarys == null || !employeSalarys.Any())
+            /*if (employeSalarys == null || !employeSalarys.Any())
             {
                 return NotFound("No employee salaries found with the specified criteria.");
             }
+            */
             return Ok(new { TotalCount = totalEmployesCount, EmployeSalarys = mapper.Map<IEnumerable<EmployeSalaryDto>>(employeSalarys) });
 
         }
