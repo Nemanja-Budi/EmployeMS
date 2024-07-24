@@ -10,6 +10,8 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using ADMitroSremEmploye.Models.DTOs;
 using AutoMapper;
+using ADMitroSremEmploye.Repositories.Employe_Salary_repository;
+using ADMitroSremEmploye.Repositories.Employe_repository;
 
 namespace ADMitroSremEmploye.Controllers
 {
@@ -19,11 +21,13 @@ namespace ADMitroSremEmploye.Controllers
     {
         private readonly IMapper mapper;
         private readonly SalaryCalculatorService _salaryCalculatorService;
+        private readonly IEmployeSalaryRepository employeSalaryRepository;
 
-        public EmployeSalaryController(IMapper mapper, SalaryCalculatorService salaryCalculatorService)
+        public EmployeSalaryController(IMapper mapper, SalaryCalculatorService salaryCalculatorService, IEmployeSalaryRepository employeSalaryRepository)
         {
             this.mapper = mapper;
             _salaryCalculatorService = salaryCalculatorService;
+            this.employeSalaryRepository = employeSalaryRepository;
         }
 
         [HttpPost("create-employe-salary")]
@@ -47,16 +51,17 @@ namespace ADMitroSremEmploye.Controllers
         }
 
         [HttpGet("employe-salarys")]
-        public async Task<IActionResult> GetAllEmployeSalarys()
+        public async Task<IActionResult> GetAllEmployeSalarys([FromQuery] EmployeSalaryFilterDto filterDto, [FromQuery] string? sortBy, [FromQuery] bool isAscending = true, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
-            var employeSalarys = await _salaryCalculatorService.GetAllEmployeSalarys();
+            var employeSalarys = await employeSalaryRepository.GetAllEmployeSalarysAsync(filterDto, sortBy, isAscending, pageNumber, pageSize);
+            var totalEmployesCount = await employeSalaryRepository.GetTotalEmployeSalariesCountAsync(filterDto);
 
-            if (employeSalarys == null)
+            if (employeSalarys == null || !employeSalarys.Any())
             {
-                return NotFound($"Employee with Id {employeSalarys} not found.");
+                return NotFound("No employee salaries found with the specified criteria.");
             }
+            return Ok(new { TotalCount = totalEmployesCount, EmployeSalarys = mapper.Map<IEnumerable<EmployeSalaryDto>>(employeSalarys) });
 
-            return Ok(mapper.Map<List<EmployeSalaryDto>>(employeSalarys));
         }
 
         [HttpGet("employe-salarys/{employeId}")]

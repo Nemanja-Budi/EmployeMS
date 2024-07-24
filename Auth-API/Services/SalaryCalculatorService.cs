@@ -105,13 +105,13 @@ namespace ADMitroSremEmploye.Services
         }
 
 
-        public async Task<List<EmployeSalary>> GetAllEmployeSalarys()
+        /*public async Task<List<EmployeSalary>> GetAllEmployeSalarys()
         {
             var employeSalary = await employeSalaryRepository.GetAllEmployeSalarysAsync();
 
             return employeSalary;
         }
-
+        */
         public async Task<List<EmployeSalary>?> GetEmployeSalarys(Guid employeId)
         {
             var employe = await employeSalaryRepository.GetEmployeByIdAsync(employeId);
