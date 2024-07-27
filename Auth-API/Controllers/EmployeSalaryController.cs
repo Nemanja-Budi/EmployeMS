@@ -111,10 +111,10 @@ namespace ADMitroSremEmploye.Controllers
 
             if (!result)
             {
-                return NotFound($"EmployeSalary with Id {employeSalaryId} not found.");
+                return NotFound(new { message = $"EmployeSalary with Id {employeSalaryId} not found." });
             }
 
-            return Ok($"Successfully deleted EmployeSalary with Id {employeSalaryId}.");
+            return Ok(new { message = $"Successfully deleted EmployeSalary with Id {employeSalaryId}." });
         }
 
         [HttpPut("update-employe-salary")]
