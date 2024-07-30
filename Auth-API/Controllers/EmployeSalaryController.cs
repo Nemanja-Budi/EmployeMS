@@ -101,7 +101,6 @@ namespace ADMitroSremEmploye.Controllers
                 return NotFound($"Employee with Id {employeId} not found or no salaries found.");
             }
 
-            //return Ok($"Successfully deleted salaries for Employee with Id {employeId}.");
             return Ok(new { message = $"Successfully deleted EmployeSalary with Id {employeId}." });
         }
 
@@ -115,7 +114,6 @@ namespace ADMitroSremEmploye.Controllers
                 return NotFound($"EmployeSalary with Id {employeSalaryId} not found.");
             }
 
-            //return Ok($"Successfully deleted EmployeSalary with Id {employeSalaryId}.");
             return Ok(new { message = $"Successfully deleted EmployeSalary with Id {employeSalaryId}." });
         }
 
