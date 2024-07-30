@@ -2,6 +2,7 @@
 using ADMitroSremEmploye.Models.Domain;
 using ADMitroSremEmploye.Models.DTOs;
 using ADMitroSremEmploye.Repositories.Audit_repository;
+using ADMitroSremEmploye.Repositories.Employe_repository;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,11 +22,25 @@ namespace ADMitroSremEmploye.Controllers
         }
 
         // GET: api/auditlogs/get-auditlogs
-        [HttpGet("get-auditlogs")]
+        /*[HttpGet("get-auditlogs")]
         public async Task<ActionResult<IEnumerable<AuditLogDto>>> GetAuditLogs()
         {
             var auditLogDomain = await auditRepository.GetAuditLogsAsync();
             return Ok(mapper.Map<IEnumerable<AuditLogDto>>(auditLogDomain));
+        }
+        */
+        [HttpGet("get-auditlogs")]
+        public async Task<ActionResult<IEnumerable<AuditLogDto>>> GetAuditLogs(
+            [FromQuery] AuditLogFilterDto filterDto,
+            string? sortBy = null,
+            bool isAscending = true,
+            int pageNumber = 1,
+            int pageSize = 1000)
+        {
+            var auditLogs = await auditRepository.GetAuditLogsAsync(filterDto, sortBy, isAscending, pageNumber, pageSize);
+            var totalAuditLogsCount = await auditRepository.GetTotalAuditLogsCountAsync(filterDto);
+
+            return Ok(new { TotalCount = totalAuditLogsCount, AuditLogs = mapper.Map<IEnumerable<AuditLogDto>>(auditLogs), });
         }
 
         // GET: api/auditlogs/get-auditlog/id
