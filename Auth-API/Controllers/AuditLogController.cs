@@ -21,14 +21,6 @@ namespace ADMitroSremEmploye.Controllers
             this.auditRepository = auditRepository;
         }
 
-        // GET: api/auditlogs/get-auditlogs
-        /*[HttpGet("get-auditlogs")]
-        public async Task<ActionResult<IEnumerable<AuditLogDto>>> GetAuditLogs()
-        {
-            var auditLogDomain = await auditRepository.GetAuditLogsAsync();
-            return Ok(mapper.Map<IEnumerable<AuditLogDto>>(auditLogDomain));
-        }
-        */
         [HttpGet("get-auditlogs")]
         public async Task<ActionResult<IEnumerable<AuditLogDto>>> GetAuditLogs(
             [FromQuery] AuditLogFilterDto filterDto,
@@ -37,10 +29,9 @@ namespace ADMitroSremEmploye.Controllers
             int pageNumber = 1,
             int pageSize = 1000)
         {
-            var auditLogs = await auditRepository.GetAuditLogsAsync(filterDto, sortBy, isAscending, pageNumber, pageSize);
-            var totalAuditLogsCount = await auditRepository.GetTotalAuditLogsCountAsync(filterDto);
+            var (auditLogs, totalCount) = await auditRepository.GetAuditLogsAsync(filterDto, sortBy, isAscending, pageNumber, pageSize);
 
-            return Ok(new { TotalCount = totalAuditLogsCount, AuditLogs = mapper.Map<IEnumerable<AuditLogDto>>(auditLogs), });
+            return Ok(new { TotalCount = totalCount, AuditLogs = mapper.Map<IEnumerable<AuditLogDto>>(auditLogs) });
         }
 
         // GET: api/auditlogs/get-auditlog/id

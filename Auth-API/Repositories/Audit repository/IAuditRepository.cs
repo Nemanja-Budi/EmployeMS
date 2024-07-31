@@ -6,9 +6,7 @@ namespace ADMitroSremEmploye.Repositories.Audit_repository
 {
     public interface IAuditRepository
     {
-        //Task<IEnumerable<AuditLog>> GetAuditLogsAsync();
-        Task<IEnumerable<AuditLog>> GetAuditLogsAsync(AuditLogFilterDto filterDto, string? sortBy, bool isAscending, int pageNumber, int pageSize);
-        Task<int> GetTotalAuditLogsCountAsync(AuditLogFilterDto filterDto);
+        Task<(IEnumerable<AuditLog>, int totalCount)> GetAuditLogsAsync(AuditLogFilterDto filterDto, string? sortBy, bool isAscending, int pageNumber, int pageSize);
         Task<AuditLog?> GetAuditLogAsync(Guid id);
         Task<AuditLog?> CreateAuditLogAsync(AuditLog auditLog);
         Task<bool> UpdateAuditLogAsync(Guid id, AuditLog auditLog);
