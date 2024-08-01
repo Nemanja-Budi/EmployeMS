@@ -137,5 +137,45 @@ namespace ADMitroSremEmploye.Controllers
             return Ok(mapper.Map<EmployeSalaryDto>(result));
         }
 
+        [HttpGet("salaries-by-bank")]
+        public async Task<IActionResult> GetSalariesByBankAsync([FromQuery] int month, [FromQuery] int year)
+        {
+            if (month < 1 || month > 12 || year < 1)
+            {
+                return BadRequest("Invalid month or year.");
+            }
+
+            try
+            {
+                var salariesByBank = await employeSalaryRepository.GetSalariesByBankAsync(month, year);
+                return Ok(salariesByBank);
+            }
+            catch (Exception ex)
+            {
+                // Log exception (optional)
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing your request.");
+            }
+        }
+
+        [HttpGet("grand-total-salary")]
+        public async Task<ActionResult<decimal>> GetGrandTotalSalaryAsync([FromQuery] int month, [FromQuery] int year)
+        {
+            if (month < 1 || month > 12 || year < 1)
+            {
+                return BadRequest("Invalid month or year.");
+            }
+
+            try
+            {
+                decimal totalSalary = await employeSalaryRepository.GetGrandTotalSalaryAsync(month, year);
+                return Ok(totalSalary);
+            }
+            catch (Exception ex)
+            {
+                // Log exception (optional)
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing your request.");
+            }
+        }
+
     }
 }

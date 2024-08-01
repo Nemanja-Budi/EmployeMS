@@ -14,6 +14,8 @@
         public decimal DamageCompensation { get; set; } = 0m;
         public decimal HolidayBonus { get; set; } = 1426.53m;
         public decimal MealAllowance { get; set; } = 42.8m;
+        public DateOnly SettlementDate { get; set; } //datum obracuna
+        public required DateOnly CalculationMonth { get; set; } // plate za mesec
         public Guid EmployeId { get; set; }
         public EmployeSalarySO? EmployeSalarySO { get; set; }
         public EmployeSalarySOE? EmployeSalarySOE { get; set; }

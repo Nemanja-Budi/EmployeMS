@@ -53,7 +53,9 @@ namespace ADMitroSremEmploye.Services
                 WorkingHoursForTheHoliday = employeSalary.WorkingHoursForTheHoliday,
                 OvertimeHours = employeSalary.OvertimeHours,
                 Credits = employeSalary.Credits,
-                DamageCompensation = employeSalary.DamageCompensation
+                DamageCompensation = employeSalary.DamageCompensation,
+                SettlementDate = DateOnly.FromDateTime(DateTime.Now),
+                CalculationMonth = employeSalary.CalculationMonth
             };
 
             await employeSalaryRepository.AddEmployeSalaryAsync(EmployeSalary);

@@ -20,16 +20,6 @@ namespace ADMitroSremEmploye.Repositories.Employe_Salary_repository
             return await userDbContext.Employe.FirstOrDefaultAsync(x => x.Id == employeId);
         }
 
-        /*public async Task<List<EmployeSalary>> GetAllEmployeSalarysAsync()
-        {
-            return await userDbContext.EmployeSalary
-                .Include(e => e.EmployeSalarySO)
-                .Include(e => e.EmployeSalarySOE)
-                .Include(e => e.IncomeFromWork)
-                .ToListAsync();
-        }
-        */
-
         public async Task<IEnumerable<EmployeSalary>> GetAllEmployeSalarysAsync(EmployeSalaryFilterDto filterDto, string? sortBy, bool isAscending, int pageNumber, int pageSize)
         {
             var employeSalaryQuery = userDbContext.EmployeSalary
@@ -40,11 +30,12 @@ namespace ADMitroSremEmploye.Repositories.Employe_Salary_repository
 
             var employeQuery = userDbContext.Employe.AsQueryable();
 
-            if (!string.IsNullOrEmpty(filterDto.FirstName) || !string.IsNullOrEmpty(filterDto.LastName))
+            if (!string.IsNullOrEmpty(filterDto.FirstName) || !string.IsNullOrEmpty(filterDto.LastName) || !string.IsNullOrEmpty(filterDto.BankName))
             {
                 employeQuery = employeQuery.Where(e =>
                     (string.IsNullOrEmpty(filterDto.FirstName) || EF.Functions.Like(e.FirstName, $"%{filterDto.FirstName}%")) &&
-                    (string.IsNullOrEmpty(filterDto.LastName) || EF.Functions.Like(e.LastName, $"%{filterDto.LastName}%"))
+                    (string.IsNullOrEmpty(filterDto.LastName) || EF.Functions.Like(e.LastName, $"%{filterDto.LastName}%")) &&
+                    (string.IsNullOrEmpty(filterDto.BankName) || EF.Functions.Like(e.BankName, $"%{filterDto.BankName}%"))
                 );
             }
 
@@ -65,6 +56,10 @@ namespace ADMitroSremEmploye.Repositories.Employe_Salary_repository
                 else if (sortBy.Equals("LastName", StringComparison.OrdinalIgnoreCase))
                 {
                     query = isAscending ? query.OrderBy(x => x.Employe.LastName) : query.OrderByDescending(x => x.Employe.LastName);
+                }
+                else if (sortBy.Equals("BankName", StringComparison.OrdinalIgnoreCase))
+                {
+                    query = isAscending ? query.OrderBy(x => x.Employe.BankName) : query.OrderByDescending(x => x.Employe.BankName);
                 }
             }
 
@@ -91,6 +86,11 @@ namespace ADMitroSremEmploye.Repositories.Employe_Salary_repository
             if (!string.IsNullOrEmpty(filterDto.LastName))
             {
                 employeSalaryQuery = employeSalaryQuery.Where(es => EF.Functions.Like(es.e.LastName, $"%{filterDto.LastName}%"));
+            }
+
+            if (!string.IsNullOrEmpty(filterDto.BankName))
+            {
+                employeSalaryQuery = employeSalaryQuery.Where(es => EF.Functions.Like(es.e.BankName, $"%{filterDto.BankName}%"));
             }
 
             return await employeSalaryQuery.CountAsync();
@@ -150,6 +150,50 @@ namespace ADMitroSremEmploye.Repositories.Employe_Salary_repository
             await userDbContext.SaveChangesAsync();
 
             return true;
+        }
+
+        public async Task<IEnumerable<BankSalaryDto>> GetSalariesByBankAsync(int month, int year)
+        {
+            var salaries = await userDbContext.EmployeSalary
+                .Join(
+                    userDbContext.Employe,
+                    es => es.EmployeId,
+                    e => e.Id,
+                    (es, e) => new { es, e.BankName }
+                )
+                .GroupJoin(
+                    userDbContext.EmployeSalarySOE,
+                    combined => combined.es.Id,
+                    eso => eso.EmployeSalaryId,
+                    (combined, esoes) => new { combined.BankName, esoes, combined.es.CalculationMonth }
+                )
+                .SelectMany(
+                    combined => combined.esoes.DefaultIfEmpty(),  // Left join on EmployeSalarySOE
+                    (combined, eso) => new { combined.BankName, eso.NetoSalary, combined.CalculationMonth }
+                )
+                .Where(x => x.CalculationMonth.Month == month && x.CalculationMonth.Year == year)
+                .GroupBy(x => x.BankName)
+                .Select(group => new BankSalaryDto
+                {
+                    BankName = group.Key,
+                    TotalNetSalary = group.Sum(x => x.NetoSalary)
+                })
+                .ToListAsync();
+
+            return salaries;
+        }
+
+        public async Task<decimal> GetGrandTotalSalaryAsync(int month, int year)
+        {
+            return await userDbContext.EmployeSalary
+                .Join(
+                    userDbContext.EmployeSalarySOE,
+                    es => es.Id,
+                    eso => eso.EmployeSalaryId,
+                    (es, eso) => new { eso.NetoSalary, es.CalculationMonth }
+                )
+                .Where(x => x.CalculationMonth.Month == month && x.CalculationMonth.Year == year)
+                .SumAsync(x => x.NetoSalary);
         }
 
         public async Task SaveEmployeSalaryAsync()
