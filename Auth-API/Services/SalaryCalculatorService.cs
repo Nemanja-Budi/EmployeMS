@@ -96,6 +96,7 @@ namespace ADMitroSremEmploye.Services
             existingSalary.OvertimeHours = employeSalary.OvertimeHours;
             existingSalary.Credits = employeSalary.Credits;
             existingSalary.DamageCompensation = employeSalary.DamageCompensation;
+            existingSalary.CalculationMonth = employeSalary.CalculationMonth;
 
             existingSalary.EmployeSalarySO = await SaveSalarySO(existingSalary.Id, grossSalary, true);
             existingSalary.EmployeSalarySOE = await SaveSalarySOE(existingSalary.Id, grossSalary, true);
