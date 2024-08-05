@@ -3,6 +3,7 @@ using ADMitroSremEmploye.Models.Domain;
 using ADMitroSremEmploye.Models.DTOs;
 using AutoMapper;
 using ADMitroSremEmploye.Repositories;
+using ADMitroSremEmploye.Services;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -89,10 +90,10 @@ public class AnnualLeaveController : ControllerBase
 
         if (!result)
         {
-            return NotFound();
+            return NotFound($"Employe Annual Leave with Id {id} not found or no salaries found.");
         }
-
-        return NoContent();
+        return Ok(new { message = $"Successfully deleted Employe Annual Leave with Id {id}." });
     }
-
 }
+
+

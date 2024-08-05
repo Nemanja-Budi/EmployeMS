@@ -14,10 +14,10 @@ namespace ADMitroSremEmploye.Models.DTOs
         //public required Employe Employe { get; set; }
 
         [Required]
-        public required DateTime StartDate { get; set; }
+        public required DateOnly StartDate { get; set; }
 
         [Required]
-        public required DateTime EndDate { get; set; }
+        public required DateOnly EndDate { get; set; }
 
         [Required]
         public required string Reason { get; set; }
@@ -29,10 +29,10 @@ namespace ADMitroSremEmploye.Models.DTOs
         public required bool Approved { get; set; }
 
         [Required]
-        public required DateTime RequestDate { get; set; }
+        public required DateOnly RequestDate { get; set; }
 
         [Required]
-        public required DateTime ApprovalDate { get; set; }
+        public required DateOnly ApprovalDate { get; set; }
 
         [Required]
         public required int TotalDays { get; set; }
