@@ -6,6 +6,7 @@ using ADMitroSremEmploye.Repositories;
 using ADMitroSremEmploye.Repositories.Audit_repository;
 using ADMitroSremEmploye.Repositories.Employe_repository;
 using ADMitroSremEmploye.Repositories.Employe_Salary_repository;
+using ADMitroSremEmploye.Repositories.Member_repository;
 using ADMitroSremEmploye.Repositories.Salary_Service_repository;
 using ADMitroSremEmploye.Repositories.State_obligation_repository;
 using ADMitroSremEmploye.Services;
@@ -42,6 +43,7 @@ builder.Services.AddScoped<IAuditRepository, SQLAuditRepository>();
 builder.Services.AddScoped<IEmployeSalaryRepository, SQLEmployeSalaryRepository>();
 builder.Services.AddScoped<IStateObligationRepository, SQLStateObligationRepository>();
 builder.Services.AddScoped<ISalaryServiceRepository, SalaryServiceRepository>();
+builder.Services.AddScoped<IMemberRepository, SQLMemberRepository>();
 
 builder.Services.AddDbContext<UserDbContext>(options =>
 {
