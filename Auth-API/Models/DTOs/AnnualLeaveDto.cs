@@ -51,7 +51,7 @@ namespace ADMitroSremEmploye.Models.DTOs
 
         public string? CreatedByUserId { get; set; }
 
-        public User? CreatedByUser { get; set; }
+        public ViewUserDto? CreatedByUser { get; set; }
 
         //[Required]
         public DateTime? CreatedDate { get; set; }
