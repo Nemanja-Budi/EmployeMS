@@ -20,7 +20,7 @@ namespace ADMitroSremEmploye.Repositories.Employe_Salary_repository
             return await userDbContext.Employe.FirstOrDefaultAsync(x => x.Id == employeId);
         }
 
-        public async Task<IEnumerable<EmployeSalary>> GetAllEmployeSalarysAsync(EmployeSalaryFilterDto filterDto, string? sortBy, bool isAscending, int pageNumber, int pageSize)
+        public async Task<(int totalCount, IEnumerable<EmployeSalary>)> GetAllEmployeSalarysAsync(EmployeSalaryFilterDto filterDto, string? sortBy, bool isAscending, int pageNumber, int pageSize)
         {
             var employeSalaryQuery = userDbContext.EmployeSalary
                 .Include(e => e.EmployeSalarySO)
@@ -39,6 +39,67 @@ namespace ADMitroSremEmploye.Repositories.Employe_Salary_repository
                 );
             }
 
+            if (!string.IsNullOrEmpty(filterDto.CalculationMonth))
+            {
+                var dateParts = filterDto.CalculationMonth.Split('-');
+
+                if (dateParts.Length == 1)
+                {
+                    if (int.TryParse(dateParts[0], out int year))
+                    {
+                        employeSalaryQuery = employeSalaryQuery.Where(e => e.CalculationMonth.Year == year);
+                    }
+                    else
+                    {
+                        throw new ArgumentException("Invalid year format.");
+                    }
+                }
+                else if (dateParts.Length == 2)
+                {
+                    if (int.TryParse(dateParts[0], out int year) && int.TryParse(dateParts[1], out int month))
+                    {
+                        employeSalaryQuery = employeSalaryQuery.Where(e => e.CalculationMonth.Year == year && e.CalculationMonth.Month == month);
+                    }
+                    else
+                    {
+                        throw new ArgumentException("Invalid year-month format.");
+                    }
+                }
+                else if (dateParts.Length == 3)
+                {
+                    if (int.TryParse(dateParts[0], out int year) && int.TryParse(dateParts[1], out int month) && int.TryParse(dateParts[2], out int day))
+                    {
+                        if (month < 1 || month > 12)
+                        {
+                            throw new ArgumentException("Month must be between 1 and 12.");
+                        }
+
+                        if (day == 0)
+                        {
+                            day = 1;
+                        }
+
+                        var daysInMonth = DateTime.DaysInMonth(year, month);
+                        if (day < 1 || day > daysInMonth)
+                        {
+                            throw new ArgumentException("Day is out of range for the given month and year.");
+                        }
+
+                        var startDate = new DateOnly(year, month, day);
+                        var endDate = startDate.AddDays(1);
+                        employeSalaryQuery = employeSalaryQuery.Where(e => e.CalculationMonth >= startDate && e.CalculationMonth < endDate);
+                    }
+                    else
+                    {
+                        throw new ArgumentException("Invalid date format.");
+                    }
+                }
+                else
+                {
+                    throw new ArgumentException("Invalid ChangeDateTime format.");
+                }
+            }
+
             var query = from es in employeSalaryQuery
                         join e in employeQuery on es.EmployeId equals e.Id
                         select new
@@ -49,19 +110,25 @@ namespace ADMitroSremEmploye.Repositories.Employe_Salary_repository
 
             if (!string.IsNullOrEmpty(sortBy))
             {
-                if (sortBy.Equals("FirstName", StringComparison.OrdinalIgnoreCase))
+                if (sortBy.Equals("CalculationMonth", StringComparison.OrdinalIgnoreCase))
                 {
-                    query = isAscending ? query.OrderBy(x => x.Employe.FirstName) : query.OrderByDescending(x => x.Employe.FirstName);
+                    query = isAscending
+                        ? query.OrderBy(x => x.EmployeSalary.CalculationMonth)
+                        : query.OrderByDescending(x => x.EmployeSalary.CalculationMonth);
                 }
-                else if (sortBy.Equals("LastName", StringComparison.OrdinalIgnoreCase))
+                else
                 {
-                    query = isAscending ? query.OrderBy(x => x.Employe.LastName) : query.OrderByDescending(x => x.Employe.LastName);
-                }
-                else if (sortBy.Equals("BankName", StringComparison.OrdinalIgnoreCase))
-                {
-                    query = isAscending ? query.OrderBy(x => x.Employe.BankName) : query.OrderByDescending(x => x.Employe.BankName);
+                    var propertyInfo = typeof(Employe).GetProperty(sortBy, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+                    if (propertyInfo != null)
+                    {
+                        query = isAscending
+                            ? query.OrderBy(x => EF.Property<object>(x.Employe, propertyInfo.Name))
+                            : query.OrderByDescending(x => EF.Property<object>(x.Employe, propertyInfo.Name));
+                    }
                 }
             }
+
+            var totalCount = await query.CountAsync();
 
             var employeSalaryList = await query
                 .Skip((pageNumber - 1) * pageSize)
@@ -69,33 +136,8 @@ namespace ADMitroSremEmploye.Repositories.Employe_Salary_repository
                 .Select(x => x.EmployeSalary)
                 .ToListAsync();
 
-            return employeSalaryList;
+            return (totalCount, employeSalaryList);
         }
-
-        public async Task<int> GetTotalEmployeSalariesCountAsync(EmployeSalaryFilterDto filterDto)
-        {
-            var employeSalaryQuery = from es in userDbContext.EmployeSalary
-                                     join e in userDbContext.Employe on es.EmployeId equals e.Id
-                                     select new { es, e };
-
-            if (!string.IsNullOrEmpty(filterDto.FirstName))
-            {
-                employeSalaryQuery = employeSalaryQuery.Where(es => EF.Functions.Like(es.e.FirstName, $"%{filterDto.FirstName}%"));
-            }
-
-            if (!string.IsNullOrEmpty(filterDto.LastName))
-            {
-                employeSalaryQuery = employeSalaryQuery.Where(es => EF.Functions.Like(es.e.LastName, $"%{filterDto.LastName}%"));
-            }
-
-            if (!string.IsNullOrEmpty(filterDto.BankName))
-            {
-                employeSalaryQuery = employeSalaryQuery.Where(es => EF.Functions.Like(es.e.BankName, $"%{filterDto.BankName}%"));
-            }
-
-            return await employeSalaryQuery.CountAsync();
-        }
-
         public async Task<EmployeSalary?> GetEmployeSalaryById(Guid employeSalaryId)
         {
             return await userDbContext.EmployeSalary

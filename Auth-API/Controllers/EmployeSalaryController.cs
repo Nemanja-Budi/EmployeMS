@@ -53,8 +53,8 @@ namespace ADMitroSremEmploye.Controllers
         [HttpGet("employe-salarys")]
         public async Task<IActionResult> GetAllEmployeSalarys([FromQuery] EmployeSalaryFilterDto filterDto, [FromQuery] string? sortBy, [FromQuery] bool isAscending = true, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
-            var employeSalarys = await employeSalaryRepository.GetAllEmployeSalarysAsync(filterDto, sortBy, isAscending, pageNumber, pageSize);
-            var totalEmployesCount = await employeSalaryRepository.GetTotalEmployeSalariesCountAsync(filterDto);
+            var (totalEmployesCount, employeSalarys) = await employeSalaryRepository.GetAllEmployeSalarysAsync(filterDto, sortBy, isAscending, pageNumber, pageSize);
+            //var totalEmployesCount = await employeSalaryRepository.GetTotalEmployeSalariesCountAsync(filterDto);
 
             /*if (employeSalarys == null || !employeSalarys.Any())
             {
