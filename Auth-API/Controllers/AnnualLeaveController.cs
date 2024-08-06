@@ -4,6 +4,7 @@ using ADMitroSremEmploye.Models.DTOs;
 using AutoMapper;
 using ADMitroSremEmploye.Repositories;
 using ADMitroSremEmploye.Services;
+using ADMitroSremEmploye.Models.DTOs.Filters;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -20,10 +21,16 @@ public class AnnualLeaveController : ControllerBase
 
     // GET: api/AnnualLeave/get-annualleaves
     [HttpGet("get-annualleaves")]
-    public async Task<ActionResult<IEnumerable<AnnualLeaveDto>>> GetAnnualLeaves()
+    public async Task<ActionResult<IEnumerable<AnnualLeaveDto>>> GetAnnualLeaves(
+        [FromQuery] AnnualLeaveFilterDto filterDto, 
+        [FromQuery] string? sortBy, 
+        [FromQuery] bool isAscending = true, 
+        [FromQuery] int pageNumber = 1, 
+        [FromQuery] int pageSize = 1000)
     {
-        var annualLeaves = await annualLeaveRepository.GetAnnualLeavesAsync();
-        return Ok(mapper.Map<IEnumerable<AnnualLeaveDto>>(annualLeaves));
+        var (totalCount, annualLeaves) = await annualLeaveRepository.GetAnnualLeavesAsync(filterDto, sortBy,isAscending,pageNumber,pageSize);
+        //return Ok(mapper.Map<IEnumerable<AnnualLeaveDto>>(annualLeaves));
+        return Ok(new { TotalCount = totalCount, AnnualLeaves = mapper.Map<IEnumerable<AnnualLeaveDto>>(annualLeaves) });
     }
 
     // GET: api/AnnualLeave/get-annualleave/{id}
