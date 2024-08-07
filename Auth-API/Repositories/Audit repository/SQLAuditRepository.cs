@@ -116,7 +116,9 @@ namespace ADMitroSremEmploye.Repositories.Audit_repository
                         : auditLogsQuery.OrderByDescending(a => EF.Property<object>(a, propertyInfo.Name));
                 }
             }
+
             var totalCount = await auditLogsQuery.CountAsync();
+
             var auditLogs = await auditLogsQuery
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
@@ -124,6 +126,7 @@ namespace ADMitroSremEmploye.Repositories.Audit_repository
 
             return (auditLogs, totalCount);
         }
+
 
         public async Task<AuditLog?> GetAuditLogAsync(Guid id)
         {
