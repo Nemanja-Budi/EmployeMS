@@ -7,12 +7,15 @@ namespace ADMitroSremEmploye
     {
         public const string AdminRole = "Admin";
         public const string ManagerRole = "Manager";
-        public const string PlayerRole = "Player";
+        public const string PlayerRole = "Player"; 
 
         public const string AdminUserName = "admin@example.com";
         public const string SuperAdminChangeNotAllowed = "Super Admin change is not allowed";
 
         public const int MaximumLoginAttempts = 3;
+
+        public const string SalaryMail = "96budi@gmail.com";
+        public const string SalaryPassword = "argh iflw ytel hswc";
 
         public static bool VIPPolicy(AuthorizationHandlerContext authorizationHandlerContext)
         {
