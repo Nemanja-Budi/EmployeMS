@@ -1,4 +1,5 @@
 ﻿using ADMitroSremEmploye.Models.DTOs;
+using ADMitroSremEmploye.Models.DTOs.Filters;
 using Microsoft.AspNetCore.Identity;
 
 namespace ADMitroSremEmploye.Repositories.Member_repository
@@ -6,8 +7,7 @@ namespace ADMitroSremEmploye.Repositories.Member_repository
     public interface IMemberRepository
     {
         Task<(int totalCount, IEnumerable<MemberViewDto>)> GetMembersAsync(
-            string? filterOn = null,
-            string? filterQuery = null,
+            MemberFilterDto memberFilterDto,
             string? sortBy = null,
             bool isAscending = true,
             int pageNumber = 1,

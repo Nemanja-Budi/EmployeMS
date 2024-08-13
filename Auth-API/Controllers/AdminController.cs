@@ -12,6 +12,7 @@ using System;
 using Microsoft.IdentityModel.Tokens;
 using ADMitroSremEmploye.Repositories.Member_repository;
 using AutoMapper;
+using ADMitroSremEmploye.Models.DTOs.Filters;
 
 namespace ADMitroSremEmploye.Controllers
 {
@@ -35,14 +36,13 @@ namespace ADMitroSremEmploye.Controllers
 
         [HttpGet("get-members")]
         public async Task<ActionResult<IEnumerable<MemberViewDto>>> GetMembers(
-           string? filterOn = null,
-           string? filterQuery = null,
+           [FromQuery] MemberFilterDto memberFilterDto,
            string? sortBy = null,
            bool isAscending = true,
            int pageNumber = 1,
            int pageSize = 1000)
         {
-            var (totalCount, members) = await memberRepository.GetMembersAsync(filterOn, filterQuery, sortBy, isAscending, pageNumber, pageSize);
+            var (totalCount, members) = await memberRepository.GetMembersAsync(memberFilterDto, sortBy, isAscending, pageNumber, pageSize);
 
             return Ok(new { TotalCount = totalCount, Members = mapper.Map<IEnumerable<MemberViewDto>>(members) });
 

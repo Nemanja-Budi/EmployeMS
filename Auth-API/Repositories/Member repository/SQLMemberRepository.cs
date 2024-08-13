@@ -1,5 +1,6 @@
 ﻿using ADMitroSremEmploye.Models.Domain;
 using ADMitroSremEmploye.Models.DTOs;
+using ADMitroSremEmploye.Models.DTOs.Filters;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,81 +17,93 @@ namespace ADMitroSremEmploye.Repositories.Member_repository
             this.roleManager = roleManager;
         }
 
-        public async Task<(int totalCount, IEnumerable<MemberViewDto>)> GetMembersAsync(string? filterOn = null, string? filterQuery = null, string? sortBy = null, bool isAscending = true, int pageNumber = 1, int pageSize = 1000)
+        public async Task<(int totalCount, IEnumerable<MemberViewDto>)> GetMembersAsync(MemberFilterDto memberFilterDto ,string? sortBy = null, bool isAscending = true, int pageNumber = 1, int pageSize = 1000)
         {
 
-            var query = userManager.Users
-                .Where(x => x.UserName != SD.AdminUserName);
+            var usersQuery = userManager.Users
+            .Where(x => x.UserName != SD.AdminUserName);
 
-            if (!string.IsNullOrEmpty(filterOn) && !string.IsNullOrEmpty(filterQuery))
+            // Filtriranje prema filterDto
+            if (!string.IsNullOrEmpty(memberFilterDto.UserName))
             {
-                switch (filterOn.ToLower())
-                {
-                    case "username":
-                        query = query.Where(x => x.UserName.Contains(filterQuery));
-                        break;
-                    case "firstname":
-                        query = query.Where(x => x.FirstName.Contains(filterQuery));
-                        break;
-                    case "lastname":
-                        query = query.Where(x => x.LastName.Contains(filterQuery));
-                        break;
-                    default:
-                        break;
-                }
+                usersQuery = usersQuery.Where(x => x.UserName.Contains(memberFilterDto.UserName));
             }
 
-            var memberTotalLength = await query.CountAsync();
+            if (!string.IsNullOrEmpty(memberFilterDto.FirstName))
+            {
+                usersQuery = usersQuery.Where(x => x.FirstName.Contains(memberFilterDto.FirstName));
+            }
 
+            if (!string.IsNullOrEmpty(memberFilterDto.LastName))
+            {
+                usersQuery = usersQuery.Where(x => x.LastName.Contains(memberFilterDto.LastName));
+            }
+
+            // Sortiranje
             if (!string.IsNullOrEmpty(sortBy))
             {
                 switch (sortBy.ToLower())
                 {
                     case "username":
-                        query = isAscending ? query.OrderBy(x => x.UserName) : query.OrderByDescending(x => x.UserName);
+                        usersQuery = isAscending ? usersQuery.OrderBy(x => x.UserName) : usersQuery.OrderByDescending(x => x.UserName);
                         break;
                     case "firstname":
-                        query = isAscending ? query.OrderBy(x => x.FirstName) : query.OrderByDescending(x => x.FirstName);
+                        usersQuery = isAscending ? usersQuery.OrderBy(x => x.FirstName) : usersQuery.OrderByDescending(x => x.FirstName);
                         break;
                     case "lastname":
-                        query = isAscending ? query.OrderBy(x => x.LastName) : query.OrderByDescending(x => x.LastName);
+                        usersQuery = isAscending ? usersQuery.OrderBy(x => x.LastName) : usersQuery.OrderByDescending(x => x.LastName);
                         break;
                     default:
                         break;
                 }
             }
 
-            var paginatedMembers = await query
+            // Paginacija i dohvati korisnike
+            var users = await usersQuery
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
-                .Select(member => new MemberViewDto
-                {
-                    Id = member.Id,
-                    UserName = member.UserName,
-                    FirstName = member.FirstName,
-                    LastName = member.LastName,
-                    DateCreated = member.DataCreated,
-                    IsLocked = userManager.IsLockedOutAsync(member).GetAwaiter().GetResult(),
-                    Roles = userManager.GetRolesAsync(member).GetAwaiter().GetResult()
-                })
                 .ToListAsync();
 
-            return (memberTotalLength, paginatedMembers);
+            var members = new List<MemberViewDto>();
+
+            foreach (var user in users)
+            {
+                var memberToAdd = new MemberViewDto
+                {
+                    Id = user.Id,
+                    UserName = user.UserName,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    DateCreated = user.DataCreated,
+                    IsLocked = await userManager.IsLockedOutAsync(user),
+                    Roles = await userManager.GetRolesAsync(user)
+                };
+
+                members.Add(memberToAdd);
+            }
+
+            // Ukupan broj članova
+            var memberTotalLength = await usersQuery.CountAsync();
+
+            return (memberTotalLength, members);
 
         }
 
         public async Task<MemberAddEditDto?> GetMemberAsync(string id)
         {
-            var member = await userManager.Users
-               .Where(x => x.UserName != SD.AdminUserName && x.Id == id)
-               .Select(m => new MemberAddEditDto
-               {
-                   Id = m.Id,
-                   UserName = m.UserName,
-                   FirstName = m.FirstName,
-                   LastName = m.LastName,
-                   Roles = string.Join(",", userManager.GetRolesAsync(m).GetAwaiter().GetResult())
-               }).FirstOrDefaultAsync();
+            var user = await userManager.Users
+                .Where(x => x.UserName != SD.AdminUserName && x.Id == id)
+                .FirstOrDefaultAsync();
+
+            var member = new MemberAddEditDto
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Roles = string.Join(",", await userManager.GetRolesAsync(user))
+            };
+
             return member;
         }
 

@@ -11,12 +11,10 @@ namespace ADMitroSremEmploye.Repositories.Audit_repository
     public class SQLAuditRepository : IAuditRepository
     {
         private readonly UserDbContext userDbContext;
-        private readonly IHttpContextAccessor httpContextAccessor;
 
-        public SQLAuditRepository(UserDbContext userDbContext, IHttpContextAccessor httpContextAccessor)
+        public SQLAuditRepository(UserDbContext userDbContext)
         {
             this.userDbContext = userDbContext;
-            this.httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<(IEnumerable<AuditLog>, int totalCount)> GetAuditLogsAsync(AuditLogFilterDto filterDto, string? sortBy, bool isAscending, int pageNumber, int pageSize)
