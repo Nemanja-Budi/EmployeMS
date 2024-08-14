@@ -3,6 +3,7 @@ using ADMitroSremEmploye.Data;
 using ADMitroSremEmploye.Mappings;
 using ADMitroSremEmploye.Models.Domain;
 using ADMitroSremEmploye.Repositories;
+using ADMitroSremEmploye.Repositories.AnnualLeave_repository;
 using ADMitroSremEmploye.Repositories.Audit_repository;
 using ADMitroSremEmploye.Repositories.Employe_repository;
 using ADMitroSremEmploye.Repositories.Employe_Salary_repository;
@@ -38,6 +39,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddMemoryCache();
 
+builder.Services.AddScoped<SQLAnnualLeaveRepository>();
+builder.Services.AddScoped<IAnnualLeaveRepository, CachedAnnualLeaveRepository>();
+
 builder.Services.AddScoped<SQLAuditRepository>();
 builder.Services.AddScoped<IAuditRepository, CachedAuditRepository>();
 
@@ -50,7 +54,6 @@ builder.Services.AddScoped<IEmployeSalaryRepository, CachedEmployeSalaryReposito
 builder.Services.AddScoped<SQLMemberRepository>();
 builder.Services.AddScoped<IMemberRepository, CachedMemberRepository>();
 
-builder.Services.AddScoped<IAnnualLeaveRepository, SQLAnnualLeaveRepository>();
 builder.Services.AddScoped<IStateObligationRepository, SQLStateObligationRepository>();
 builder.Services.AddScoped<ISalaryServiceRepository, SalaryServiceRepository>();
 

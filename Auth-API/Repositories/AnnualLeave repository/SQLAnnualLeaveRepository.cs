@@ -65,7 +65,7 @@ namespace ADMitroSremEmploye.Repositories
 
             return (totalCount, annualLeaves);
         }
-        public async Task<AnnualLeave> GetAnnualLeaveAsync(Guid id)
+        public async Task<AnnualLeave?> GetAnnualLeaveAsync(Guid id)
         {
             return await _userDbContext.AnnualLeaves.Include(al => al.CreatedByUser).Include(al => al.Employe).FirstOrDefaultAsync(al => al.AnnualLeaveId == id);
         }
