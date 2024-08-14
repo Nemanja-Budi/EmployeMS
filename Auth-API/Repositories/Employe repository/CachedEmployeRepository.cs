@@ -1,5 +1,6 @@
 ﻿using ADMitroSremEmploye.Models.Domain;
 using ADMitroSremEmploye.Models.DTOs;
+using ADMitroSremEmploye.Models.DTOs.Filters;
 using ADMitroSremEmploye.Repositories.Member_repository;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -16,13 +17,19 @@ namespace ADMitroSremEmploye.Repositories.Employe_repository
             this.memoryCache = memoryCache;
         }
 
-        public async Task<(int totalCount, IEnumerable<Employe>)> GetEmployesAsync(EmployeFilterDto filterDto, string? sortBy, bool isAscending, int pageNumber, int pageSize)
+        public async Task<(int totalCount, IEnumerable<Employe>)> GetEmployesAsync(EmployeFilterDto filterDto, CommonFilterDto commonFilterDto)
         {
-            string cacheKey = $"employes-{filterDto.FirstName}-{filterDto.LastName}-{filterDto.JMBG}-{filterDto.Email}-{sortBy}-{isAscending}-{pageNumber}-{pageSize}";
+            string cacheKey = $"employes" +
+                $"-{filterDto.FirstName}" +
+                $"-{filterDto.LastName}-{filterDto.JMBG}" +
+                $"-{filterDto.Email}-{commonFilterDto.SortBy}" +
+                $"-{commonFilterDto.IsAscending}" +
+                $"-{commonFilterDto.PageNumber}" +
+                $"-{commonFilterDto.PageSize}";
             
             if (!memoryCache.TryGetValue(cacheKey, out (int totalCount, IEnumerable<Employe>) cachedResult))
             {
-                cachedResult = await decorated.GetEmployesAsync(filterDto, sortBy, isAscending, pageNumber, pageSize);
+                cachedResult = await decorated.GetEmployesAsync(filterDto, commonFilterDto);
 
                 memoryCache.Set(cacheKey, cachedResult, TimeSpan.FromMinutes(2));
             }

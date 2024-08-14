@@ -1,6 +1,7 @@
 ﻿using ADMitroSremEmploye.Data;
 using ADMitroSremEmploye.Models.Domain;
 using ADMitroSremEmploye.Models.DTOs;
+using ADMitroSremEmploye.Models.DTOs.Filters;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
@@ -20,7 +21,7 @@ namespace ADMitroSremEmploye.Repositories.Employe_repository
             this.httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<(int totalCount, IEnumerable<Employe>)> GetEmployesAsync(EmployeFilterDto filterDto, string? sortBy, bool isAscending, int pageNumber, int pageSize)
+        public async Task<(int totalCount, IEnumerable<Employe>)> GetEmployesAsync(EmployeFilterDto filterDto, CommonFilterDto commonFilterDto)
         {
             var employesQuery = userDbContext.Employe.Include(e => e.EmployeChild).AsQueryable();
 
@@ -41,20 +42,20 @@ namespace ADMitroSremEmploye.Repositories.Employe_repository
                 }
             }
 
-            if (!string.IsNullOrEmpty(sortBy))
+            if (!string.IsNullOrEmpty(commonFilterDto.SortBy))
             {
-                var propertyInfo = typeof(Employe).GetProperty(sortBy, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+                var propertyInfo = typeof(Employe).GetProperty(commonFilterDto.SortBy, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
                 if (propertyInfo != null)
                 {
-                    employesQuery = isAscending
+                    employesQuery = commonFilterDto.IsAscending
                         ? employesQuery.OrderBy(e => EF.Property<object>(e, propertyInfo.Name))
                         : employesQuery.OrderByDescending(e => EF.Property<object>(e, propertyInfo.Name));
                 }
             }
 
             var employes = await employesQuery
-                .Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize)
+                .Skip((commonFilterDto.PageNumber - 1) * commonFilterDto.PageSize)
+            .Take(commonFilterDto.PageSize)
                 .ToListAsync();
 
             var totalCount = await employesQuery.CountAsync();

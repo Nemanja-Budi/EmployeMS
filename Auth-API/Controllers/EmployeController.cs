@@ -3,6 +3,7 @@ using ADMitroSremEmploye.Models.Domain;
 using ADMitroSremEmploye.Models.DTOs;
 using ADMitroSremEmploye.Repositories.Employe_repository;
 using AutoMapper;
+using ADMitroSremEmploye.Models.DTOs.Filters;
 
 namespace ADMitroSremEmploye.Controllers
 {
@@ -23,12 +24,9 @@ namespace ADMitroSremEmploye.Controllers
         [HttpGet("get-employes")]
         public async Task<ActionResult<IEnumerable<EmployeDto>>> GetEmployes(
             [FromQuery] EmployeFilterDto filterDto,
-            string? sortBy = null, 
-            bool isAscending = true, 
-            int pageNumber = 1,
-            int pageSize = 1000)
+            [FromQuery] CommonFilterDto commonFilterDto)
         {
-            var (totalCount, employes) = await employeRepository.GetEmployesAsync(filterDto, sortBy, isAscending, pageNumber, pageSize);
+            var (totalCount, employes) = await employeRepository.GetEmployesAsync(filterDto, commonFilterDto);
 
             return Ok(new {TotalCount = totalCount, Employes = mapper.Map<IEnumerable<EmployeDto>>(employes)});
         }
