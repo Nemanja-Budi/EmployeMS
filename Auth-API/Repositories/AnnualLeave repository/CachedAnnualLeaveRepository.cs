@@ -17,12 +17,18 @@ namespace ADMitroSremEmploye.Repositories.AnnualLeave_repository
             this.memoryCache = memoryCache;
         }
 
-        public async Task<(int TotalCount, IEnumerable<AnnualLeave> AnnualLeaves)> GetAnnualLeavesAsync(AnnualLeaveFilterDto filterDto, string? sortBy, bool isAscending, int pageNumber, int pageSize)
+        public async Task<(int TotalCount, IEnumerable<AnnualLeave> AnnualLeaves)> GetAnnualLeavesAsync(AnnualLeaveFilterDto filterDto, CommonFilterDto commonFilterDto)
         {
-            string cacheKey = $"annual-leaves-{filterDto.FirstName}-{filterDto.LastName}-{sortBy}-{isAscending}-{pageNumber}-{pageSize}";
+            string cacheKey = $"annual-leaves-" +
+                $"{filterDto.FirstName}-" +
+                $"{filterDto.LastName}-" +
+                $"{commonFilterDto.SortBy}" +
+                $"-{commonFilterDto.IsAscending}" +
+                $"-{commonFilterDto.PageNumber}" +
+                $"-{commonFilterDto.PageSize}";
             if (!memoryCache.TryGetValue(cacheKey, out (int totalCount,IEnumerable<AnnualLeave>) cachedResult))
             {
-                cachedResult = await decorated.GetAnnualLeavesAsync(filterDto, sortBy, isAscending, pageNumber, pageSize);
+                cachedResult = await decorated.GetAnnualLeavesAsync(filterDto, commonFilterDto);
 
                 memoryCache.Set(cacheKey, cachedResult, TimeSpan.FromMinutes(2));
             }

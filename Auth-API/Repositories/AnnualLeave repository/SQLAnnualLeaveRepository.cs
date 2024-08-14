@@ -24,7 +24,7 @@ namespace ADMitroSremEmploye.Repositories
         }
         */
 
-        public async Task<(int TotalCount, IEnumerable<AnnualLeave> AnnualLeaves)> GetAnnualLeavesAsync(AnnualLeaveFilterDto filterDto, string? sortBy, bool isAscending, int pageNumber, int pageSize)
+        public async Task<(int TotalCount, IEnumerable<AnnualLeave> AnnualLeaves)> GetAnnualLeavesAsync(AnnualLeaveFilterDto filterDto, CommonFilterDto commonFilterDto)
         {
             var annualLeaveQuery = _userDbContext.AnnualLeaves
                 .Include(al => al.CreatedByUser)
@@ -44,23 +44,23 @@ namespace ADMitroSremEmploye.Repositories
             var totalCount = await annualLeaveQuery.CountAsync();
 
             // Sortiranje
-            if (!string.IsNullOrEmpty(sortBy))
+            if (!string.IsNullOrEmpty(commonFilterDto.SortBy))
             {
-                if (sortBy.Equals("FirstName", StringComparison.OrdinalIgnoreCase))
+                if (commonFilterDto.SortBy.Equals("FirstName", StringComparison.OrdinalIgnoreCase))
                 {
-                    annualLeaveQuery = isAscending ? annualLeaveQuery.OrderBy(al => al.Employe.FirstName) : annualLeaveQuery.OrderByDescending(al => al.Employe.FirstName);
+                    annualLeaveQuery = commonFilterDto.IsAscending ? annualLeaveQuery.OrderBy(al => al.Employe.FirstName) : annualLeaveQuery.OrderByDescending(al => al.Employe.FirstName);
                 }
-                else if (sortBy.Equals("LastName", StringComparison.OrdinalIgnoreCase))
+                else if (commonFilterDto.SortBy.Equals("LastName", StringComparison.OrdinalIgnoreCase))
                 {
-                    annualLeaveQuery = isAscending ? annualLeaveQuery.OrderBy(al => al.Employe.LastName) : annualLeaveQuery.OrderByDescending(al => al.Employe.LastName);
+                    annualLeaveQuery = commonFilterDto.IsAscending ? annualLeaveQuery.OrderBy(al => al.Employe.LastName) : annualLeaveQuery.OrderByDescending(al => al.Employe.LastName);
                 }
                 // Dodajte dodatne uslove za sortiranje po drugim kolonama ako je potrebno
             }
 
             // Paginacija
             var annualLeaves = await annualLeaveQuery
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
+                .Skip((commonFilterDto.PageNumber - 1) * commonFilterDto.PageSize)
+                .Take(commonFilterDto.PageSize)
                 .ToListAsync();
 
             return (totalCount, annualLeaves);

@@ -23,12 +23,9 @@ public class AnnualLeaveController : ControllerBase
     [HttpGet("get-annualleaves")]
     public async Task<ActionResult<IEnumerable<AnnualLeaveDto>>> GetAnnualLeaves(
         [FromQuery] AnnualLeaveFilterDto filterDto, 
-        [FromQuery] string? sortBy, 
-        [FromQuery] bool isAscending = true, 
-        [FromQuery] int pageNumber = 1, 
-        [FromQuery] int pageSize = 1000)
+        [FromQuery] CommonFilterDto commonFilterDto)
     {
-        var (totalCount, annualLeaves) = await annualLeaveRepository.GetAnnualLeavesAsync(filterDto, sortBy,isAscending,pageNumber,pageSize);
+        var (totalCount, annualLeaves) = await annualLeaveRepository.GetAnnualLeavesAsync(filterDto, commonFilterDto);
         //return Ok(mapper.Map<IEnumerable<AnnualLeaveDto>>(annualLeaves));
         return Ok(new { TotalCount = totalCount, AnnualLeaves = mapper.Map<IEnumerable<AnnualLeaveDto>>(annualLeaves) });
     }
