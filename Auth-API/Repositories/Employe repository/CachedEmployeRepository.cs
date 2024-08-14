@@ -55,7 +55,7 @@ namespace ADMitroSremEmploye.Repositories.Employe_repository
             return await decorated.EmployeExistsAsync(id);
         }
 
-        public async Task<Employe> UpdateEmployeAsync(Employe employe)
+        public async Task<Employe?> UpdateEmployeAsync(Employe employe)
         {
             return await decorated.UpdateEmployeAsync(employe);
         }

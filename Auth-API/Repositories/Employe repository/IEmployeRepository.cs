@@ -9,7 +9,7 @@ namespace ADMitroSremEmploye.Repositories.Employe_repository
         Task<(int totalCount, IEnumerable<Employe>)> GetEmployesAsync(EmployeFilterDto filterDto, string? sortBy, bool isAscending, int pageNumber, int pageSize);
         Task<Employe?> GetEmployeAsync(Guid id);
         Task<Employe> CreateEmployeAsync(Employe employe);
-        Task<Employe> UpdateEmployeAsync(Employe employe);
+        Task<Employe?> UpdateEmployeAsync(Employe employe);
         Task<bool> DeleteEmployeAsync(Guid id);
         Task<bool> EmployeExistsAsync(Guid id);
 

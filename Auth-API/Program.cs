@@ -44,13 +44,17 @@ builder.Services.AddScoped<IAuditRepository, CachedAuditRepository>();
 builder.Services.AddScoped<SQLEmployeRepository>();
 builder.Services.AddScoped<IEmployeRepository, CachedEmployeRepository>();
 
-builder.Services.AddScoped<IAnnualLeaveRepository, SQLAnnualLeaveRepository>();
-builder.Services.AddScoped<IEmployeSalaryRepository, SQLEmployeSalaryRepository>();
-builder.Services.AddScoped<IStateObligationRepository, SQLStateObligationRepository>();
-builder.Services.AddScoped<ISalaryServiceRepository, SalaryServiceRepository>();
+builder.Services.AddScoped<SQLEmployeSalaryRepository>();
+builder.Services.AddScoped<IEmployeSalaryRepository, CachedEmployeSalaryRepository>();
 
 builder.Services.AddScoped<SQLMemberRepository>();
 builder.Services.AddScoped<IMemberRepository, CachedMemberRepository>();
+
+builder.Services.AddScoped<IAnnualLeaveRepository, SQLAnnualLeaveRepository>();
+builder.Services.AddScoped<IStateObligationRepository, SQLStateObligationRepository>();
+builder.Services.AddScoped<ISalaryServiceRepository, SalaryServiceRepository>();
+
+
 
 builder.Services.AddDbContext<UserDbContext>(options =>
 {

@@ -49,7 +49,7 @@ namespace ADMitroSremEmploye.Controllers
 
         // PUT: api/Employe/update-employe/id
         [HttpPut("update-employe/{id}")]
-        public async Task<IActionResult> PutEmploye(Guid id, EmployeDto employeDto)
+        public async Task<IActionResult?> UpdateEmploye(Guid id, EmployeDto employeDto)
         {
             if (id != employeDto.Id)
             {

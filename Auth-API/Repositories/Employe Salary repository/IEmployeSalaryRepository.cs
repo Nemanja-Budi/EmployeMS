@@ -12,7 +12,7 @@ namespace ADMitroSremEmploye.Repositories.Employe_Salary_repository
         Task<List<EmployeSalary>?> GetEmployeSalarysByEmployeIdAsync(Guid employeId);
         Task<bool> DeleteEmployeSalarysByEmployeIdAsync(Guid employeId);
         Task<bool> DeleteEmployeSalaryByEmployeSalaryIdAsync(Guid employeSalaryId);
-        Task<IEnumerable<BankSalaryDto>> GetSalariesByBankAsync(int month, int year);
+        Task<IEnumerable<BankSalaryDto>?> GetSalariesByBankAsync(int month, int year);
         Task<decimal> GetGrandTotalSalaryAsync(int month, int year);
         Task SaveEmployeSalaryAsync();
     }

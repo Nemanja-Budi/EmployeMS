@@ -75,7 +75,7 @@ namespace ADMitroSremEmploye.Repositories.Employe_repository
             return employe;
         }
 
-        public async Task<Employe> UpdateEmployeAsync(Employe employe)
+        public async Task<Employe?> UpdateEmployeAsync(Employe employe)
         {
             var existingEmploye = await userDbContext.Employe
                 .Include(e => e.EmployeChild)

@@ -194,7 +194,7 @@ namespace ADMitroSremEmploye.Repositories.Employe_Salary_repository
             return true;
         }
 
-        public async Task<IEnumerable<BankSalaryDto>> GetSalariesByBankAsync(int month, int year)
+        public async Task<IEnumerable<BankSalaryDto>?> GetSalariesByBankAsync(int month, int year)
         {
             var salaries = await userDbContext.EmployeSalary
                 .Join(
