@@ -37,12 +37,9 @@ namespace ADMitroSremEmploye.Controllers
         [HttpGet("get-members")]
         public async Task<ActionResult<IEnumerable<MemberViewDto>>> GetMembers(
            [FromQuery] MemberFilterDto memberFilterDto,
-           string? sortBy = null,
-           bool isAscending = true,
-           int pageNumber = 1,
-           int pageSize = 1000)
+           [FromQuery] CommonFilterDto commonFilterDto)
         {
-            var (totalCount, members) = await memberRepository.GetMembersAsync(memberFilterDto, sortBy, isAscending, pageNumber, pageSize);
+            var (totalCount, members) = await memberRepository.GetMembersAsync(memberFilterDto, commonFilterDto);
 
             return Ok(new { TotalCount = totalCount, Members = mapper.Map<IEnumerable<MemberViewDto>>(members) });
 

@@ -17,7 +17,7 @@ namespace ADMitroSremEmploye.Repositories.Member_repository
             this.roleManager = roleManager;
         }
 
-        public async Task<(int totalCount, IEnumerable<MemberViewDto>)> GetMembersAsync(MemberFilterDto memberFilterDto ,string? sortBy = null, bool isAscending = true, int pageNumber = 1, int pageSize = 1000)
+        public async Task<(int totalCount, IEnumerable<MemberViewDto>)> GetMembersAsync(MemberFilterDto memberFilterDto, CommonFilterDto commonFilterDto )
         {
 
             var usersQuery = userManager.Users
@@ -40,18 +40,18 @@ namespace ADMitroSremEmploye.Repositories.Member_repository
             }
 
             // Sortiranje
-            if (!string.IsNullOrEmpty(sortBy))
+            if (!string.IsNullOrEmpty(commonFilterDto.SortBy))
             {
-                switch (sortBy.ToLower())
+                switch (commonFilterDto.SortBy.ToLower())
                 {
                     case "username":
-                        usersQuery = isAscending ? usersQuery.OrderBy(x => x.UserName) : usersQuery.OrderByDescending(x => x.UserName);
+                        usersQuery = commonFilterDto.IsAscending ? usersQuery.OrderBy(x => x.UserName) : usersQuery.OrderByDescending(x => x.UserName);
                         break;
                     case "firstname":
-                        usersQuery = isAscending ? usersQuery.OrderBy(x => x.FirstName) : usersQuery.OrderByDescending(x => x.FirstName);
+                        usersQuery = commonFilterDto.IsAscending ? usersQuery.OrderBy(x => x.FirstName) : usersQuery.OrderByDescending(x => x.FirstName);
                         break;
                     case "lastname":
-                        usersQuery = isAscending ? usersQuery.OrderBy(x => x.LastName) : usersQuery.OrderByDescending(x => x.LastName);
+                        usersQuery = commonFilterDto.IsAscending ? usersQuery.OrderBy(x => x.LastName) : usersQuery.OrderByDescending(x => x.LastName);
                         break;
                     default:
                         break;
@@ -60,8 +60,8 @@ namespace ADMitroSremEmploye.Repositories.Member_repository
 
             // Paginacija i dohvati korisnike
             var users = await usersQuery
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
+                .Skip((commonFilterDto.PageNumber - 1) * commonFilterDto.PageSize)
+                .Take(commonFilterDto.PageSize)
                 .ToListAsync();
 
             var members = new List<MemberViewDto>();

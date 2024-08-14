@@ -35,13 +35,20 @@ namespace ADMitroSremEmploye.Repositories.Member_repository
             });
         }
 
-        public async Task<(int totalCount, IEnumerable<MemberViewDto>)> GetMembersAsync(MemberFilterDto memberFilterDto, string? sortBy = null, bool isAscending = true, int pageNumber = 1, int pageSize = 1000)
+        public async Task<(int totalCount, IEnumerable<MemberViewDto>)> GetMembersAsync(MemberFilterDto memberFilterDto, CommonFilterDto commonFilterDto)
         {
-            string cacheKey = $"members-{memberFilterDto.UserName}-{memberFilterDto.FirstName}-{memberFilterDto.LastName}-{sortBy}-{isAscending}-{pageNumber}-{pageSize}";
+            string cacheKey = $"members-" +
+                $"{memberFilterDto.UserName}-" +
+                $"{memberFilterDto.FirstName}-" +
+                $"{memberFilterDto.LastName}-" +
+                $"{commonFilterDto.SortBy}-" +
+                $"{commonFilterDto.IsAscending}-" +
+                $"{commonFilterDto.PageNumber}-" +
+                $"{commonFilterDto.PageSize}";
 
             if (!memoryCache.TryGetValue(cacheKey, out (int totalCount, IEnumerable<MemberViewDto>) cachedResult))
             {
-                cachedResult = await decorated.GetMembersAsync(memberFilterDto, sortBy, isAscending, pageNumber, pageSize);
+                cachedResult = await decorated.GetMembersAsync(memberFilterDto, commonFilterDto);
 
                 memoryCache.Set(cacheKey, cachedResult, TimeSpan.FromMinutes(2));
             }
