@@ -12,6 +12,7 @@ using ADMitroSremEmploye.Models.DTOs;
 using AutoMapper;
 using ADMitroSremEmploye.Repositories.Employe_Salary_repository;
 using ADMitroSremEmploye.Repositories.Employe_repository;
+using ADMitroSremEmploye.Models.DTOs.Filters;
 
 namespace ADMitroSremEmploye.Controllers
 {
@@ -51,9 +52,9 @@ namespace ADMitroSremEmploye.Controllers
         }
 
         [HttpGet("employe-salarys")]
-        public async Task<IActionResult> GetAllEmployeSalarys([FromQuery] EmployeSalaryFilterDto filterDto, [FromQuery] string? sortBy, [FromQuery] bool isAscending = true, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+        public async Task<IActionResult> GetAllEmployeSalarys([FromQuery] EmployeSalaryFilterDto filterDto, [FromQuery] CommonFilterDto commonFilterDto)
         {
-            var (totalEmployesCount, employeSalarys) = await employeSalaryRepository.GetAllEmployeSalarysAsync(filterDto, sortBy, isAscending, pageNumber, pageSize);
+            var (totalEmployesCount, employeSalarys) = await employeSalaryRepository.GetAllEmployeSalarysAsync(filterDto, commonFilterDto);
             //var totalEmployesCount = await employeSalaryRepository.GetTotalEmployeSalariesCountAsync(filterDto);
 
             /*if (employeSalarys == null || !employeSalarys.Any())

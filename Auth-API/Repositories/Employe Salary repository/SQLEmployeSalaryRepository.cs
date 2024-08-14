@@ -1,6 +1,7 @@
 ﻿using ADMitroSremEmploye.Data;
 using ADMitroSremEmploye.Models.Domain;
 using ADMitroSremEmploye.Models.DTOs;
+using ADMitroSremEmploye.Models.DTOs.Filters;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
@@ -20,7 +21,7 @@ namespace ADMitroSremEmploye.Repositories.Employe_Salary_repository
             return await userDbContext.Employe.FirstOrDefaultAsync(x => x.Id == employeId);
         }
 
-        public async Task<(int totalCount, IEnumerable<EmployeSalary>)> GetAllEmployeSalarysAsync(EmployeSalaryFilterDto filterDto, string? sortBy, bool isAscending, int pageNumber, int pageSize)
+        public async Task<(int totalCount, IEnumerable<EmployeSalary>)> GetAllEmployeSalarysAsync(EmployeSalaryFilterDto filterDto, CommonFilterDto commonFilterDto)
         {
             var employeSalaryQuery = userDbContext.EmployeSalary
                 .Include(e => e.EmployeSalarySO)
@@ -108,20 +109,20 @@ namespace ADMitroSremEmploye.Repositories.Employe_Salary_repository
                             Employe = e
                         };
 
-            if (!string.IsNullOrEmpty(sortBy))
+            if (!string.IsNullOrEmpty(commonFilterDto.SortBy))
             {
-                if (sortBy.Equals("CalculationMonth", StringComparison.OrdinalIgnoreCase))
+                if (commonFilterDto.SortBy.Equals("CalculationMonth", StringComparison.OrdinalIgnoreCase))
                 {
-                    query = isAscending
+                    query = commonFilterDto.IsAscending
                         ? query.OrderBy(x => x.EmployeSalary.CalculationMonth)
                         : query.OrderByDescending(x => x.EmployeSalary.CalculationMonth);
                 }
                 else
                 {
-                    var propertyInfo = typeof(Employe).GetProperty(sortBy, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+                    var propertyInfo = typeof(Employe).GetProperty(commonFilterDto.SortBy, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
                     if (propertyInfo != null)
                     {
-                        query = isAscending
+                        query = commonFilterDto.IsAscending
                             ? query.OrderBy(x => EF.Property<object>(x.Employe, propertyInfo.Name))
                             : query.OrderByDescending(x => EF.Property<object>(x.Employe, propertyInfo.Name));
                     }
@@ -131,8 +132,8 @@ namespace ADMitroSremEmploye.Repositories.Employe_Salary_repository
             var totalCount = await query.CountAsync();
 
             var employeSalaryList = await query
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
+                .Skip((commonFilterDto.PageNumber - 1) * commonFilterDto.PageSize)
+                .Take(commonFilterDto.PageSize)
                 .Select(x => x.EmployeSalary)
                 .ToListAsync();
 
