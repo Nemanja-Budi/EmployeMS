@@ -1,6 +1,7 @@
 ﻿using ADMitroSremEmploye.Data;
 using ADMitroSremEmploye.Models.Domain;
 using ADMitroSremEmploye.Models.DTOs;
+using ADMitroSremEmploye.Models.DTOs.Filters;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -17,7 +18,7 @@ namespace ADMitroSremEmploye.Repositories.Audit_repository
             this.userDbContext = userDbContext;
         }
 
-        public async Task<(IEnumerable<AuditLog>, int totalCount)> GetAuditLogsAsync(AuditLogFilterDto filterDto, string? sortBy, bool isAscending, int pageNumber, int pageSize)
+        public async Task<(IEnumerable<AuditLog>, int totalCount)> GetAuditLogsAsync(AuditLogFilterDto filterDto, CommonFilterDto commonFilterDto)
         {
             var auditLogsQuery = userDbContext.AuditLogs
                 .Include(a => a.User)  // Pretpostavljam da je User entitet povezan s AuditLog
@@ -104,12 +105,12 @@ namespace ADMitroSremEmploye.Repositories.Audit_repository
             }
 
             // Sortiranje
-            if (!string.IsNullOrEmpty(sortBy))
+            if (!string.IsNullOrEmpty(commonFilterDto.SortBy))
             {
-                var propertyInfo = typeof(AuditLog).GetProperty(sortBy, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+                var propertyInfo = typeof(AuditLog).GetProperty(commonFilterDto.SortBy, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
                 if (propertyInfo != null)
                 {
-                    auditLogsQuery = isAscending
+                    auditLogsQuery = commonFilterDto.IsAscending
                         ? auditLogsQuery.OrderBy(a => EF.Property<object>(a, propertyInfo.Name))
                         : auditLogsQuery.OrderByDescending(a => EF.Property<object>(a, propertyInfo.Name));
                 }
@@ -118,8 +119,8 @@ namespace ADMitroSremEmploye.Repositories.Audit_repository
             var totalCount = await auditLogsQuery.CountAsync();
 
             var auditLogs = await auditLogsQuery
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
+                .Skip((commonFilterDto.PageNumber - 1) * commonFilterDto.PageSize)
+                .Take(commonFilterDto.PageSize)
                 .ToListAsync();
 
             return (auditLogs, totalCount);

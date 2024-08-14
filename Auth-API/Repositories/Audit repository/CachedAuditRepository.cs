@@ -18,12 +18,20 @@ namespace ADMitroSremEmploye.Repositories.Audit_repository
             this.memoryCache = memoryCache;
         }
 
-        public async Task<(IEnumerable<AuditLog>, int totalCount)> GetAuditLogsAsync(AuditLogFilterDto filterDto, string? sortBy, bool isAscending, int pageNumber, int pageSize)
+        public async Task<(IEnumerable<AuditLog>, int totalCount)> GetAuditLogsAsync(AuditLogFilterDto filterDto, CommonFilterDto commonFilterDto)
         {
-            string cacheKey = $"audits-{filterDto.UserName}-{filterDto.TableName}-{filterDto.OperationType}-{filterDto.ChangeDateTime}-{sortBy}-{isAscending}-{pageNumber}-{pageSize}";
+            string cacheKey = $"audits-" +
+                $"{filterDto.UserName}-" +
+                $"{filterDto.TableName}-" +
+                $"{filterDto.OperationType}-" +
+                $"{filterDto.ChangeDateTime}-" +
+                $"{commonFilterDto.SortBy}-" +
+                $"{commonFilterDto.IsAscending}-" +
+                $"{commonFilterDto.PageNumber}-" +
+                $"{commonFilterDto.PageSize}";
             if (!memoryCache.TryGetValue(cacheKey, out (IEnumerable<AuditLog>, int totalCount) cachedResult))
             {
-                cachedResult = await decorated.GetAuditLogsAsync(filterDto, sortBy, isAscending, pageNumber, pageSize);
+                cachedResult = await decorated.GetAuditLogsAsync(filterDto, commonFilterDto);
 
                 memoryCache.Set(cacheKey, cachedResult, TimeSpan.FromMinutes(2));
             }

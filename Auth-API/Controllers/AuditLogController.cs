@@ -1,6 +1,7 @@
 ﻿using ADMitroSremEmploye.Data;
 using ADMitroSremEmploye.Models.Domain;
 using ADMitroSremEmploye.Models.DTOs;
+using ADMitroSremEmploye.Models.DTOs.Filters;
 using ADMitroSremEmploye.Repositories.Audit_repository;
 using ADMitroSremEmploye.Repositories.Employe_repository;
 using AutoMapper;
@@ -24,12 +25,9 @@ namespace ADMitroSremEmploye.Controllers
         [HttpGet("get-auditlogs")]
         public async Task<ActionResult<IEnumerable<AuditLogDto>>> GetAuditLogs(
             [FromQuery] AuditLogFilterDto filterDto,
-            string? sortBy = null,
-            bool isAscending = true,
-            int pageNumber = 1,
-            int pageSize = 1000)
+            [FromQuery] CommonFilterDto commonFilterDto)
         {
-            var (auditLogs, totalCount) = await auditRepository.GetAuditLogsAsync(filterDto, sortBy, isAscending, pageNumber, pageSize);
+            var (auditLogs, totalCount) = await auditRepository.GetAuditLogsAsync(filterDto, commonFilterDto);
 
             return Ok(new { TotalCount = totalCount, AuditLogs = mapper.Map<IEnumerable<AuditLogDto>>(auditLogs) });
         }
