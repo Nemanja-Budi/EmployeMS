@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using System.Security.Claims;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace ADMitroSremEmploye.Repositories.Employe_repository
 {
@@ -19,7 +20,7 @@ namespace ADMitroSremEmploye.Repositories.Employe_repository
             this.httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<IEnumerable<Employe>> GetEmployesAsync(EmployeFilterDto filterDto, string? sortBy, bool isAscending, int pageNumber, int pageSize)
+        public async Task<(int totalCount, IEnumerable<Employe>)> GetEmployesAsync(EmployeFilterDto filterDto, string? sortBy, bool isAscending, int pageNumber, int pageSize)
         {
             var employesQuery = userDbContext.Employe.Include(e => e.EmployeChild).AsQueryable();
 
@@ -53,46 +54,15 @@ namespace ADMitroSremEmploye.Repositories.Employe_repository
 
             var employes = await employesQuery
                 .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
+            .Take(pageSize)
                 .ToListAsync();
 
-            return employes;
+            var totalCount = await employesQuery.CountAsync();
+
+            return (totalCount, employes);
         }
 
-        public async Task<int> GetTotalEmployesCountAsync(EmployeFilterDto filterDto)
-        {
-            var employesQuery = userDbContext.Employe.AsQueryable();
-
-            foreach (var property in typeof(EmployeFilterDto).GetProperties())
-            {
-                var value = property.GetValue(filterDto);
-
-                if (value != null)
-                {
-                    if (property.PropertyType == typeof(string))
-                    {
-                        var stringValue = (string)value;
-                        if (!string.IsNullOrEmpty(stringValue))
-                        {
-                            employesQuery = employesQuery.Where(e => EF.Functions.Like(EF.Property<string>(e, property.Name), $"%{stringValue}%"));
-                        }
-                    }
-                    else if (property.PropertyType == typeof(int) || property.PropertyType == typeof(int?))
-                    {
-                        var intValue = (int?)value;
-                        if (intValue.HasValue)
-                        {
-                            employesQuery = employesQuery.Where(e => EF.Property<int?>(e, property.Name) == intValue);
-                        }
-                    }
-                }
-            }
-
-            return await employesQuery.CountAsync();
-        }
-
-
-        public async Task<Employe> GetEmployeAsync(Guid id)
+        public async Task<Employe?> GetEmployeAsync(Guid id)
         {
             return await userDbContext.Employe.Include(al => al.EmployeChild).FirstOrDefaultAsync(e => e.Id == id);
         }

@@ -8,7 +8,6 @@ namespace ADMitroSremEmploye.Repositories.Employe_Salary_repository
         Task<Employe?> GetEmployeByIdAsync(Guid employeId);
         Task<EmployeSalary?> GetEmployeSalaryById(Guid employeSalaryId);
         Task<(int totalCount, IEnumerable<EmployeSalary>)> GetAllEmployeSalarysAsync(EmployeSalaryFilterDto filterDto, string? sortBy, bool isAscending, int pageNumber, int pageSize);
-        //Task<int> GetTotalEmployeSalariesCountAsync(EmployeSalaryFilterDto filterDto);
         Task<EmployeSalary> AddEmployeSalaryAsync(EmployeSalary employeSalary);
         Task<List<EmployeSalary>?> GetEmployeSalarysByEmployeIdAsync(Guid employeId);
         Task<bool> DeleteEmployeSalarysByEmployeIdAsync(Guid employeId);

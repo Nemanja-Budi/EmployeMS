@@ -18,31 +18,6 @@ namespace ADMitroSremEmploye.Repositories.Audit_repository
             this.memoryCache = memoryCache;
         }
 
-        public async Task<bool> AuditLogExistsAsync(Guid id)
-        {
-            return await decorated.AuditLogExistsAsync(id);
-        }
-
-        public async Task<AuditLog?> CreateAuditLogAsync(AuditLog auditLog)
-        {
-            return await decorated.CreateAuditLogAsync(auditLog);
-        }
-
-        public async Task<bool> DeleteAuditLogAsync(Guid id)
-        {
-            return await decorated.DeleteAuditLogAsync(id);
-        }
-
-        public async Task<AuditLog?> GetAuditLogAsync(Guid id)
-        {
-            string key = $"audit-{id}";
-            return await memoryCache.GetOrCreateAsync(key, async entry =>
-            {
-                entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(2));
-                return await decorated.GetAuditLogAsync(id);
-            });
-        }
-
         public async Task<(IEnumerable<AuditLog>, int totalCount)> GetAuditLogsAsync(AuditLogFilterDto filterDto, string? sortBy, bool isAscending, int pageNumber, int pageSize)
         {
             string cacheKey = $"audits-{filterDto.UserName}-{filterDto.TableName}-{filterDto.OperationType}-{filterDto.ChangeDateTime}-{sortBy}-{isAscending}-{pageNumber}-{pageSize}";
@@ -56,6 +31,16 @@ namespace ADMitroSremEmploye.Repositories.Audit_repository
             return cachedResult;
         }
 
+        public async Task<AuditLog?> GetAuditLogAsync(Guid id)
+        {
+            string key = $"audit-{id}";
+            return await memoryCache.GetOrCreateAsync(key, async entry =>
+            {
+                entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(2));
+                return await decorated.GetAuditLogAsync(id);
+            });
+        }
+
         public async Task<User?> GetUserAsync(Guid userId)
         {
             string key = $"audit-user-{userId}";
@@ -64,7 +49,21 @@ namespace ADMitroSremEmploye.Repositories.Audit_repository
                 entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(2));
                 return await decorated.GetUserAsync(userId);
             });
-            //return await decorated.GetUserAsync(userId);
+        }
+
+        public async Task<bool> AuditLogExistsAsync(Guid id)
+        {
+            return await decorated.AuditLogExistsAsync(id);
+        }
+
+        public async Task<AuditLog?> CreateAuditLogAsync(AuditLog auditLog)
+        {
+            return await decorated.CreateAuditLogAsync(auditLog);
+        }
+
+        public async Task<bool> DeleteAuditLogAsync(Guid id)
+        {
+            return await decorated.DeleteAuditLogAsync(id);
         }
 
         public async Task<bool> UpdateAuditLogAsync(Guid id, AuditLog auditLog)

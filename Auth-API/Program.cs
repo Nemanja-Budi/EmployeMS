@@ -41,11 +41,14 @@ builder.Services.AddMemoryCache();
 builder.Services.AddScoped<SQLAuditRepository>();
 builder.Services.AddScoped<IAuditRepository, CachedAuditRepository>();
 
-builder.Services.AddScoped<IEmployeRepository, SQLEmployeRepository>();
+builder.Services.AddScoped<SQLEmployeRepository>();
+builder.Services.AddScoped<IEmployeRepository, CachedEmployeRepository>();
+
 builder.Services.AddScoped<IAnnualLeaveRepository, SQLAnnualLeaveRepository>();
 builder.Services.AddScoped<IEmployeSalaryRepository, SQLEmployeSalaryRepository>();
 builder.Services.AddScoped<IStateObligationRepository, SQLStateObligationRepository>();
 builder.Services.AddScoped<ISalaryServiceRepository, SalaryServiceRepository>();
+
 builder.Services.AddScoped<SQLMemberRepository>();
 builder.Services.AddScoped<IMemberRepository, CachedMemberRepository>();
 
