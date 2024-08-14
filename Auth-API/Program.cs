@@ -38,9 +38,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddMemoryCache();
 
+builder.Services.AddScoped<SQLAuditRepository>();
+builder.Services.AddScoped<IAuditRepository, CachedAuditRepository>();
+
 builder.Services.AddScoped<IEmployeRepository, SQLEmployeRepository>();
 builder.Services.AddScoped<IAnnualLeaveRepository, SQLAnnualLeaveRepository>();
-builder.Services.AddScoped<IAuditRepository, SQLAuditRepository>();
 builder.Services.AddScoped<IEmployeSalaryRepository, SQLEmployeSalaryRepository>();
 builder.Services.AddScoped<IStateObligationRepository, SQLStateObligationRepository>();
 builder.Services.AddScoped<ISalaryServiceRepository, SalaryServiceRepository>();
