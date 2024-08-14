@@ -36,6 +36,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddMemoryCache();
 
 builder.Services.AddScoped<IEmployeRepository, SQLEmployeRepository>();
 builder.Services.AddScoped<IAnnualLeaveRepository, SQLAnnualLeaveRepository>();
@@ -43,7 +44,8 @@ builder.Services.AddScoped<IAuditRepository, SQLAuditRepository>();
 builder.Services.AddScoped<IEmployeSalaryRepository, SQLEmployeSalaryRepository>();
 builder.Services.AddScoped<IStateObligationRepository, SQLStateObligationRepository>();
 builder.Services.AddScoped<ISalaryServiceRepository, SalaryServiceRepository>();
-builder.Services.AddScoped<IMemberRepository, SQLMemberRepository>();
+builder.Services.AddScoped<SQLMemberRepository>();
+builder.Services.AddScoped<IMemberRepository, CachedMemberRepository>();
 
 builder.Services.AddDbContext<UserDbContext>(options =>
 {
