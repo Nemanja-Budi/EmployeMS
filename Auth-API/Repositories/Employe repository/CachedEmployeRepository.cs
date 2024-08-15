@@ -64,6 +64,8 @@ namespace ADMitroSremEmploye.Repositories.Employe_repository
 
         public async Task<Employe?> UpdateEmployeAsync(Employe employe)
         {
+            string key = $"employe-{employe.Id}";
+            memoryCache.Remove(key);
             return await decorated.UpdateEmployeAsync(employe);
         }
     }
