@@ -79,6 +79,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<JWTService>();
 builder.Services.AddScoped<ContextSeedService>();
 builder.Services.AddScoped<SalaryCalculatorService>();
+builder.Services.AddScoped<BankSeedService>();
 
 builder.Services.AddIdentityCore<User>(options =>
     {
@@ -175,6 +176,9 @@ try
 {
     var contextSeedService = scope.ServiceProvider.GetService<ContextSeedService>();
     await contextSeedService.InitializeContextAsync();
+
+    var bankSeedService = scope.ServiceProvider.GetService<BankSeedService>();
+    await bankSeedService.SeedBankDataAsync();
 }
 catch (Exception ex)
 {

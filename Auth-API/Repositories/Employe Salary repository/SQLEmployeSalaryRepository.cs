@@ -36,7 +36,7 @@ namespace ADMitroSremEmploye.Repositories.Employe_Salary_repository
                 employeQuery = employeQuery.Where(e =>
                     (string.IsNullOrEmpty(filterDto.FirstName) || EF.Functions.Like(e.FirstName, $"%{filterDto.FirstName}%")) &&
                     (string.IsNullOrEmpty(filterDto.LastName) || EF.Functions.Like(e.LastName, $"%{filterDto.LastName}%")) &&
-                    (string.IsNullOrEmpty(filterDto.BankName) || EF.Functions.Like(e.BankName, $"%{filterDto.BankName}%"))
+                    (string.IsNullOrEmpty(filterDto.BankName) || EF.Functions.Like(e.Bank.BankName, $"%{filterDto.BankName}%"))
                 );
             }
 
@@ -202,7 +202,7 @@ namespace ADMitroSremEmploye.Repositories.Employe_Salary_repository
                     userDbContext.Employe,
                     es => es.EmployeId,
                     e => e.Id,
-                    (es, e) => new { es, e.BankName }
+                    (es, e) => new { es, e.Bank.BankName }
                 )
                 .GroupJoin(
                     userDbContext.EmployeSalarySOE,

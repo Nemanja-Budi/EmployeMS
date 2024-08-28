@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace ADMitroSremEmploye.Migrations
+namespace ADMitroSremEmploye.Data.Migrations
 {
     [DbContext(typeof(UserDbContext))]
     partial class UserDbContextModelSnapshot : ModelSnapshot
@@ -120,6 +120,29 @@ namespace ADMitroSremEmploye.Migrations
                     b.ToTable("AuditLogs");
                 });
 
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.Bank", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BankAccount")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BankEmail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BankName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Bank");
+                });
+
             modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.Employe", b =>
                 {
                     b.Property<Guid>("Id")
@@ -136,17 +159,12 @@ namespace ADMitroSremEmploye.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("BankName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                    b.Property<Guid?>("BankId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("College")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("CurrentAccount")
-                        .HasColumnType("int");
 
                     b.Property<DateOnly>("DateOfBirth")
                         .HasColumnType("date");
@@ -157,6 +175,9 @@ namespace ADMitroSremEmploye.Migrations
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("EmployeBankAccount")
+                        .HasColumnType("decimal(20,0)");
 
                     b.Property<string>("EmploymentContract")
                         .IsRequired()
@@ -194,8 +215,8 @@ namespace ADMitroSremEmploye.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int>("PIO")
-                        .HasColumnType("int");
+                    b.Property<decimal>("PIO")
+                        .HasColumnType("decimal(20,0)");
 
                     b.Property<string>("Phone")
                         .IsRequired()
@@ -218,6 +239,8 @@ namespace ADMitroSremEmploye.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BankId");
+
                     b.ToTable("Employe");
                 });
 
@@ -226,6 +249,9 @@ namespace ADMitroSremEmploye.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateOnly>("DateOfBirth")
+                        .HasColumnType("date");
 
                     b.Property<Guid?>("EmployeId")
                         .HasColumnType("uniqueidentifier");
@@ -299,8 +325,6 @@ namespace ADMitroSremEmploye.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("EmployeId");
 
                     b.ToTable("EmployeSalary");
                 });
@@ -461,7 +485,7 @@ namespace ADMitroSremEmploye.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("94538ba8-cd5f-47a6-b93c-a58d64aa6dfa"),
+                            Id = new Guid("93cdcf57-5fb7-467e-a8aa-ebc1fb1e6fab"),
                             HealthCare = 0.0515m,
                             PIO = 0.10m
                         });
@@ -694,7 +718,7 @@ namespace ADMitroSremEmploye.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("5b06ddfb-aa44-4790-b09a-c1876264e602"),
+                            Id = new Guid("d432b6cf-e842-4d86-b636-89bfe1e4e337"),
                             HealthCare = 0.0515m,
                             PIO = 0.14m,
                             Tax = 0.10m,
@@ -731,20 +755,20 @@ namespace ADMitroSremEmploye.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.Employe", b =>
+                {
+                    b.HasOne("ADMitroSremEmploye.Models.Domain.Bank", "Bank")
+                        .WithMany()
+                        .HasForeignKey("BankId");
+
+                    b.Navigation("Bank");
+                });
+
             modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.EmployeChild", b =>
                 {
                     b.HasOne("ADMitroSremEmploye.Models.Domain.Employe", null)
                         .WithMany("EmployeChild")
                         .HasForeignKey("EmployeId");
-                });
-
-            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.EmployeSalary", b =>
-                {
-                    b.HasOne("ADMitroSremEmploye.Models.Domain.Employe", null)
-                        .WithMany("EmployeSalary")
-                        .HasForeignKey("EmployeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.EmployeSalarySO", b =>
@@ -828,8 +852,6 @@ namespace ADMitroSremEmploye.Migrations
             modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.Employe", b =>
                 {
                     b.Navigation("EmployeChild");
-
-                    b.Navigation("EmployeSalary");
                 });
 
             modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.EmployeSalary", b =>

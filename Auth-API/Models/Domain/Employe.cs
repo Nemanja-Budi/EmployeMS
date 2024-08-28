@@ -57,7 +57,7 @@ namespace ADMitroSremEmploye.Models.Domain
 
         [Required]
         [Range(1000000000, 9999999999, ErrorMessage = "PIO must be a 10-digit number.")]
-        public int PIO { get; set; }
+        public ulong PIO { get; set; }
 
         [StringLength(100, ErrorMessage = "School name cannot be longer than 100 characters.")]
         public string? School { get; set; }
@@ -78,17 +78,13 @@ namespace ADMitroSremEmploye.Models.Domain
         public required string AmendmentContract { get; set; }
 
         [Required]
-        [StringLength(50, ErrorMessage = "Bank name cannot be longer than 50 characters.")]
-        public required string BankName { get; set; }
+        [Range(1000000000, 9999999999, ErrorMessage = "Current account must be a valid account number.")]
+        public ulong EmployeBankAccount { get; set; }
 
-        [Required]
-        //[Range(1000000000, 9999999999, ErrorMessage = "Current account must be a valid account number.")]
-        public int CurrentAccount { get; set; }
+        //public Guid? BankId { get; set; }
+        public Bank? Bank { get; set; }
 
         public ICollection<EmployeChild>? EmployeChild { get; set; }
-
-        // Veza jedan-na-više sa EmployeSalary
-        public ICollection<EmployeSalary>? EmployeSalary { get; set; }
 
     }
 }

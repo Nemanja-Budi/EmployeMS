@@ -14,7 +14,7 @@ namespace ADMitroSremEmploye.Mappings
             CreateMap<AuditLog, AuditLogDto>().ReverseMap();
             CreateMap<EmployeSalary, EmployeSalaryDto>().ReverseMap();
             CreateMap<User, ViewUserDto>().ReverseMap();
-
+            CreateMap<Bank, EmployeBank>().ReverseMap();
         }
     }
 }

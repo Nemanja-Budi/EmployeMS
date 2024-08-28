@@ -9,10 +9,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace ADMitroSremEmploye.Migrations
+namespace ADMitroSremEmploye.Data.Migrations
 {
     [DbContext(typeof(UserDbContext))]
-    [Migration("20240708082553_FMigration")]
+    [Migration("20240828082532_FMigration")]
     partial class FMigration
     {
         /// <inheritdoc />
@@ -31,8 +31,8 @@ namespace ADMitroSremEmploye.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("ApprovalDate")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("ApprovalDate")
+                        .HasColumnType("date");
 
                     b.Property<bool>("Approved")
                         .HasColumnType("bit");
@@ -50,8 +50,8 @@ namespace ADMitroSremEmploye.Migrations
                     b.Property<Guid>("EmployeId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("EndDate")
+                        .HasColumnType("date");
 
                     b.Property<bool>("IsCarryOver")
                         .HasColumnType("bit");
@@ -66,11 +66,11 @@ namespace ADMitroSremEmploye.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("RequestDate")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("RequestDate")
+                        .HasColumnType("date");
 
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("StartDate")
+                        .HasColumnType("date");
 
                     b.Property<int>("TotalDays")
                         .HasColumnType("int");
@@ -123,6 +123,29 @@ namespace ADMitroSremEmploye.Migrations
                     b.ToTable("AuditLogs");
                 });
 
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.Bank", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BankAccount")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BankEmail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BankName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Bank");
+                });
+
             modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.Employe", b =>
                 {
                     b.Property<Guid>("Id")
@@ -139,17 +162,12 @@ namespace ADMitroSremEmploye.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("BankName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                    b.Property<Guid?>("BankId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("College")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("CurrentAccount")
-                        .HasColumnType("int");
 
                     b.Property<DateOnly>("DateOfBirth")
                         .HasColumnType("date");
@@ -160,6 +178,9 @@ namespace ADMitroSremEmploye.Migrations
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("EmployeBankAccount")
+                        .HasColumnType("decimal(20,0)");
 
                     b.Property<string>("EmploymentContract")
                         .IsRequired()
@@ -197,8 +218,8 @@ namespace ADMitroSremEmploye.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int>("PIO")
-                        .HasColumnType("int");
+                    b.Property<decimal>("PIO")
+                        .HasColumnType("decimal(20,0)");
 
                     b.Property<string>("Phone")
                         .IsRequired()
@@ -221,6 +242,8 @@ namespace ADMitroSremEmploye.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BankId");
+
                     b.ToTable("Employe");
                 });
 
@@ -229,6 +252,9 @@ namespace ADMitroSremEmploye.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateOnly>("DateOfBirth")
+                        .HasColumnType("date");
 
                     b.Property<Guid?>("EmployeId")
                         .HasColumnType("uniqueidentifier");
@@ -259,6 +285,9 @@ namespace ADMitroSremEmploye.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateOnly>("CalculationMonth")
+                        .HasColumnType("date");
+
                     b.Property<decimal>("Credits")
                         .HasColumnType("decimal(18,2)");
 
@@ -280,6 +309,9 @@ namespace ADMitroSremEmploye.Migrations
                     b.Property<int>("OvertimeHours")
                         .HasColumnType("int");
 
+                    b.Property<DateOnly>("SettlementDate")
+                        .HasColumnType("date");
+
                     b.Property<int>("Sickness100")
                         .HasColumnType("int");
 
@@ -296,8 +328,6 @@ namespace ADMitroSremEmploye.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("EmployeId");
 
                     b.ToTable("EmployeSalary");
                 });
@@ -458,7 +488,7 @@ namespace ADMitroSremEmploye.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("a984cbb6-4e3a-4617-bc92-b4fb91489cea"),
+                            Id = new Guid("93cdcf57-5fb7-467e-a8aa-ebc1fb1e6fab"),
                             HealthCare = 0.0515m,
                             PIO = 0.10m
                         });
@@ -691,7 +721,7 @@ namespace ADMitroSremEmploye.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("72eb62be-6f13-4a97-8e90-2e94767e1f56"),
+                            Id = new Guid("d432b6cf-e842-4d86-b636-89bfe1e4e337"),
                             HealthCare = 0.0515m,
                             PIO = 0.14m,
                             Tax = 0.10m,
@@ -728,20 +758,20 @@ namespace ADMitroSremEmploye.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.Employe", b =>
+                {
+                    b.HasOne("ADMitroSremEmploye.Models.Domain.Bank", "Bank")
+                        .WithMany()
+                        .HasForeignKey("BankId");
+
+                    b.Navigation("Bank");
+                });
+
             modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.EmployeChild", b =>
                 {
                     b.HasOne("ADMitroSremEmploye.Models.Domain.Employe", null)
                         .WithMany("EmployeChild")
                         .HasForeignKey("EmployeId");
-                });
-
-            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.EmployeSalary", b =>
-                {
-                    b.HasOne("ADMitroSremEmploye.Models.Domain.Employe", null)
-                        .WithMany("EmployeSalary")
-                        .HasForeignKey("EmployeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.EmployeSalarySO", b =>
@@ -825,8 +855,6 @@ namespace ADMitroSremEmploye.Migrations
             modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.Employe", b =>
                 {
                     b.Navigation("EmployeChild");
-
-                    b.Navigation("EmployeSalary");
                 });
 
             modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.EmployeSalary", b =>

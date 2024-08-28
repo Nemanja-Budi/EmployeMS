@@ -23,7 +23,12 @@ namespace ADMitroSremEmploye.Repositories.Employe_repository
 
         public async Task<(int totalCount, IEnumerable<Employe>)> GetEmployesAsync(EmployeFilterDto filterDto, CommonFilterDto commonFilterDto)
         {
-            var employesQuery = userDbContext.Employe.Include(e => e.EmployeChild).AsQueryable();
+
+            var employesQuery = userDbContext.Employe
+                .Include(e => e.EmployeChild)
+                .Include(e => e.Bank)
+                .AsQueryable();
+
 
             foreach (var property in typeof(EmployeFilterDto).GetProperties())
             {
@@ -31,10 +36,21 @@ namespace ADMitroSremEmploye.Repositories.Employe_repository
 
                 if (value != null)
                 {
+
                     if (property.PropertyType == typeof(string))
                     {
-                        employesQuery = employesQuery.Where(e => EF.Functions.Like(EF.Property<string>(e, property.Name), $"%{value}%"));
+
+                        if (property.Name.Equals("BankName", StringComparison.OrdinalIgnoreCase))
+                        {
+                            employesQuery = employesQuery.Where(e => EF.Functions.Like(e.Bank.BankName, $"%{value}%"));
+                        }
+                        else
+                        {
+
+                            employesQuery = employesQuery.Where(e => EF.Functions.Like(EF.Property<string>(e, property.Name), $"%{value}%"));
+                        }
                     }
+
                     else if (property.PropertyType == typeof(int) || property.PropertyType == typeof(int?))
                     {
                         employesQuery = employesQuery.Where(e => EF.Property<int?>(e, property.Name) == (int?)value);
@@ -55,8 +71,9 @@ namespace ADMitroSremEmploye.Repositories.Employe_repository
 
             var employes = await employesQuery
                 .Skip((commonFilterDto.PageNumber - 1) * commonFilterDto.PageSize)
-            .Take(commonFilterDto.PageSize)
+                .Take(commonFilterDto.PageSize)
                 .ToListAsync();
+
 
             var totalCount = await employesQuery.CountAsync();
 
@@ -65,11 +82,21 @@ namespace ADMitroSremEmploye.Repositories.Employe_repository
 
         public async Task<Employe?> GetEmployeAsync(Guid id)
         {
-            return await userDbContext.Employe.Include(al => al.EmployeChild).FirstOrDefaultAsync(e => e.Id == id);
+            return await userDbContext.Employe.Include(al => al.EmployeChild).Include(e => e.Bank).FirstOrDefaultAsync(e => e.Id == id);
         }
 
         public async Task<Employe> CreateEmployeAsync(Employe employe)
         {
+            var existingBank = await userDbContext.Bank.FirstOrDefaultAsync(b => b.Id == employe.Bank.Id);
+            if(existingBank != null)
+            {
+                employe.Bank = existingBank;
+            } 
+            else
+            {
+                userDbContext.Bank.Add(employe.Bank);
+            }
+
             userDbContext.Employe.Add(employe);
             await userDbContext.SaveChangesAsync();
 
@@ -87,10 +114,8 @@ namespace ADMitroSremEmploye.Repositories.Employe_repository
                 return null;
             }
 
-            // Update existing employe with new values
             userDbContext.Entry(existingEmploye).CurrentValues.SetValues(employe);
 
-            // Remove children that are not present in the updated employe
             foreach (var existingChild in existingEmploye.EmployeChild.ToList())
             {
                 if (!employe.EmployeChild.Any(c => c.Name == existingChild.Name))
@@ -99,19 +124,16 @@ namespace ADMitroSremEmploye.Repositories.Employe_repository
                 }
             }
 
-            // Update or add new children
             foreach (var child in employe.EmployeChild)
             {
                 var existingChild = existingEmploye.EmployeChild.FirstOrDefault(c => c.Name == child.Name);
 
                 if (existingChild != null)
                 {
-                    // Update existing child with new values
                     userDbContext.Entry(existingChild).CurrentValues.SetValues(child);
                 }
                 else
                 {
-                    // Add new child to existing employe
                     existingEmploye.EmployeChild.Add(child);
                 }
             }

@@ -29,6 +29,8 @@ namespace ADMitroSremEmploye.Data
         public DbSet<EmployeSalarySO> EmployeSalarySO { get; set; }
         public DbSet<EmployeSalarySOE> EmployeSalarySOE { get; set; }
         public DbSet<IncomeFromWork> IncomeFromWork { get; set; }
+        public DbSet<Bank> Bank { get; set; }
+
 
         public override int SaveChanges()
         {

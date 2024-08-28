@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace ADMitroSremEmploye.Migrations
+namespace ADMitroSremEmploye.Data.Migrations
 {
     /// <inheritdoc />
     public partial class FMigration : Migration
@@ -54,35 +54,42 @@ namespace ADMitroSremEmploye.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Employe",
+                name: "Bank",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    NameOfParent = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    DateOfBirth = table.Column<DateOnly>(type: "date", nullable: false),
-                    JMBG = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    HourlyRate = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
-                    Gender = table.Column<string>(type: "nvarchar(1)", nullable: false),
-                    IdentityCardNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    Phone = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PlaceOfBirth = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    DateOfEmployment = table.Column<DateOnly>(type: "date", nullable: false),
-                    PIO = table.Column<int>(type: "int", nullable: false),
-                    School = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    College = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    Position = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    EmploymentContract = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    AmendmentContract = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    BankName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    CurrentAccount = table.Column<int>(type: "int", nullable: false)
+                    BankName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BankEmail = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BankAccount = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Employe", x => x.Id);
+                    table.PrimaryKey("PK_Bank", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EmployeSalary",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TotalNumberOfHours = table.Column<int>(type: "int", nullable: false),
+                    TotalNumberOfWorkingHours = table.Column<int>(type: "int", nullable: false),
+                    Sickness100 = table.Column<int>(type: "int", nullable: false),
+                    Sickness60 = table.Column<int>(type: "int", nullable: false),
+                    HoursOfAnnualVacation = table.Column<int>(type: "int", nullable: false),
+                    WorkingHoursForTheHoliday = table.Column<int>(type: "int", nullable: false),
+                    OvertimeHours = table.Column<int>(type: "int", nullable: false),
+                    Credits = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    DamageCompensation = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    HolidayBonus = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    MealAllowance = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    SettlementDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    CalculationMonth = table.Column<DateOnly>(type: "date", nullable: false),
+                    EmployeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EmployeSalary", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -232,89 +239,40 @@ namespace ADMitroSremEmploye.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AnnualLeaves",
-                columns: table => new
-                {
-                    AnnualLeaveId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    EmployeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Reason = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Comments = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Approved = table.Column<bool>(type: "bit", nullable: false),
-                    RequestDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ApprovalDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    TotalDays = table.Column<int>(type: "int", nullable: false),
-                    UsedDays = table.Column<int>(type: "int", nullable: false),
-                    IsPaid = table.Column<bool>(type: "bit", nullable: false),
-                    IsCarryOver = table.Column<bool>(type: "bit", nullable: false),
-                    IsSickLeave = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedByUserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AnnualLeaves", x => x.AnnualLeaveId);
-                    table.ForeignKey(
-                        name: "FK_AnnualLeaves_AspNetUsers_CreatedByUserId",
-                        column: x => x.CreatedByUserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_AnnualLeaves_Employe_EmployeId",
-                        column: x => x.EmployeId,
-                        principalTable: "Employe",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "EmployeChild",
+                name: "Employe",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    NameOfParent = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    DateOfBirth = table.Column<DateOnly>(type: "date", nullable: false),
                     JMBG = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    HourlyRate = table.Column<decimal>(type: "decimal(18,5)", nullable: false),
                     Gender = table.Column<string>(type: "nvarchar(1)", nullable: false),
-                    EmployeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    IdentityCardNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Phone = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PlaceOfBirth = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    DateOfEmployment = table.Column<DateOnly>(type: "date", nullable: false),
+                    PIO = table.Column<decimal>(type: "decimal(20,0)", nullable: false),
+                    School = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    College = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Position = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    EmploymentContract = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    AmendmentContract = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    EmployeBankAccount = table.Column<decimal>(type: "decimal(20,0)", nullable: false),
+                    BankId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EmployeChild", x => x.Id);
+                    table.PrimaryKey("PK_Employe", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_EmployeChild_Employe_EmployeId",
-                        column: x => x.EmployeId,
-                        principalTable: "Employe",
+                        name: "FK_Employe_Bank_BankId",
+                        column: x => x.BankId,
+                        principalTable: "Bank",
                         principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "EmployeSalary",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TotalNumberOfHours = table.Column<int>(type: "int", nullable: false),
-                    TotalNumberOfWorkingHours = table.Column<int>(type: "int", nullable: false),
-                    Sickness100 = table.Column<int>(type: "int", nullable: false),
-                    Sickness60 = table.Column<int>(type: "int", nullable: false),
-                    HoursOfAnnualVacation = table.Column<int>(type: "int", nullable: false),
-                    WorkingHoursForTheHoliday = table.Column<int>(type: "int", nullable: false),
-                    OvertimeHours = table.Column<int>(type: "int", nullable: false),
-                    Credits = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    DamageCompensation = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    HolidayBonus = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    MealAllowance = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    EmployeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EmployeSalary", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_EmployeSalary_Employe_EmployeId",
-                        column: x => x.EmployeId,
-                        principalTable: "Employe",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -349,8 +307,8 @@ namespace ADMitroSremEmploye.Migrations
                     DeductionHealth = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     DeductionUnemployment = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     DeductionTaxRelief = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    NetoSalary = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     ExpenseOfTheEmploye = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    NetoSalary = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     EmployeSalaryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -393,15 +351,73 @@ namespace ADMitroSremEmploye.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.InsertData(
-                table: "StateObligation",
-                columns: new[] { "Id", "Discriminator", "HealthCare", "PIO", "Tax", "TaxRelief", "Unemployment" },
-                values: new object[] { new Guid("72eb62be-6f13-4a97-8e90-2e94767e1f56"), "StateObligationsEmploye", 0.0515m, 0.14m, 0.10m, 25000m, 0.0075m });
+            migrationBuilder.CreateTable(
+                name: "AnnualLeaves",
+                columns: table => new
+                {
+                    AnnualLeaveId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EmployeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    StartDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    EndDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    Reason = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Comments = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Approved = table.Column<bool>(type: "bit", nullable: false),
+                    RequestDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    ApprovalDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    TotalDays = table.Column<int>(type: "int", nullable: false),
+                    UsedDays = table.Column<int>(type: "int", nullable: false),
+                    IsPaid = table.Column<bool>(type: "bit", nullable: false),
+                    IsCarryOver = table.Column<bool>(type: "bit", nullable: false),
+                    IsSickLeave = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedByUserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AnnualLeaves", x => x.AnnualLeaveId);
+                    table.ForeignKey(
+                        name: "FK_AnnualLeaves_AspNetUsers_CreatedByUserId",
+                        column: x => x.CreatedByUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_AnnualLeaves_Employe_EmployeId",
+                        column: x => x.EmployeId,
+                        principalTable: "Employe",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EmployeChild",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    DateOfBirth = table.Column<DateOnly>(type: "date", nullable: false),
+                    JMBG = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Gender = table.Column<string>(type: "nvarchar(1)", nullable: false),
+                    EmployeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EmployeChild", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_EmployeChild_Employe_EmployeId",
+                        column: x => x.EmployeId,
+                        principalTable: "Employe",
+                        principalColumn: "Id");
+                });
 
             migrationBuilder.InsertData(
                 table: "StateObligation",
                 columns: new[] { "Id", "Discriminator", "HealthCare", "PIO" },
-                values: new object[] { new Guid("a984cbb6-4e3a-4617-bc92-b4fb91489cea"), "StateObligation", 0.0515m, 0.10m });
+                values: new object[] { new Guid("93cdcf57-5fb7-467e-a8aa-ebc1fb1e6fab"), "StateObligation", 0.0515m, 0.10m });
+
+            migrationBuilder.InsertData(
+                table: "StateObligation",
+                columns: new[] { "Id", "Discriminator", "HealthCare", "PIO", "Tax", "TaxRelief", "Unemployment" },
+                values: new object[] { new Guid("d432b6cf-e842-4d86-b636-89bfe1e4e337"), "StateObligationsEmploye", 0.0515m, 0.14m, 0.10m, 25000m, 0.0075m });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AnnualLeaves_CreatedByUserId",
@@ -458,13 +474,13 @@ namespace ADMitroSremEmploye.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EmployeChild_EmployeId",
-                table: "EmployeChild",
-                column: "EmployeId");
+                name: "IX_Employe_BankId",
+                table: "Employe",
+                column: "BankId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EmployeSalary_EmployeId",
-                table: "EmployeSalary",
+                name: "IX_EmployeChild_EmployeId",
+                table: "EmployeChild",
                 column: "EmployeId");
 
             migrationBuilder.CreateIndex(
@@ -532,10 +548,13 @@ namespace ADMitroSremEmploye.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
+                name: "Employe");
+
+            migrationBuilder.DropTable(
                 name: "EmployeSalary");
 
             migrationBuilder.DropTable(
-                name: "Employe");
+                name: "Bank");
         }
     }
 }

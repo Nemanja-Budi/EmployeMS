@@ -21,8 +21,11 @@ namespace ADMitroSremEmploye.Repositories.Employe_repository
         {
             string cacheKey = $"employes" +
                 $"-{filterDto.FirstName}" +
-                $"-{filterDto.LastName}-{filterDto.JMBG}" +
-                $"-{filterDto.Email}-{commonFilterDto.SortBy}" +
+                $"-{filterDto.LastName}" +
+                $"-{filterDto.JMBG}" +
+                $"-{filterDto.Email}" +
+                $"-{filterDto.BankName}" +
+                $"-{commonFilterDto.SortBy}" +
                 $"-{commonFilterDto.IsAscending}" +
                 $"-{commonFilterDto.PageNumber}" +
                 $"-{commonFilterDto.PageSize}";
