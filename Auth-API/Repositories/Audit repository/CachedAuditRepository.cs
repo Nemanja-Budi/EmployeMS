@@ -70,11 +70,21 @@ namespace ADMitroSremEmploye.Repositories.Audit_repository
 
         public async Task<bool> DeleteAuditLogAsync(Guid id)
         {
+            string key = $"audit-{id}";
+            
+            memoryCache.Remove(key);
+            
             return await decorated.DeleteAuditLogAsync(id);
         }
 
         public async Task<bool> UpdateAuditLogAsync(Guid id, AuditLog auditLog)
         {
+            string key = $"audit-{auditLog.AuditLogId}";
+            string keyUser = $"audit-user-{auditLog.User.Id}";
+
+            memoryCache.Remove(key);
+            memoryCache.Remove(keyUser);
+            
             return await decorated.UpdateAuditLogAsync(id, auditLog);
         }
     }

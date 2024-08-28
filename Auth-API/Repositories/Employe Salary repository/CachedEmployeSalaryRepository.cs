@@ -106,11 +106,17 @@ namespace ADMitroSremEmploye.Repositories.Employe_Salary_repository
 
         public async Task<bool> DeleteEmployeSalaryByEmployeSalaryIdAsync(Guid employeSalaryId)
         {
+            string key = $"employe-salarys-{employeSalaryId}";
+
+            memoryCache.Remove(key);
             return await decorated.DeleteEmployeSalaryByEmployeSalaryIdAsync(employeSalaryId);
         }
 
         public async Task<bool> DeleteEmployeSalarysByEmployeIdAsync(Guid employeId)
         {
+            string key = $"employe-salarys-by-employeId-{employeId}";
+
+            memoryCache.Remove(key);
             return await decorated.DeleteEmployeSalarysByEmployeIdAsync(employeId);
         }
 

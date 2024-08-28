@@ -1,4 +1,5 @@
-﻿using ADMitroSremEmploye.Models.DTOs;
+﻿using ADMitroSremEmploye.Models.Domain;
+using ADMitroSremEmploye.Models.DTOs;
 using ADMitroSremEmploye.Models.DTOs.Filters;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Caching.Memory;
@@ -17,11 +18,17 @@ namespace ADMitroSremEmploye.Repositories.Member_repository
         }
         public Task<IdentityResult> AddEditMemberAsync(MemberAddEditDto memberAddEditDto)
         {
+            string key = $"member-{memberAddEditDto.Id}";
+
+            memoryCache.Remove(key);
             return decorated.AddEditMemberAsync(memberAddEditDto);
         }
 
         public Task<IdentityResult> DeleteMemberAsync(string userId)
         {
+            string key = $"member-{userId}";
+
+            memoryCache.Remove(key);
             return decorated.DeleteMemberAsync(userId);
         }
 
@@ -58,11 +65,19 @@ namespace ADMitroSremEmploye.Repositories.Member_repository
 
         public async Task<IdentityResult> LockMemberAsync(string userId)
         {
+            string key = $"member-{userId}";
+
+            memoryCache.Remove(key);
+
             return await decorated.LockMemberAsync(userId);
         }
 
         public async Task<IdentityResult> UnlockMemberAsync(string userId)
         {
+            string key = $"member-{userId}";
+
+            memoryCache.Remove(key);
+
             return  await decorated.UnlockMemberAsync(userId);
         }
     }

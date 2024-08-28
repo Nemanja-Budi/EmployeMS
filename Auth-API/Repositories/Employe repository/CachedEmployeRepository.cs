@@ -56,6 +56,9 @@ namespace ADMitroSremEmploye.Repositories.Employe_repository
 
         public async Task<bool> DeleteEmployeAsync(Guid id)
         {
+            string key = $"employe-{id}";
+
+            memoryCache.Remove(key);
             return await decorated.DeleteEmployeAsync(id);
         }
 

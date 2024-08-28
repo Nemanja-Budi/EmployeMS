@@ -58,6 +58,8 @@ namespace ADMitroSremEmploye.Repositories.AnnualLeave_repository
 
         public async Task<bool> DeleteAnnualLeaveAsync(Guid id)
         {
+            string key = $"annual-leave-{id}";
+            memoryCache.Remove(key);
             return await decorated.DeleteAnnualLeaveAsync(id);
         }
 
@@ -68,6 +70,9 @@ namespace ADMitroSremEmploye.Repositories.AnnualLeave_repository
 
         public async Task<bool> PutAnnualLeaveAsync(Guid id, AnnualLeave annualLeave)
         {
+            string key = $"annual-leave-{annualLeave.AnnualLeaveId}";
+            memoryCache.Remove(key);
+
             return await decorated.PutAnnualLeaveAsync(id, annualLeave);
         }
     }
