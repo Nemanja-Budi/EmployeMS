@@ -156,7 +156,6 @@ namespace ADMitroSremEmploye.Repositories.Employe_repository
             }
         }
 
-
         public async Task<bool> DeleteEmployeAsync(Guid id)
         {
             var employe = await userDbContext.Employe

@@ -12,7 +12,7 @@ namespace ADMitroSremEmploye.Models.Domain
         public required string Name { get; set; }
 
         [Required]
-        public DateOnly DateOfBirth { get; set; }
+        public required DateOnly DateOfBirth { get; set; }
 
         [Required]
         [RegularExpression(@"^\d{13}$", ErrorMessage = "JMBG must be exactly 13 digits.")]

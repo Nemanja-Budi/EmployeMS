@@ -1,4 +1,4 @@
-﻿namespace ADMitroSremEmploye.Models.DTOs
+﻿namespace ADMitroSremEmploye.Models.DTOs.Filters
 {
     public class EmployeFilterDto
     {

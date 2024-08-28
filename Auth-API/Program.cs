@@ -5,6 +5,7 @@ using ADMitroSremEmploye.Models.Domain;
 using ADMitroSremEmploye.Repositories;
 using ADMitroSremEmploye.Repositories.AnnualLeave_repository;
 using ADMitroSremEmploye.Repositories.Audit_repository;
+using ADMitroSremEmploye.Repositories.Bank_repository;
 using ADMitroSremEmploye.Repositories.Employe_repository;
 using ADMitroSremEmploye.Repositories.Employe_Salary_repository;
 using ADMitroSremEmploye.Repositories.Member_repository;
@@ -56,7 +57,7 @@ builder.Services.AddScoped<IMemberRepository, CachedMemberRepository>();
 
 builder.Services.AddScoped<IStateObligationRepository, SQLStateObligationRepository>();
 builder.Services.AddScoped<ISalaryServiceRepository, SalaryServiceRepository>();
-
+builder.Services.AddScoped<IBankRepository, SQLBankRepository>();
 
 
 builder.Services.AddDbContext<UserDbContext>(options =>

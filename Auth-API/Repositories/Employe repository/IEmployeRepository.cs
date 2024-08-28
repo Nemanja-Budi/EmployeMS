@@ -1,5 +1,4 @@
 ﻿using ADMitroSremEmploye.Models.Domain;
-using ADMitroSremEmploye.Models.DTOs;
 using ADMitroSremEmploye.Models.DTOs.Filters;
 using Microsoft.AspNetCore.Mvc;
 

@@ -81,7 +81,6 @@ namespace ADMitroSremEmploye.Models.DTOs
         [Range(1000000000, 9999999999, ErrorMessage = "Current account must be a valid account number.")]
         public ulong EmployeBankAccount { get; set; }
 
-        //public Guid? BankId { get; set; }
         public EmployeBank? Bank { get; set; }
 
         public ICollection<EmployeChild>? EmployeChild { get; set; }
