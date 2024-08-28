@@ -57,7 +57,8 @@ builder.Services.AddScoped<IMemberRepository, CachedMemberRepository>();
 
 builder.Services.AddScoped<IStateObligationRepository, SQLStateObligationRepository>();
 builder.Services.AddScoped<ISalaryServiceRepository, SalaryServiceRepository>();
-builder.Services.AddScoped<IBankRepository, SQLBankRepository>();
+builder.Services.AddScoped<SQLBankRepository>();
+builder.Services.AddScoped<IBankRepository, CachedBankRepository>();
 
 
 builder.Services.AddDbContext<UserDbContext>(options =>
