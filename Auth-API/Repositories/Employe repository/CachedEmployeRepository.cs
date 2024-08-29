@@ -1,6 +1,7 @@
 ﻿using ADMitroSremEmploye.Models.Domain;
 using ADMitroSremEmploye.Models.DTOs.Filters;
 using ADMitroSremEmploye.Repositories.Member_repository;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace ADMitroSremEmploye.Repositories.Employe_repository
@@ -9,7 +10,8 @@ namespace ADMitroSremEmploye.Repositories.Employe_repository
     {
         private readonly SQLEmployeRepository decorated;
         private readonly IMemoryCache memoryCache;
-
+        private static readonly object cacheKeysLock = new object();
+        private static readonly HashSet<string> employeCacheKeys = new HashSet<string>();
         public CachedEmployeRepository(SQLEmployeRepository decorated, IMemoryCache memoryCache)
         {
             this.decorated = decorated;
@@ -28,7 +30,12 @@ namespace ADMitroSremEmploye.Repositories.Employe_repository
                 $"-{commonFilterDto.IsAscending}" +
                 $"-{commonFilterDto.PageNumber}" +
                 $"-{commonFilterDto.PageSize}";
-            
+
+            lock (cacheKeysLock)
+            {
+                employeCacheKeys.Add(cacheKey);
+            }
+
             if (!memoryCache.TryGetValue(cacheKey, out (int totalCount, IEnumerable<Employe>) cachedResult))
             {
                 cachedResult = await decorated.GetEmployesAsync(filterDto, commonFilterDto);
@@ -42,6 +49,12 @@ namespace ADMitroSremEmploye.Repositories.Employe_repository
         public async Task<Employe?> GetEmployeAsync(Guid id)
         {
             string key = $"employe-{id}";
+
+            lock (cacheKeysLock)
+            {
+                employeCacheKeys.Add(key);
+            }
+
             return await memoryCache.GetOrCreateAsync(key, async entry =>
             {
                 entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(2));
@@ -51,27 +64,42 @@ namespace ADMitroSremEmploye.Repositories.Employe_repository
 
         public async Task<Employe> CreateEmployeAsync(Employe employe)
         {
+            RemoveRelatedCache();
+            
             return await decorated.CreateEmployeAsync(employe);
         }
 
         public async Task<bool> DeleteEmployeAsync(Guid id)
         {
-            string key = $"employe-{id}";
+            RemoveRelatedCache();
 
-            memoryCache.Remove(key);
             return await decorated.DeleteEmployeAsync(id);
         }
 
         public async Task<bool> EmployeExistsAsync(Guid id)
         {
+            RemoveRelatedCache();
+
             return await decorated.EmployeExistsAsync(id);
         }
 
         public async Task<Employe?> UpdateEmployeAsync(Employe employe)
         {
-            string key = $"employe-{employe.Id}";
-            memoryCache.Remove(key);
+            RemoveRelatedCache();
+
             return await decorated.UpdateEmployeAsync(employe);
+        }
+
+        private void RemoveRelatedCache()
+        {
+            lock (cacheKeysLock)
+            {
+                foreach (var key in employeCacheKeys)
+                {
+                    memoryCache.Remove(key);
+                }
+            }
+            employeCacheKeys.Clear();
         }
     }
 }

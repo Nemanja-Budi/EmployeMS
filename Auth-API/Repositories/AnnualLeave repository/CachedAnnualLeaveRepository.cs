@@ -10,7 +10,8 @@ namespace ADMitroSremEmploye.Repositories.AnnualLeave_repository
     {
         private readonly SQLAnnualLeaveRepository decorated;
         private readonly IMemoryCache memoryCache;
-
+        private static readonly object cacheKeysLock = new object();
+        private static readonly HashSet<string> auditCacheKeys = new HashSet<string>();
         public CachedAnnualLeaveRepository(SQLAnnualLeaveRepository decorated, IMemoryCache memoryCache)
         {
             this.decorated = decorated;
@@ -26,6 +27,12 @@ namespace ADMitroSremEmploye.Repositories.AnnualLeave_repository
                 $"-{commonFilterDto.IsAscending}" +
                 $"-{commonFilterDto.PageNumber}" +
                 $"-{commonFilterDto.PageSize}";
+
+            lock (cacheKeysLock)
+            {
+                auditCacheKeys.Add(cacheKey);
+            }
+
             if (!memoryCache.TryGetValue(cacheKey, out (int totalCount,IEnumerable<AnnualLeave>) cachedResult))
             {
                 cachedResult = await decorated.GetAnnualLeavesAsync(filterDto, commonFilterDto);
@@ -39,6 +46,12 @@ namespace ADMitroSremEmploye.Repositories.AnnualLeave_repository
         public async Task<AnnualLeave?> GetAnnualLeaveAsync(Guid id)
         {
             string key = $"annual-leave-{id}";
+
+            lock (cacheKeysLock)
+            {
+                auditCacheKeys.Add(key);
+            }
+
             return await memoryCache.GetOrCreateAsync(key, async entry =>
             {
                 entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(2));
@@ -49,6 +62,12 @@ namespace ADMitroSremEmploye.Repositories.AnnualLeave_repository
         public bool AnnualLeaveExistsAsync(Guid id)
         {
             string key = $"annual-leave-exists-{id}";
+
+            lock (cacheKeysLock)
+            {
+                auditCacheKeys.Add(key);
+            }
+
             return memoryCache.GetOrCreate(key, entry =>
             {
                 entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(2));
@@ -58,22 +77,35 @@ namespace ADMitroSremEmploye.Repositories.AnnualLeave_repository
 
         public async Task<bool> DeleteAnnualLeaveAsync(Guid id)
         {
-            string key = $"annual-leave-{id}";
-            memoryCache.Remove(key);
+            RemoveRelatedCache();
+
             return await decorated.DeleteAnnualLeaveAsync(id);
         }
 
         public async Task<ActionResult<AnnualLeave>> PostAnnualLeaveAsync(AnnualLeave annualLeave)
         {
+            RemoveRelatedCache();
+
             return await decorated.PostAnnualLeaveAsync(annualLeave);
         }
 
         public async Task<bool> PutAnnualLeaveAsync(Guid id, AnnualLeave annualLeave)
         {
-            string key = $"annual-leave-{annualLeave.AnnualLeaveId}";
-            memoryCache.Remove(key);
+            RemoveRelatedCache();
 
             return await decorated.PutAnnualLeaveAsync(id, annualLeave);
+        }
+
+        private void RemoveRelatedCache()
+        {
+            lock (cacheKeysLock)
+            {
+                foreach (var key in auditCacheKeys)
+                {
+                    memoryCache.Remove(key);
+                }
+            }
+            auditCacheKeys.Clear();
         }
     }
 }

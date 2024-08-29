@@ -2,6 +2,7 @@
 using ADMitroSremEmploye.Models.DTOs;
 using ADMitroSremEmploye.Models.DTOs.Filters;
 using ADMitroSremEmploye.Repositories.Employe_repository;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace ADMitroSremEmploye.Repositories.Employe_Salary_repository
@@ -10,7 +11,8 @@ namespace ADMitroSremEmploye.Repositories.Employe_Salary_repository
     {
         private readonly SQLEmployeSalaryRepository decorated;
         private readonly IMemoryCache memoryCache;
-
+        private static readonly object cacheKeysLock = new object();
+        private static readonly HashSet<string> employeSalaryCacheKeys = new HashSet<string>();
         public CachedEmployeSalaryRepository(SQLEmployeSalaryRepository decorated, IMemoryCache memoryCache)
         {
             this.decorated = decorated;
@@ -29,6 +31,11 @@ namespace ADMitroSremEmploye.Repositories.Employe_Salary_repository
                 $"{commonFilterDto.PageNumber}-" +
                 $"{commonFilterDto.PageSize}";
 
+            lock (cacheKeysLock)
+            {
+                employeSalaryCacheKeys.Add(cacheKey);
+            }
+
             if (!memoryCache.TryGetValue(cacheKey, out (int totalCount, IEnumerable<EmployeSalary>) cachedResult))
             {
                 cachedResult = await decorated.GetAllEmployeSalarysAsync(filterDto, commonFilterDto);
@@ -42,6 +49,12 @@ namespace ADMitroSremEmploye.Repositories.Employe_Salary_repository
         public async Task<Employe?> GetEmployeByIdAsync(Guid employeId)
         {
             string key = $"employe-salarys-employe-{employeId}";
+
+            lock (cacheKeysLock)
+            {
+                employeSalaryCacheKeys.Add(key);
+            }
+
             return await memoryCache.GetOrCreateAsync(key, async entry =>
             {
                 entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(2));
@@ -52,6 +65,12 @@ namespace ADMitroSremEmploye.Repositories.Employe_Salary_repository
         public async Task<EmployeSalary?> GetEmployeSalaryById(Guid employeSalaryId)
         {
             string key = $"employe-salarys-{employeSalaryId}";
+
+            lock (cacheKeysLock)
+            {
+                employeSalaryCacheKeys.Add(key);
+            }
+
             return await memoryCache.GetOrCreateAsync(key, async entry =>
             {
                 entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(2));
@@ -61,15 +80,20 @@ namespace ADMitroSremEmploye.Repositories.Employe_Salary_repository
 
         public async Task<List<EmployeSalary>?> GetEmployeSalarysByEmployeIdAsync(Guid employeId)
         {
-            string cacheKey = $"employe-salarys-by-employeId-{employeId}";
+            string key = $"employe-salarys-by-employeId-{employeId}";
 
-            if (!memoryCache.TryGetValue(cacheKey, out List<EmployeSalary>? cachedSalaries))
+            lock (cacheKeysLock)
+            {
+                employeSalaryCacheKeys.Add(key);
+            }
+
+            if (!memoryCache.TryGetValue(key, out List<EmployeSalary>? cachedSalaries))
             {
                 cachedSalaries = await decorated.GetEmployeSalarysByEmployeIdAsync(employeId);
 
                 if (cachedSalaries != null)
                 {
-                    memoryCache.Set(cacheKey, cachedSalaries, TimeSpan.FromMinutes(5));
+                    memoryCache.Set(key, cachedSalaries, TimeSpan.FromMinutes(5));
                 }
             }
 
@@ -79,6 +103,12 @@ namespace ADMitroSremEmploye.Repositories.Employe_Salary_repository
         public async Task<decimal> GetGrandTotalSalaryAsync(int month, int year)
         {
             string key = $"total-by-banks-{month}-{year}";
+
+            lock (cacheKeysLock)
+            {
+                employeSalaryCacheKeys.Add(key);
+            }
+
             return await memoryCache.GetOrCreateAsync(key, async entry =>
             {
                 entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(2));
@@ -89,6 +119,12 @@ namespace ADMitroSremEmploye.Repositories.Employe_Salary_repository
         public async Task<IEnumerable<BankSalaryDto>?> GetSalariesByBankAsync(int month, int year)
         {
             string key = $"salary-by-banks-{month}-{year}";
+
+            lock (cacheKeysLock)
+            {
+                employeSalaryCacheKeys.Add(key);
+            }
+
             return await memoryCache.GetOrCreateAsync(key, async entry =>
             {
                 entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(2));
@@ -101,28 +137,40 @@ namespace ADMitroSremEmploye.Repositories.Employe_Salary_repository
 
         public async Task<EmployeSalary> AddEmployeSalaryAsync(EmployeSalary employeSalary)
         {
+            RemoveRelatedCache();
+
             return await decorated.AddEmployeSalaryAsync(employeSalary);
         }
 
         public async Task<bool> DeleteEmployeSalaryByEmployeSalaryIdAsync(Guid employeSalaryId)
         {
-            string key = $"employe-salarys-{employeSalaryId}";
+            RemoveRelatedCache();
 
-            memoryCache.Remove(key);
             return await decorated.DeleteEmployeSalaryByEmployeSalaryIdAsync(employeSalaryId);
         }
 
         public async Task<bool> DeleteEmployeSalarysByEmployeIdAsync(Guid employeId)
         {
-            string key = $"employe-salarys-by-employeId-{employeId}";
+            RemoveRelatedCache();
 
-            memoryCache.Remove(key);
             return await decorated.DeleteEmployeSalarysByEmployeIdAsync(employeId);
         }
 
         public async Task SaveEmployeSalaryAsync()
         {
             await decorated.SaveEmployeSalaryAsync();
+        }
+
+        private void RemoveRelatedCache()
+        {
+            lock (cacheKeysLock)
+            {
+                foreach (var key in employeSalaryCacheKeys)
+                {
+                    memoryCache.Remove(key);
+                }
+            }
+            employeSalaryCacheKeys.Clear();
         }
     }
 }

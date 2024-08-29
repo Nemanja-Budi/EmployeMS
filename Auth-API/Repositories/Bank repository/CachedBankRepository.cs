@@ -9,6 +9,8 @@ namespace ADMitroSremEmploye.Repositories.Bank_repository
     {
         private readonly SQLBankRepository decorated;
         private readonly IMemoryCache memoryCache;
+        private static readonly object cacheKeysLock = new object();
+        private static readonly HashSet<string> bankCacheKeys = new HashSet<string>();
 
         public CachedBankRepository(SQLBankRepository decorated, IMemoryCache memoryCache)
         {
@@ -19,6 +21,12 @@ namespace ADMitroSremEmploye.Repositories.Bank_repository
         public async Task<IEnumerable<Bank>> GetBanksAsync()
         {
             string key = "banks-list";
+
+            lock (cacheKeysLock)
+            {
+                bankCacheKeys.Add(key);
+            }
+
             return await memoryCache.GetOrCreateAsync(key, async entry =>
             {
                 entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(2));
@@ -30,6 +38,12 @@ namespace ADMitroSremEmploye.Repositories.Bank_repository
         public async Task<Bank?> GetBankByIdAsync(Guid id)
         {
             string key = $"bank-{id}";
+
+            lock (cacheKeysLock)
+            {
+                bankCacheKeys.Add(key);
+            }
+
             return await memoryCache.GetOrCreateAsync(key, async entry =>
             {
                 entry.SetAbsoluteExpiration(TimeSpan.FromMinutes(2));
@@ -39,21 +53,35 @@ namespace ADMitroSremEmploye.Repositories.Bank_repository
 
         public Task<Bank> CreateBankAsync(Bank bank)
         {
+            RemoveRelatedCache();
+
             return decorated.CreateBankAsync(bank);
         }
 
         public Task<Bank?> UpdateBankAsync(Bank bank)
         {
-            string key = $"bank-{bank.Id}";
-            memoryCache.Remove(key);
+            RemoveRelatedCache();
+
             return decorated.UpdateBankAsync(bank);
         }
 
         public Task<bool> DeleteBankByIdAsync(Guid id)
         {
-            string key = $"bank-{id}";
-            memoryCache.Remove(key);
+            RemoveRelatedCache();
+
             return decorated.DeleteBankByIdAsync(id);
+        }
+
+        private void RemoveRelatedCache()
+        {
+            lock (cacheKeysLock)
+            {
+                foreach (var key in bankCacheKeys)
+                {
+                    memoryCache.Remove(key);
+                }
+            }
+            bankCacheKeys.Clear();
         }
     }
 }
