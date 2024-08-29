@@ -86,7 +86,7 @@ namespace ADMitroSremEmploye.Repositories.Employe_repository
         }
 
         public async Task<Employe> CreateEmployeAsync(Employe employe)
-        {
+            {
             var existingBank = await userDbContext.Bank.FirstOrDefaultAsync(b => b.Id == employe.Bank.Id);
             if(existingBank != null)
             {
@@ -107,6 +107,7 @@ namespace ADMitroSremEmploye.Repositories.Employe_repository
         {
             var existingEmploye = await userDbContext.Employe
                 .Include(e => e.EmployeChild)
+                .Include(e => e.Bank)
                 .FirstOrDefaultAsync(e => e.Id == employe.Id);
 
             if (existingEmploye == null)
@@ -115,6 +116,13 @@ namespace ADMitroSremEmploye.Repositories.Employe_repository
             }
 
             userDbContext.Entry(existingEmploye).CurrentValues.SetValues(employe);
+
+            if (existingEmploye.Bank == null || existingEmploye.Bank.Id != employe.Bank.Id)
+            {
+                // Postavi novu banku
+                existingEmploye.Bank = await userDbContext.Bank.FirstOrDefaultAsync(b => b.Id == employe.Bank.Id);
+            }
+
 
             foreach (var existingChild in existingEmploye.EmployeChild.ToList())
             {

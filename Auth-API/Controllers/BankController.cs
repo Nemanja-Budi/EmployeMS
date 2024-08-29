@@ -30,6 +30,14 @@ namespace ADMitroSremEmploye.Controllers
             return Ok(mapper.Map<IEnumerable<BankDto>>(banks));
         }
 
+        [HttpGet("get-banks-for-employe")]
+        public async Task<ActionResult<IEnumerable<EmployeBank>>> GetBanksForEmploye()
+        {
+            var banks = await bankRepository.GetBanksAsync();
+
+            return Ok(mapper.Map<IEnumerable<EmployeBank>>(banks));
+        }
+
         [HttpGet("get-bank/{id}")]
         public async Task<ActionResult<BankDto>> GetBank(Guid id)
         {
@@ -41,6 +49,19 @@ namespace ADMitroSremEmploye.Controllers
             }
 
             return Ok(mapper.Map<BankDto>(bank));
+        }
+
+        [HttpGet("get-bank-for-employe/{id}")]
+        public async Task<ActionResult<EmployeBank>> GetBankForEmploye(Guid id)
+        {
+            var bank = await bankRepository.GetBankByIdAsync(id);
+
+            if (bank == null)
+            {
+                return NotFound($"Bank with id ${id} not found");
+            }
+
+            return Ok(mapper.Map<EmployeBank>(bank));
         }
 
         [HttpPost("create-bank")]
