@@ -202,29 +202,37 @@ namespace ADMitroSremEmploye.Repositories.Employe_Salary_repository
                     userDbContext.Employe,
                     es => es.EmployeId,
                     e => e.Id,
-                    (es, e) => new { es, e.Bank.BankName }
+                    (es, e) => new { es, e.Bank.Id } // Zadržavamo BankId iz Employe
+                )
+                .Join(
+                    userDbContext.Bank,
+                    combined => combined.Id,
+                    b => b.Id,
+                    (combined, b) => new { combined.es, BankName = b.BankName, BankAccount = b.BankAccount } // Pridružujemo Bank i uzimamo BankAccount
                 )
                 .GroupJoin(
                     userDbContext.EmployeSalarySOE,
                     combined => combined.es.Id,
                     eso => eso.EmployeSalaryId,
-                    (combined, esoes) => new { combined.BankName, esoes, combined.es.CalculationMonth }
+                    (combined, esoes) => new { combined.BankName, combined.BankAccount, esoes, combined.es.CalculationMonth }
                 )
                 .SelectMany(
                     combined => combined.esoes.DefaultIfEmpty(),  // Left join on EmployeSalarySOE
-                    (combined, eso) => new { combined.BankName, eso.NetoSalary, combined.CalculationMonth }
+                    (combined, eso) => new { combined.BankName, combined.BankAccount, NetoSalary = eso != null ? eso.NetoSalary : 0, combined.CalculationMonth }
                 )
                 .Where(x => x.CalculationMonth.Month == month && x.CalculationMonth.Year == year)
-                .GroupBy(x => x.BankName)
+                .GroupBy(x => new { x.BankName, x.BankAccount }) // Grupisanje po BankName i BankAccount
                 .Select(group => new BankSalaryDto
                 {
-                    BankName = group.Key,
+                    BankName = group.Key.BankName,
+                    BankAccount = group.Key.BankAccount,
                     TotalNetSalary = group.Sum(x => x.NetoSalary)
                 })
                 .ToListAsync();
 
             return salaries;
         }
+
 
         public async Task<decimal> GetGrandTotalSalaryAsync(int month, int year)
         {
