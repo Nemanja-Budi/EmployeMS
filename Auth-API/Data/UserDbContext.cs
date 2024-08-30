@@ -145,6 +145,7 @@ namespace ADMitroSremEmploye.Data
                 entity.Property(e => e.Demage).HasPrecision(18, 2);
                 entity.Property(e => e.HotMeal).HasPrecision(18, 2);
                 entity.Property(e => e.Regres).HasPrecision(18, 2);
+                entity.Property(e => e.MinuliRad).HasPrecision(18, 2);
                 entity.Property(e => e.GrossSalary).HasPrecision(18, 2);
             });
 

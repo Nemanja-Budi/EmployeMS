@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ADMitroSremEmploye.Data.Migrations
 {
     [DbContext(typeof(UserDbContext))]
-    [Migration("20240828082532_FMigration")]
+    [Migration("20240830081251_FMigration")]
     partial class FMigration
     {
         /// <inheritdoc />
@@ -432,6 +432,10 @@ namespace ADMitroSremEmploye.Data.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<decimal>("MinuliRad")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<decimal>("OvertimeHours")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
@@ -488,7 +492,7 @@ namespace ADMitroSremEmploye.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("93cdcf57-5fb7-467e-a8aa-ebc1fb1e6fab"),
+                            Id = new Guid("7cfecd88-3045-4db9-96c1-6b1e84b5c6b3"),
                             HealthCare = 0.0515m,
                             PIO = 0.10m
                         });
@@ -721,7 +725,7 @@ namespace ADMitroSremEmploye.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("d432b6cf-e842-4d86-b636-89bfe1e4e337"),
+                            Id = new Guid("1d4df72f-eabc-4879-bb33-af884becb295"),
                             HealthCare = 0.0515m,
                             PIO = 0.14m,
                             Tax = 0.10m,

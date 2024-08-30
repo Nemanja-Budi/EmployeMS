@@ -107,14 +107,6 @@ namespace ADMitroSremEmploye.Services
             return existingSalary;
         }
 
-
-        /*public async Task<List<EmployeSalary>> GetAllEmployeSalarys()
-        {
-            var employeSalary = await employeSalaryRepository.GetAllEmployeSalarysAsync();
-
-            return employeSalary;
-        }
-        */
         public async Task<List<EmployeSalary>?> GetEmployeSalarys(Guid employeId)
         {
             var employe = await employeSalaryRepository.GetEmployeByIdAsync(employeId);
@@ -151,15 +143,16 @@ namespace ADMitroSremEmploye.Services
             decimal workinHours = input.TotalNumberOfWorkingHours * employe.HourlyRate;
             decimal sickness60 = (input.Sickness60 * 0.65m) * employe.HourlyRate;
             decimal sickness100 = input.Sickness100 * employe.HourlyRate;
-            decimal annualVacation = (input.HoursOfAnnualVacation * 1.10687m) * employe.HourlyRate;
+            decimal annualVacation = (input.HoursOfAnnualVacation * 1.1083759m) * employe.HourlyRate;
             decimal holidayHours = (input.WorkingHoursForTheHoliday * 1.10687m) * employe.HourlyRate;
             decimal overtimeHours = (input.OvertimeHours * 1.01m) * employe.HourlyRate;
             decimal credit = input.Credits;
             decimal demage = input.DamageCompensation;
             decimal hotMeal = input.MealAllowance * input.TotalNumberOfWorkingHours;
+            decimal minuli = (workinHours * IzracunajMinuli(employe.DateOfEmployment, input.CalculationMonth));
             decimal regres = input.HolidayBonus;
 
-            decimal grossSalary = workinHours + sickness60 + sickness100 + annualVacation + holidayHours + overtimeHours + credit + demage + hotMeal + regres;
+            decimal grossSalary = workinHours + sickness60 + sickness100 + annualVacation + holidayHours + overtimeHours + credit + demage + hotMeal + minuli + regres;
 
             var incomeFromWork = new IncomeFromWork
             {
@@ -173,10 +166,24 @@ namespace ADMitroSremEmploye.Services
                 Demage = demage,
                 HotMeal = hotMeal,
                 Regres = regres,
+                MinuliRad = minuli,
                 GrossSalary = grossSalary
             };
 
             return incomeFromWork;
+        }
+
+        private decimal IzracunajMinuli(DateOnly DateOfEmployment, DateOnly CalculationMonth)
+        {
+            decimal mr = 0;
+            if(DateOfEmployment.Year ==  CalculationMonth.Year)
+            {
+                mr = 0;
+            } else if(DateOfEmployment.Year < CalculationMonth.Year && DateOfEmployment.Month <= CalculationMonth.Month)
+            {
+                mr = 0.4m * (CalculationMonth.Year - DateOfEmployment.Year);
+            }
+            return mr / 100;
         }
 
         private async Task<IncomeFromWork> SaveIncomeFromWork(Guid employeSalaryId, IncomeFromWork input, bool isUpdate = false)

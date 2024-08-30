@@ -13,6 +13,7 @@
         public decimal Demage { get; set; }
         public decimal HotMeal { get; set; }
         public decimal Regres { get; set; }
+        public decimal MinuliRad { get; set; }
         public decimal GrossSalary { get; set; }
         public Guid EmployeSalaryId { get; set; }
     }

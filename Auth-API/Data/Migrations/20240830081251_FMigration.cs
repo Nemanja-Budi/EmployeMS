@@ -337,6 +337,7 @@ namespace ADMitroSremEmploye.Data.Migrations
                     Demage = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     HotMeal = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     Regres = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    MinuliRad = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     GrossSalary = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     EmployeSalaryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
@@ -411,13 +412,13 @@ namespace ADMitroSremEmploye.Data.Migrations
 
             migrationBuilder.InsertData(
                 table: "StateObligation",
-                columns: new[] { "Id", "Discriminator", "HealthCare", "PIO" },
-                values: new object[] { new Guid("93cdcf57-5fb7-467e-a8aa-ebc1fb1e6fab"), "StateObligation", 0.0515m, 0.10m });
+                columns: new[] { "Id", "Discriminator", "HealthCare", "PIO", "Tax", "TaxRelief", "Unemployment" },
+                values: new object[] { new Guid("1d4df72f-eabc-4879-bb33-af884becb295"), "StateObligationsEmploye", 0.0515m, 0.14m, 0.10m, 25000m, 0.0075m });
 
             migrationBuilder.InsertData(
                 table: "StateObligation",
-                columns: new[] { "Id", "Discriminator", "HealthCare", "PIO", "Tax", "TaxRelief", "Unemployment" },
-                values: new object[] { new Guid("d432b6cf-e842-4d86-b636-89bfe1e4e337"), "StateObligationsEmploye", 0.0515m, 0.14m, 0.10m, 25000m, 0.0075m });
+                columns: new[] { "Id", "Discriminator", "HealthCare", "PIO" },
+                values: new object[] { new Guid("7cfecd88-3045-4db9-96c1-6b1e84b5c6b3"), "StateObligation", 0.0515m, 0.10m });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AnnualLeaves_CreatedByUserId",

@@ -54,6 +54,7 @@ namespace ADMitroSremEmploye.Repositories.Salary_Service_repository
             incomeFromWork.Demage = input.Demage;
             incomeFromWork.HotMeal = input.HotMeal;
             incomeFromWork.Regres = input.Regres;
+            incomeFromWork.MinuliRad = input.MinuliRad;
             incomeFromWork.GrossSalary = input.GrossSalary;
 
 
