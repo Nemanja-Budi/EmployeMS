@@ -68,6 +68,20 @@ namespace ADMitroSremEmploye.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Dokument",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DatumDokumenta = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    NazivDokumenta = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BrojDokumenta = table.Column<decimal>(type: "decimal(20,0)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Dokument", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "EmployeSalary",
                 columns: table => new
                 {
@@ -90,6 +104,39 @@ namespace ADMitroSremEmploye.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_EmployeSalary", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Komintenti",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Komintent = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Mesto = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Adresa = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Komintenti", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Proizvod",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SifraProizvoda = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NazivProizvoda = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    JM = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PoreskaGrupa = table.Column<int>(type: "int", nullable: false),
+                    CenaProizvoda = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    CenaProizvodaBezPdv = table.Column<decimal>(type: "decimal(18,3)", nullable: false),
+                    ZaliheProizvoda = table.Column<decimal>(type: "decimal(18,3)", nullable: false),
+                    NazivProizvodaZaPrikaz = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Proizvod", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -276,6 +323,26 @@ namespace ADMitroSremEmploye.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Otpremnica",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Paritet = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BrojFiskalnogRacuna = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DokumentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Otpremnica", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Otpremnica_Dokument_DokumentId",
+                        column: x => x.DokumentId,
+                        principalTable: "Dokument",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "EmployeSalarySO",
                 columns: table => new
                 {
@@ -353,6 +420,111 @@ namespace ADMitroSremEmploye.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Kalkulacija",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DokumentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    KomintentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Kalkulacija", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Kalkulacija_Dokument_DokumentId",
+                        column: x => x.DokumentId,
+                        principalTable: "Dokument",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Kalkulacija_Komintenti_KomintentId",
+                        column: x => x.KomintentId,
+                        principalTable: "Komintenti",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Povratnica",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DokumentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    KomintentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Povratnica", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Povratnica_Dokument_DokumentId",
+                        column: x => x.DokumentId,
+                        principalTable: "Dokument",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Povratnica_Komintenti_KomintentId",
+                        column: x => x.KomintentId,
+                        principalTable: "Komintenti",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Prijemnica",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DokumentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    KomintentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Prijemnica", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Prijemnica_Dokument_DokumentId",
+                        column: x => x.DokumentId,
+                        principalTable: "Dokument",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Prijemnica_Komintenti_KomintentId",
+                        column: x => x.KomintentId,
+                        principalTable: "Komintenti",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Racun",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PIB = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MaticniBroj = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Primalac = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    KomintentiId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Paritet = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BrojFiskalnogRacuna = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DokumentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Racun", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Racun_Dokument_DokumentId",
+                        column: x => x.DokumentId,
+                        principalTable: "Dokument",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Racun_Komintenti_KomintentiId",
+                        column: x => x.KomintentiId,
+                        principalTable: "Komintenti",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AnnualLeaves",
                 columns: table => new
                 {
@@ -410,15 +582,161 @@ namespace ADMitroSremEmploye.Data.Migrations
                         principalColumn: "Id");
                 });
 
+            migrationBuilder.CreateTable(
+                name: "OtpremnicaStavke",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IzlaznaKolicina = table.Column<decimal>(type: "decimal(18,3)", nullable: false),
+                    IzlaznaVrednost = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    PDV = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    CenaBezPdv = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    PdvUDin = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    ProizvodId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    OtpremnicaId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OtpremnicaStavke", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OtpremnicaStavke_Otpremnica_OtpremnicaId",
+                        column: x => x.OtpremnicaId,
+                        principalTable: "Otpremnica",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_OtpremnicaStavke_Proizvod_ProizvodId",
+                        column: x => x.ProizvodId,
+                        principalTable: "Proizvod",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "KalkulacijaStavke",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UlaznaKolicina = table.Column<decimal>(type: "decimal(18,3)", nullable: false),
+                    UlaznaVrednost = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    ProizvodId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Kolicina = table.Column<decimal>(type: "decimal(18,3)", nullable: false),
+                    UlaznaCena = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    PDV = table.Column<int>(type: "int", nullable: false),
+                    NabavnaCena = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    NabavnaVrednost = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    VrednostRobeBezPdv = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    PdvUDin = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    VrednostRobeSaPdv = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    CenaProizvodaBezPdv = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    CenaProizvodaSaPdv = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    KalkulacijaId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_KalkulacijaStavke", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_KalkulacijaStavke_Kalkulacija_KalkulacijaId",
+                        column: x => x.KalkulacijaId,
+                        principalTable: "Kalkulacija",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_KalkulacijaStavke_Proizvod_ProizvodId",
+                        column: x => x.ProizvodId,
+                        principalTable: "Proizvod",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PovratnicaStavke",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UlaznaKolicina = table.Column<decimal>(type: "decimal(18,3)", nullable: false),
+                    UlaznaVrednost = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    ProizvodId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PovratnicaId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PovratnicaStavke", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PovratnicaStavke_Povratnica_PovratnicaId",
+                        column: x => x.PovratnicaId,
+                        principalTable: "Povratnica",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_PovratnicaStavke_Proizvod_ProizvodId",
+                        column: x => x.ProizvodId,
+                        principalTable: "Proizvod",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PrijemnicaStavke",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UlaznaKolicina = table.Column<decimal>(type: "decimal(18,3)", nullable: false),
+                    UlaznaVrednost = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    ProizvodId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PrijemnicaId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PrijemnicaStavke", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PrijemnicaStavke_Prijemnica_PrijemnicaId",
+                        column: x => x.PrijemnicaId,
+                        principalTable: "Prijemnica",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_PrijemnicaStavke_Proizvod_ProizvodId",
+                        column: x => x.ProizvodId,
+                        principalTable: "Proizvod",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RacunStavke",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IzlaznaKolicina = table.Column<decimal>(type: "decimal(18,3)", nullable: false),
+                    IzlaznaVrednost = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    PDV = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    CenaBezPdv = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    PdvUDin = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    ProizvodId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RacunId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RacunStavke", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RacunStavke_Proizvod_ProizvodId",
+                        column: x => x.ProizvodId,
+                        principalTable: "Proizvod",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_RacunStavke_Racun_RacunId",
+                        column: x => x.RacunId,
+                        principalTable: "Racun",
+                        principalColumn: "Id");
+                });
+
             migrationBuilder.InsertData(
                 table: "StateObligation",
                 columns: new[] { "Id", "Discriminator", "HealthCare", "PIO", "Tax", "TaxRelief", "Unemployment" },
-                values: new object[] { new Guid("1d4df72f-eabc-4879-bb33-af884becb295"), "StateObligationsEmploye", 0.0515m, 0.14m, 0.10m, 25000m, 0.0075m });
+                values: new object[] { new Guid("3be3823d-b2df-413b-a9c3-70f2379ca720"), "StateObligationsEmploye", 0.0515m, 0.14m, 0.10m, 25000m, 0.0075m });
 
             migrationBuilder.InsertData(
                 table: "StateObligation",
                 columns: new[] { "Id", "Discriminator", "HealthCare", "PIO" },
-                values: new object[] { new Guid("7cfecd88-3045-4db9-96c1-6b1e84b5c6b3"), "StateObligation", 0.0515m, 0.10m });
+                values: new object[] { new Guid("9f2597c4-e985-4b36-b3f5-0ba1875e3ee9"), "StateObligation", 0.0515m, 0.10m });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AnnualLeaves_CreatedByUserId",
@@ -501,6 +819,101 @@ namespace ADMitroSremEmploye.Data.Migrations
                 table: "IncomeFromWork",
                 column: "EmployeSalaryId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Kalkulacija_DokumentId",
+                table: "Kalkulacija",
+                column: "DokumentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Kalkulacija_KomintentId",
+                table: "Kalkulacija",
+                column: "KomintentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_KalkulacijaStavke_KalkulacijaId",
+                table: "KalkulacijaStavke",
+                column: "KalkulacijaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_KalkulacijaStavke_ProizvodId",
+                table: "KalkulacijaStavke",
+                column: "ProizvodId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Otpremnica_DokumentId",
+                table: "Otpremnica",
+                column: "DokumentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OtpremnicaStavke_OtpremnicaId",
+                table: "OtpremnicaStavke",
+                column: "OtpremnicaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OtpremnicaStavke_ProizvodId",
+                table: "OtpremnicaStavke",
+                column: "ProizvodId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Povratnica_DokumentId",
+                table: "Povratnica",
+                column: "DokumentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Povratnica_KomintentId",
+                table: "Povratnica",
+                column: "KomintentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PovratnicaStavke_PovratnicaId",
+                table: "PovratnicaStavke",
+                column: "PovratnicaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PovratnicaStavke_ProizvodId",
+                table: "PovratnicaStavke",
+                column: "ProizvodId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Prijemnica_DokumentId",
+                table: "Prijemnica",
+                column: "DokumentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Prijemnica_KomintentId",
+                table: "Prijemnica",
+                column: "KomintentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PrijemnicaStavke_PrijemnicaId",
+                table: "PrijemnicaStavke",
+                column: "PrijemnicaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PrijemnicaStavke_ProizvodId",
+                table: "PrijemnicaStavke",
+                column: "ProizvodId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Racun_DokumentId",
+                table: "Racun",
+                column: "DokumentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Racun_KomintentiId",
+                table: "Racun",
+                column: "KomintentiId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RacunStavke_ProizvodId",
+                table: "RacunStavke",
+                column: "ProizvodId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RacunStavke_RacunId",
+                table: "RacunStavke",
+                column: "RacunId");
         }
 
         /// <inheritdoc />
@@ -540,6 +953,21 @@ namespace ADMitroSremEmploye.Data.Migrations
                 name: "IncomeFromWork");
 
             migrationBuilder.DropTable(
+                name: "KalkulacijaStavke");
+
+            migrationBuilder.DropTable(
+                name: "OtpremnicaStavke");
+
+            migrationBuilder.DropTable(
+                name: "PovratnicaStavke");
+
+            migrationBuilder.DropTable(
+                name: "PrijemnicaStavke");
+
+            migrationBuilder.DropTable(
+                name: "RacunStavke");
+
+            migrationBuilder.DropTable(
                 name: "StateObligation");
 
             migrationBuilder.DropTable(
@@ -555,7 +983,31 @@ namespace ADMitroSremEmploye.Data.Migrations
                 name: "EmployeSalary");
 
             migrationBuilder.DropTable(
+                name: "Kalkulacija");
+
+            migrationBuilder.DropTable(
+                name: "Otpremnica");
+
+            migrationBuilder.DropTable(
+                name: "Povratnica");
+
+            migrationBuilder.DropTable(
+                name: "Prijemnica");
+
+            migrationBuilder.DropTable(
+                name: "Proizvod");
+
+            migrationBuilder.DropTable(
+                name: "Racun");
+
+            migrationBuilder.DropTable(
                 name: "Bank");
+
+            migrationBuilder.DropTable(
+                name: "Dokument");
+
+            migrationBuilder.DropTable(
+                name: "Komintenti");
         }
     }
 }

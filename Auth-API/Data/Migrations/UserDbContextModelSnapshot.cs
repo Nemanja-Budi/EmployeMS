@@ -461,6 +461,274 @@ namespace ADMitroSremEmploye.Data.Migrations
                     b.ToTable("IncomeFromWork");
                 });
 
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.MP.Dokument", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("BrojDokumenta")
+                        .HasColumnType("decimal(20,0)");
+
+                    b.Property<DateTime>("DatumDokumenta")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("NazivDokumenta")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Dokument");
+                });
+
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.MP.Izlaz.IzlazniPodaci", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("CenaBezPdv")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("IzlaznaKolicina")
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<decimal>("IzlaznaVrednost")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("PDV")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("PdvUDin")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid>("ProizvodId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProizvodId");
+
+                    b.ToTable((string)null);
+
+                    b.UseTpcMappingStrategy();
+                });
+
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.MP.Izlaz.Otpremnica.Otpremnica", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BrojFiskalnogRacuna")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("DokumentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Paritet")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DokumentId");
+
+                    b.ToTable("Otpremnica");
+                });
+
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.MP.Izlaz.Racun.Racun", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BrojFiskalnogRacuna")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("DokumentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("KomintentiId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("MaticniBroj")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PIB")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Paritet")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Primalac")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DokumentId");
+
+                    b.HasIndex("KomintentiId");
+
+                    b.ToTable("Racun");
+                });
+
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.MP.Komintenti", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Adresa")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Komintent")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Mesto")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Komintenti");
+                });
+
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.MP.Proizvod", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("CenaProizvoda")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("CenaProizvodaBezPdv")
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<string>("JM")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NazivProizvoda")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NazivProizvodaZaPrikaz")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PoreskaGrupa")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SifraProizvoda")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("ZaliheProizvoda")
+                        .HasColumnType("decimal(18,3)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Proizvod");
+                });
+
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.MP.Ulaz.Kalkulacija.Kalkulacija", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("DokumentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("KomintentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DokumentId");
+
+                    b.HasIndex("KomintentId");
+
+                    b.ToTable("Kalkulacija");
+                });
+
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.MP.Ulaz.Povratnica.Povratnica", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("DokumentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("KomintentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DokumentId");
+
+                    b.HasIndex("KomintentId");
+
+                    b.ToTable("Povratnica");
+                });
+
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.MP.Ulaz.Prijemnica.Prijemnica", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("DokumentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("KomintentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DokumentId");
+
+                    b.HasIndex("KomintentId");
+
+                    b.ToTable("Prijemnica");
+                });
+
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.MP.Ulaz.UlazniPodaci", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProizvodId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("UlaznaKolicina")
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<decimal>("UlaznaVrednost")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProizvodId");
+
+                    b.ToTable((string)null);
+
+                    b.UseTpcMappingStrategy();
+                });
+
             modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.StateObligation", b =>
                 {
                     b.Property<Guid>("Id")
@@ -489,7 +757,7 @@ namespace ADMitroSremEmploye.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("7cfecd88-3045-4db9-96c1-6b1e84b5c6b3"),
+                            Id = new Guid("9f2597c4-e985-4b36-b3f5-0ba1875e3ee9"),
                             HealthCare = 0.0515m,
                             PIO = 0.10m
                         });
@@ -704,6 +972,96 @@ namespace ADMitroSremEmploye.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.MP.Izlaz.Otpremnica.OtpremnicaStavke", b =>
+                {
+                    b.HasBaseType("ADMitroSremEmploye.Models.Domain.MP.Izlaz.IzlazniPodaci");
+
+                    b.Property<Guid?>("OtpremnicaId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasIndex("OtpremnicaId");
+
+                    b.ToTable("OtpremnicaStavke");
+                });
+
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.MP.Izlaz.Racun.RacunStavke", b =>
+                {
+                    b.HasBaseType("ADMitroSremEmploye.Models.Domain.MP.Izlaz.IzlazniPodaci");
+
+                    b.Property<Guid?>("RacunId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasIndex("RacunId");
+
+                    b.ToTable("RacunStavke");
+                });
+
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.MP.Ulaz.Kalkulacija.KalkulacijaStavke", b =>
+                {
+                    b.HasBaseType("ADMitroSremEmploye.Models.Domain.MP.Ulaz.UlazniPodaci");
+
+                    b.Property<decimal>("CenaProizvodaBezPdv")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("CenaProizvodaSaPdv")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid?>("KalkulacijaId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Kolicina")
+                        .HasColumnType("decimal(18,3)");
+
+                    b.Property<decimal>("NabavnaCena")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("NabavnaVrednost")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("PDV")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("PdvUDin")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("UlaznaCena")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("VrednostRobeBezPdv")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("VrednostRobeSaPdv")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasIndex("KalkulacijaId");
+
+                    b.ToTable("KalkulacijaStavke");
+                });
+
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.MP.Ulaz.Povratnica.PovratnicaStavke", b =>
+                {
+                    b.HasBaseType("ADMitroSremEmploye.Models.Domain.MP.Ulaz.UlazniPodaci");
+
+                    b.Property<Guid?>("PovratnicaId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasIndex("PovratnicaId");
+
+                    b.ToTable("PovratnicaStavke");
+                });
+
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.MP.Ulaz.Prijemnica.PrijemnicaStavke", b =>
+                {
+                    b.HasBaseType("ADMitroSremEmploye.Models.Domain.MP.Ulaz.UlazniPodaci");
+
+                    b.Property<Guid?>("PrijemnicaId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasIndex("PrijemnicaId");
+
+                    b.ToTable("PrijemnicaStavke");
+                });
+
             modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.StateObligationsEmploye", b =>
                 {
                     b.HasBaseType("ADMitroSremEmploye.Models.Domain.StateObligation");
@@ -722,7 +1080,7 @@ namespace ADMitroSremEmploye.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("1d4df72f-eabc-4879-bb33-af884becb295"),
+                            Id = new Guid("3be3823d-b2df-413b-a9c3-70f2379ca720"),
                             HealthCare = 0.0515m,
                             PIO = 0.14m,
                             Tax = 0.10m,
@@ -802,6 +1160,115 @@ namespace ADMitroSremEmploye.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.MP.Izlaz.IzlazniPodaci", b =>
+                {
+                    b.HasOne("ADMitroSremEmploye.Models.Domain.MP.Proizvod", "Proizvod")
+                        .WithMany()
+                        .HasForeignKey("ProizvodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Proizvod");
+                });
+
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.MP.Izlaz.Otpremnica.Otpremnica", b =>
+                {
+                    b.HasOne("ADMitroSremEmploye.Models.Domain.MP.Dokument", "Dokument")
+                        .WithMany()
+                        .HasForeignKey("DokumentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Dokument");
+                });
+
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.MP.Izlaz.Racun.Racun", b =>
+                {
+                    b.HasOne("ADMitroSremEmploye.Models.Domain.MP.Dokument", "Dokument")
+                        .WithMany()
+                        .HasForeignKey("DokumentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ADMitroSremEmploye.Models.Domain.MP.Komintenti", "Komintenti")
+                        .WithMany()
+                        .HasForeignKey("KomintentiId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Dokument");
+
+                    b.Navigation("Komintenti");
+                });
+
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.MP.Ulaz.Kalkulacija.Kalkulacija", b =>
+                {
+                    b.HasOne("ADMitroSremEmploye.Models.Domain.MP.Dokument", "Dokument")
+                        .WithMany()
+                        .HasForeignKey("DokumentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ADMitroSremEmploye.Models.Domain.MP.Komintenti", "Komintent")
+                        .WithMany()
+                        .HasForeignKey("KomintentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Dokument");
+
+                    b.Navigation("Komintent");
+                });
+
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.MP.Ulaz.Povratnica.Povratnica", b =>
+                {
+                    b.HasOne("ADMitroSremEmploye.Models.Domain.MP.Dokument", "Dokument")
+                        .WithMany()
+                        .HasForeignKey("DokumentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ADMitroSremEmploye.Models.Domain.MP.Komintenti", "Komintent")
+                        .WithMany()
+                        .HasForeignKey("KomintentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Dokument");
+
+                    b.Navigation("Komintent");
+                });
+
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.MP.Ulaz.Prijemnica.Prijemnica", b =>
+                {
+                    b.HasOne("ADMitroSremEmploye.Models.Domain.MP.Dokument", "Dokument")
+                        .WithMany()
+                        .HasForeignKey("DokumentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ADMitroSremEmploye.Models.Domain.MP.Komintenti", "Komintent")
+                        .WithMany()
+                        .HasForeignKey("KomintentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Dokument");
+
+                    b.Navigation("Komintent");
+                });
+
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.MP.Ulaz.UlazniPodaci", b =>
+                {
+                    b.HasOne("ADMitroSremEmploye.Models.Domain.MP.Proizvod", "Proizvod")
+                        .WithMany()
+                        .HasForeignKey("ProizvodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Proizvod");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -853,6 +1320,41 @@ namespace ADMitroSremEmploye.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.MP.Izlaz.Otpremnica.OtpremnicaStavke", b =>
+                {
+                    b.HasOne("ADMitroSremEmploye.Models.Domain.MP.Izlaz.Otpremnica.Otpremnica", null)
+                        .WithMany("OtpremnicaStavke")
+                        .HasForeignKey("OtpremnicaId");
+                });
+
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.MP.Izlaz.Racun.RacunStavke", b =>
+                {
+                    b.HasOne("ADMitroSremEmploye.Models.Domain.MP.Izlaz.Racun.Racun", null)
+                        .WithMany("RacunStavke")
+                        .HasForeignKey("RacunId");
+                });
+
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.MP.Ulaz.Kalkulacija.KalkulacijaStavke", b =>
+                {
+                    b.HasOne("ADMitroSremEmploye.Models.Domain.MP.Ulaz.Kalkulacija.Kalkulacija", null)
+                        .WithMany("KalkulacijaStavke")
+                        .HasForeignKey("KalkulacijaId");
+                });
+
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.MP.Ulaz.Povratnica.PovratnicaStavke", b =>
+                {
+                    b.HasOne("ADMitroSremEmploye.Models.Domain.MP.Ulaz.Povratnica.Povratnica", null)
+                        .WithMany("PovratnicaStavke")
+                        .HasForeignKey("PovratnicaId");
+                });
+
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.MP.Ulaz.Prijemnica.PrijemnicaStavke", b =>
+                {
+                    b.HasOne("ADMitroSremEmploye.Models.Domain.MP.Ulaz.Prijemnica.Prijemnica", null)
+                        .WithMany("PrijemnicaStavke")
+                        .HasForeignKey("PrijemnicaId");
+                });
+
             modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.Employe", b =>
                 {
                     b.Navigation("EmployeChild");
@@ -865,6 +1367,31 @@ namespace ADMitroSremEmploye.Data.Migrations
                     b.Navigation("EmployeSalarySOE");
 
                     b.Navigation("IncomeFromWork");
+                });
+
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.MP.Izlaz.Otpremnica.Otpremnica", b =>
+                {
+                    b.Navigation("OtpremnicaStavke");
+                });
+
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.MP.Izlaz.Racun.Racun", b =>
+                {
+                    b.Navigation("RacunStavke");
+                });
+
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.MP.Ulaz.Kalkulacija.Kalkulacija", b =>
+                {
+                    b.Navigation("KalkulacijaStavke");
+                });
+
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.MP.Ulaz.Povratnica.Povratnica", b =>
+                {
+                    b.Navigation("PovratnicaStavke");
+                });
+
+            modelBuilder.Entity("ADMitroSremEmploye.Models.Domain.MP.Ulaz.Prijemnica.Prijemnica", b =>
+                {
+                    b.Navigation("PrijemnicaStavke");
                 });
 #pragma warning restore 612, 618
         }
