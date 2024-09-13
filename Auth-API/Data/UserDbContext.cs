@@ -7,6 +7,14 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using ADMitroSremEmploye.Models.Domain.MP.Izlaz.Otpremnica;
+using ADMitroSremEmploye.Models.Domain.MP.Izlaz.Racun;
+using ADMitroSremEmploye.Models.Domain.MP.Ulaz.Kalkulacija;
+using ADMitroSremEmploye.Models.Domain.MP.Ulaz.Povratnica;
+using ADMitroSremEmploye.Models.Domain.MP.Ulaz.Prijemnica;
+using ADMitroSremEmploye.Models.Domain.MP;
+using ADMitroSremEmploye.Models.Domain.MP.Izlaz;
+using ADMitroSremEmploye.Models.Domain.MP.Ulaz;
 
 namespace ADMitroSremEmploye.Data
 {
@@ -30,6 +38,27 @@ namespace ADMitroSremEmploye.Data
         public DbSet<EmployeSalarySOE> EmployeSalarySOE { get; set; }
         public DbSet<IncomeFromWork> IncomeFromWork { get; set; }
         public DbSet<Bank> Bank { get; set; }
+        
+        public DbSet<Dokument> Dokument { get; set; }
+        public DbSet<Komintenti> Komintenti { get; set; }
+        public DbSet<Proizvod> Proizvod { get; set; }
+        
+        public DbSet<Racun> Racun { get; set; }
+        public DbSet<RacunStavke> RacunStavke { get; set; }
+
+        public DbSet<Otpremnica> Otpremnica { get; set; }
+        public DbSet<OtpremnicaStavke> OtpremnicaStavke { get; set; }
+
+
+        public DbSet<Kalkulacija> Kalkulacija { get; set; }
+        public DbSet<KalkulacijaStavke> KalkulacijaStavke { get; set; }
+        
+        public DbSet<PrijemnicaStavke> PrijemnicaStavke { get; set; }
+        public DbSet<Prijemnica> Prijemnica { get; set; }
+
+        public DbSet<PovratnicaStavke> PovratnicaStavke { get; set; }        
+        public DbSet<Povratnica> Povratnica { get; set; }
+
 
 
         public override int SaveChanges()
@@ -100,6 +129,44 @@ namespace ADMitroSremEmploye.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<UlazniPodaci>().UseTpcMappingStrategy();
+            modelBuilder.Entity<IzlazniPodaci>().UseTpcMappingStrategy();
+
+            modelBuilder.Entity<IzlazniPodaci>(entity =>
+            {
+                entity.Property(r => r.IzlaznaKolicina).HasColumnType("decimal(18,3)");
+                entity.Property(r => r.IzlaznaVrednost).HasColumnType("decimal(18,2)");
+                entity.Property(r => r.PDV).HasColumnType("decimal(18,2)");
+                entity.Property(r => r.CenaBezPdv).HasColumnType("decimal(18,2)");
+                entity.Property(r => r.PdvUDin).HasColumnType("decimal(18,2)");
+            });
+
+            modelBuilder.Entity<Proizvod>(entity =>
+            {
+                entity.Property(p => p.CenaProizvoda).HasColumnType("decimal(18,2)");
+                entity.Property(p => p.CenaProizvodaBezPdv).HasColumnType("decimal(18,3)");
+                entity.Property(p => p.ZaliheProizvoda).HasColumnType("decimal(18,3)");
+            });
+
+            modelBuilder.Entity<UlazniPodaci>(entity =>
+            {
+                entity.Property(p => p.UlaznaKolicina).HasColumnType("decimal(18,3)");
+                entity.Property(p => p.UlaznaVrednost).HasColumnType("decimal(18,2)");
+            });
+
+            modelBuilder.Entity<KalkulacijaStavke>(entity =>
+            {
+                entity.Property(k => k.Kolicina).HasColumnType("decimal(18,3)");
+                entity.Property(k => k.UlaznaCena).HasColumnType("decimal(18,2)");
+                entity.Property(k => k.NabavnaCena).HasColumnType("decimal(18,2)");
+                entity.Property(k => k.NabavnaVrednost).HasColumnType("decimal(18,2)");
+                entity.Property(k => k.VrednostRobeBezPdv).HasColumnType("decimal(18,2)");
+                entity.Property(k => k.PdvUDin).HasColumnType("decimal(18,2)");
+                entity.Property(k => k.VrednostRobeSaPdv).HasColumnType("decimal(18,2)");
+                entity.Property(k => k.CenaProizvodaBezPdv).HasColumnType("decimal(18,2)");
+                entity.Property(k => k.CenaProizvodaSaPdv).HasColumnType("decimal(18,2)");
+            });
 
             modelBuilder.Entity<Employe>(entity =>
             {
