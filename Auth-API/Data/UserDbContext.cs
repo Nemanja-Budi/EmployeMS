@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Http;
 using ADMitroSremEmploye.Models.Domain.MP.Izlaz.Otpremnica;
 using ADMitroSremEmploye.Models.Domain.MP.Izlaz.Racun;
 using ADMitroSremEmploye.Models.Domain.MP.Ulaz.Kalkulacija;
-using ADMitroSremEmploye.Models.Domain.MP.Ulaz.Povratnica;
 using ADMitroSremEmploye.Models.Domain.MP.Ulaz.Prijemnica;
 using ADMitroSremEmploye.Models.Domain.MP;
 using ADMitroSremEmploye.Models.Domain.MP.Izlaz;
@@ -55,11 +54,6 @@ namespace ADMitroSremEmploye.Data
         
         public DbSet<PrijemnicaStavke> PrijemnicaStavke { get; set; }
         public DbSet<Prijemnica> Prijemnica { get; set; }
-
-        public DbSet<PovratnicaStavke> PovratnicaStavke { get; set; }        
-        public DbSet<Povratnica> Povratnica { get; set; }
-
-
 
         public override int SaveChanges()
         {
