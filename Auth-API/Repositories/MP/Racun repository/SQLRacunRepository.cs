@@ -1,32 +1,25 @@
 ﻿using ADMitroSremEmploye.Data;
 using ADMitroSremEmploye.Models.Domain.MP.Izlaz.Racun;
-using ADMitroSremEmploye.Models.Domain.MP.Ulaz.Kalkulacija;
-using ADMitroSremEmploye.Models.Domain.MP.Ulaz.Prijemnica;
 using ADMitroSremEmploye.Models.Domain.MP;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ADMitroSremEmploye.Models.Domain.MP.Ulaz;
 
-namespace ADMitroSremEmploye.Controllers
+namespace ADMitroSremEmploye.Repositories.MP.Racun_repository
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class MpController : ControllerBase
+    public class SQLRacunRepository : IRacunRepository
     {
         private readonly UserDbContext userDbContext;
 
-        public MpController(UserDbContext userDbContext)
+        public SQLRacunRepository(UserDbContext userDbContext)
         {
             this.userDbContext = userDbContext;
         }
 
-        [HttpPost("create-racun")]
-        public async Task<ActionResult<Racun>> CreateRacun(IzlazCreateRacun izlazCreateRacun)
+        private async Task<Dokument> CreateRacunDokument()
         {
             var brojDokumenta = await userDbContext.Racun
-              .OrderByDescending(k => k.Dokument.BrojDokumenta)
-              .Select(k => k.Dokument.BrojDokumenta)
+              .OrderByDescending(k => k.Dokument!.BrojDokumenta)
+              .Select(k => k.Dokument!.BrojDokumenta)
               .FirstOrDefaultAsync();
 
 
@@ -34,13 +27,17 @@ namespace ADMitroSremEmploye.Controllers
             userDbContext.Dokument.Add(newDokument);
             await userDbContext.SaveChangesAsync();
 
-            var racunStavke = new List<RacunStavke>();
+            return newDokument;
+        }
 
+        private async Task<List<RacunStavke>> CreateRacunStavkeDokument(IzlazCreateRacun izlazCreateRacun)
+        {
+            var racunStavke = new List<RacunStavke>();
 
             foreach (var proizvod in izlazCreateRacun.Proizvodi)
             {
                 var currentProizvod = await userDbContext.Proizvod.FirstOrDefaultAsync(x => x.Id == proizvod.ProizvodId);
-                int pdv = currentProizvod.PoreskaGrupa == 4 ? 10 : 20;
+                int pdv = currentProizvod!.PoreskaGrupa == 4 ? 10 : 20;
                 decimal izlaznaVrednost = proizvod.IzlaznaKolicina * currentProizvod.CenaProizvoda;
                 decimal pdvUDin = (izlaznaVrednost / (pdv == 10 ? 1.1m : 1.2m)) / 10;
 
@@ -57,7 +54,17 @@ namespace ADMitroSremEmploye.Controllers
                 racunStavke.Add(newRacunStavke);
 
                 currentProizvod.ZaliheProizvoda -= proizvod.IzlaznaKolicina;
+                userDbContext.Proizvod.Update(currentProizvod);
             }
+
+            return racunStavke;
+        }
+
+        public async Task<Racun> CreateRacunAsync(IzlazCreateRacun izlazCreateRacun)
+        {
+
+            var newDokument = await CreateRacunDokument();
+            var racunStavke = await CreateRacunStavkeDokument(izlazCreateRacun);
 
             var newRacun = new Racun
             {
@@ -74,12 +81,9 @@ namespace ADMitroSremEmploye.Controllers
 
             userDbContext.Racun.AddRange(newRacun);
 
-            userDbContext.Proizvod.UpdateRange(userDbContext.Proizvod);
-
             await userDbContext.SaveChangesAsync();
 
-            return Ok(newRacun);
+            return newRacun;
         }
     }
 }
-

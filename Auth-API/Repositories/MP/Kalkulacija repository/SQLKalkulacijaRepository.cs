@@ -115,14 +115,14 @@ namespace ADMitroSremEmploye.Repositories.MP.Kalkulacija_repository
             return newKalkulacija;
         }
 
-        public async Task DeleteKalkulacijaAsync(Guid id)
+        public async Task<bool> DeleteKalkulacijaAsync(Guid id)
         {
             var kalkulacija = await userDbContext.Kalkulacija
                 .Include(k => k.KalkulacijaStavke)
                 .ThenInclude(ks => ks.Proizvod)
                 .FirstOrDefaultAsync(k => k.Id == id);
 
-            if (kalkulacija == null) return;
+            if (kalkulacija == null) return false;
 
             userDbContext.KalkulacijaStavke.RemoveRange(kalkulacija.KalkulacijaStavke);
             userDbContext.Kalkulacija.Remove(kalkulacija);
@@ -130,17 +130,19 @@ namespace ADMitroSremEmploye.Repositories.MP.Kalkulacija_repository
             var dokument = await userDbContext.Dokument
                 .FirstOrDefaultAsync(d => d.Id == kalkulacija.DokumentId);
 
-            if (dokument == null) return;
+            if (dokument == null) return false;
                 
             var prijemnica = await userDbContext.Prijemnica
                 .Include(p => p.PrijemnicaStavke)
                 .FirstOrDefaultAsync(p => p.DokumentId == dokument.Id);
 
-            if (prijemnica == null) return;
+            if (prijemnica == null) return false;
 
             userDbContext.PrijemnicaStavke.RemoveRange(prijemnica.PrijemnicaStavke);
             userDbContext.Prijemnica.Remove(prijemnica);
             userDbContext.Dokument.Remove(dokument);
+
+            return true;
         }
     }
 }

@@ -8,6 +8,6 @@ namespace ADMitroSremEmploye.Repositories.MP.Kalkulacija_repository
     {
         Task<IEnumerable<Kalkulacija>> GetKalkulacijeAsync();
         Task<Kalkulacija> CreateKalkulacijaAsync(UlazCreate ulazCreate);
-        Task DeleteKalkulacijaAsync(Guid id);
+        Task<bool> DeleteKalkulacijaAsync(Guid id);
     }
 }

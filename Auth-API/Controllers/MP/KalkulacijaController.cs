@@ -43,40 +43,14 @@ namespace ADMitroSremEmploye.Controllers.MP
         [HttpDelete("delete-kalkulacija/{id}")]
         public async Task<ActionResult> DeleteKalkulacija(Guid id)
         {
-            var kalkulacija = await userDbContext.Kalkulacija
-                .Include(k => k.KalkulacijaStavke)
-                .FirstOrDefaultAsync(k => k.Id == id);
+            var kalkulacija = await kalkulacijaRepository.DeleteKalkulacijaAsync(id);
 
-            if (kalkulacija == null)
+            if (kalkulacija == false)
             {
                 return NotFound();
             }
 
-            var dokumentId = kalkulacija.DokumentId;
-            var dokument = await userDbContext.Dokument
-                .FirstOrDefaultAsync(d => d.Id == dokumentId);
-
-            if (dokument != null)
-            {
-                var prijemnica = await userDbContext.Prijemnica
-                    .Include(p => p.PrijemnicaStavke)
-                    .FirstOrDefaultAsync(p => p.DokumentId == dokumentId);
-
-                if (prijemnica != null)
-                {
-                    userDbContext.PrijemnicaStavke.RemoveRange(prijemnica.PrijemnicaStavke);
-                    userDbContext.Prijemnica.Remove(prijemnica);
-                }
-
-
-                userDbContext.KalkulacijaStavke.RemoveRange(kalkulacija.KalkulacijaStavke);
-                userDbContext.Kalkulacija.Remove(kalkulacija);
-                userDbContext.Dokument.Remove(dokument);
-            }
-
-            await userDbContext.SaveChangesAsync();
-
-            return NoContent(); // Vrati HTTP 204 No Content
+            return NoContent();
         }
     }
 }
