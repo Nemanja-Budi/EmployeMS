@@ -10,6 +10,8 @@ using ADMitroSremEmploye.Repositories.Employe_repository;
 using ADMitroSremEmploye.Repositories.Employe_Salary_repository;
 using ADMitroSremEmploye.Repositories.Member_repository;
 using ADMitroSremEmploye.Repositories.MP.Kalkulacija_repository;
+using ADMitroSremEmploye.Repositories.MP.Otpremnica_repository;
+using ADMitroSremEmploye.Repositories.MP.Racun_repository;
 using ADMitroSremEmploye.Repositories.Salary_Service_repository;
 using ADMitroSremEmploye.Repositories.State_obligation_repository;
 using ADMitroSremEmploye.Services;
@@ -61,7 +63,10 @@ builder.Services.AddScoped<IBankRepository, CachedBankRepository>();
 
 builder.Services.AddScoped<IStateObligationRepository, SQLStateObligationRepository>();
 builder.Services.AddScoped<ISalaryServiceRepository, SalaryServiceRepository>();
+
 builder.Services.AddScoped<IKalkulacijaRepository, SQLKalkulacijaRepository>();
+builder.Services.AddScoped<IRacunRepository, SQLRacunRepository>();
+builder.Services.AddScoped<IOtpremnicaRepository, SQLOtpremnicaRepository>();
 
 
 
