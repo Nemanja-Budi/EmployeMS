@@ -144,5 +144,33 @@ namespace ADMitroSremEmploye.Repositories.MP.Kalkulacija_repository
 
             return true;
         }
+
+        public async Task<Kalkulacija?> GetKalkulacijaByIdAsync(Guid id)
+        {
+            var kalkulacija = await userDbContext.Kalkulacija
+                .Include(k => k.KalkulacijaStavke)
+                    .ThenInclude(ks => ks.Proizvod)
+                .Include(k => k.Dokument)
+                .Include(k => k.Komintent)
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            if(kalkulacija == null) return null;
+
+            return kalkulacija;
+        }
+
+        public async Task<Kalkulacija?> GetKalkulacijaByDocumentIdAsync(Guid documentId)
+        {
+            var kalkulacija = await userDbContext.Kalkulacija
+               .Include(k => k.KalkulacijaStavke)
+                   .ThenInclude(ks => ks.Proizvod)
+               .Include(k => k.Dokument)
+               .Include(k => k.Komintent)
+               .FirstOrDefaultAsync(x => x.DokumentId == documentId);
+
+            if (kalkulacija == null) return null;
+
+            return kalkulacija;
+        }
     }
 }

@@ -7,6 +7,8 @@ namespace ADMitroSremEmploye.Repositories.MP.Kalkulacija_repository
     public interface IKalkulacijaRepository
     {
         Task<IEnumerable<Kalkulacija>> GetKalkulacijeAsync();
+        Task<Kalkulacija?> GetKalkulacijaByIdAsync(Guid id);
+        Task<Kalkulacija?> GetKalkulacijaByDocumentIdAsync(Guid documentId);
         Task<Kalkulacija> CreateKalkulacijaAsync(UlazCreate ulazCreate);
         Task<bool> DeleteKalkulacijaAsync(Guid id);
     }

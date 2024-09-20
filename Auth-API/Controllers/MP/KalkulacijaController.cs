@@ -14,12 +14,10 @@ namespace ADMitroSremEmploye.Controllers.MP
     [ApiController]
     public class KalkulacijaController : ControllerBase
     {
-        private readonly UserDbContext userDbContext;
         private readonly IKalkulacijaRepository kalkulacijaRepository;
 
-        public KalkulacijaController(UserDbContext userDbContext, IKalkulacijaRepository kalkulacijaRepository)
+        public KalkulacijaController(IKalkulacijaRepository kalkulacijaRepository)
         {
-            this.userDbContext = userDbContext;
             this.kalkulacijaRepository = kalkulacijaRepository;
         }
 
@@ -31,13 +29,32 @@ namespace ADMitroSremEmploye.Controllers.MP
             return Ok(kalkulacije);
         }
 
+        [HttpGet("get-kalkulacija/{id}")]
+        public async Task<ActionResult<IEnumerable<Kalkulacija>>> GetKalkulacijaById(Guid id)
+        {
+            var kalkulacija = await kalkulacijaRepository.GetKalkulacijaByIdAsync(id);
+
+            if (kalkulacija == null) return NotFound($"Kalkulacija sa id-em {id} nije pronadjena"); 
+
+            return Ok(kalkulacija);
+        }
+
+        [HttpGet("get-kalkulacija-document/{documentId}")]
+        public async Task<ActionResult<IEnumerable<Kalkulacija>>> GetKalkulacijaByDocumentId(Guid documentId)
+        {
+            var kalkulacija = await kalkulacijaRepository.GetKalkulacijaByDocumentIdAsync(documentId);
+
+            if (kalkulacija == null) return NotFound($"Kalkulacija sa id-em {documentId} nije pronadjena");
+
+            return Ok(kalkulacija);
+        }
+
         [HttpPost("create-kalkulacija")]
         public async Task<ActionResult<Kalkulacija>> CreateKalkulacija(UlazCreate ulazCreate)
         {
             var newKalkulacija = await kalkulacijaRepository.CreateKalkulacijaAsync(ulazCreate);
 
             return Ok(newKalkulacija);
-            
         }
 
         [HttpDelete("delete-kalkulacija/{id}")]
