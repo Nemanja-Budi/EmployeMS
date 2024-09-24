@@ -6,5 +6,6 @@ namespace ADMitroSremEmploye.Repositories.MP.Izvestaj_repository
     public interface IIzvestajRepository
     {
         Task<Izvestaj> GetIzvestajZaProizvodAsync([FromQuery] string sifra, [FromQuery] DateTime startDate, [FromQuery] DateTime endDate);
+        Task<List<Izvestaj>> GetIzvestajZaProizvodeAsync([FromQuery] DateTime startDate, [FromQuery] DateTime endDate);
     }
 }
