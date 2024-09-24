@@ -1,8 +1,8 @@
 ﻿namespace ADMitroSremEmploye.Models.DTOs.MP
 {
-    public class ProizvodaIzvestaj
+    public class ProizvodIzvestaj
     {
-        public required string ImeProizvoda { get; set; }
+        public required string NazivProizvoda { get; set; }
         public required string SifraProizvoda { get; set; }
         public required string JM { get; set; }
     }

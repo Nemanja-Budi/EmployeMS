@@ -1,6 +1,7 @@
 ﻿using ADMitroSremEmploye.Data;
 using ADMitroSremEmploye.Models.Domain.MP;
 using ADMitroSremEmploye.Models.DTOs.MP;
+using ADMitroSremEmploye.Repositories.MP.Izvestaj_repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -13,141 +14,36 @@ namespace ADMitroSremEmploye.Controllers.MP
     public class IzvestajController : ControllerBase
     {
         private readonly UserDbContext userDbContext;
+        private readonly IIzvestajRepository izvestajRepository;
 
-        public IzvestajController(UserDbContext userDbContext)
+        public IzvestajController(UserDbContext userDbContext, IIzvestajRepository izvestajRepository)
         {
             this.userDbContext = userDbContext;
+            this.izvestajRepository = izvestajRepository;
         }
 
         [HttpGet("promet-izvestaj")]
-        public async Task<IActionResult> GetAggregatedData(
-            [FromQuery] string sifra,
-            [FromQuery] DateTime startDate,
-            [FromQuery] DateTime endDate)
+        public async Task<IActionResult> GetIzvestajZaProizvod([FromQuery] string sifra,[FromQuery] DateTime startDate,[FromQuery] DateTime endDate)
         {
-            // Upit za Prijemnice
-            var adjustedEndDate = endDate.Date.AddDays(1).AddTicks(-1);
 
-            var prijemnice = await userDbContext.Prijemnica
-                .Where(p => p.Dokument.DatumDokumenta >= startDate && p.Dokument.DatumDokumenta <= adjustedEndDate
-                            && p.PrijemnicaStavke.Any(x => x.Proizvod.SifraProizvoda == sifra))  // Provera proizvoda u stavkama
-                .SelectMany(p => p.PrijemnicaStavke)  // Raspakujemo stavke
-                .Where(stavka => stavka.Proizvod.SifraProizvoda == sifra)  // Filtriranje stavki po šifri proizvoda
-                .GroupBy(stavka => stavka.Proizvod.SifraProizvoda)  // Grupisanje po šifri proizvoda
-                .Select(g => new
-                {
-                    UkupnaUlaznaVrednost = g.Sum(stavka => stavka.UlaznaVrednost),
-                    UkupnaUlaznaKolicina = g.Sum(stavka => stavka.UlaznaKolicina)
-                })
-                .FirstOrDefaultAsync();
+            var izvestaj = await izvestajRepository.GetIzvestajZaProizvodAsync(sifra, startDate, endDate);
 
-            // Upit za Kalkulacije
-            var kalkulacije = await userDbContext.Kalkulacija
-                .Where(p => p.Dokument.DatumDokumenta >= startDate && p.Dokument.DatumDokumenta <= adjustedEndDate
-                            && p.KalkulacijaStavke.Any(x => x.Proizvod.SifraProizvoda == sifra))  // Provera proizvoda u stavkama
-                .SelectMany(p => p.KalkulacijaStavke)  // Raspakujemo stavke
-                .Where(stavka => stavka.Proizvod.SifraProizvoda == sifra)  // Filtriranje stavki po šifri proizvoda
-                .GroupBy(stavka => stavka.Proizvod.SifraProizvoda)  // Grupisanje po šifri proizvoda
-                .Select(g => new
-                {
-                    UkupnaUlaznaVrednost = g.Sum(stavka => stavka.UlaznaVrednost),
-                    UkupnaUlaznaKolicina = g.Sum(stavka => stavka.UlaznaKolicina)
-                })
-                .FirstOrDefaultAsync();
-
-            // Upit za Otpremnice
-            var otpremnice = await userDbContext.Otpremnica
-                .Where(p => p.Dokument.DatumDokumenta >= startDate && p.Dokument.DatumDokumenta <= adjustedEndDate
-                            && p.OtpremnicaStavke.Any(x => x.Proizvod.SifraProizvoda == sifra))  // Provera proizvoda u stavkama
-                .SelectMany(p => p.OtpremnicaStavke)  // Raspakujemo stavke
-                .Where(stavka => stavka.Proizvod.SifraProizvoda == sifra)  // Filtriranje stavki po šifri proizvoda
-                .GroupBy(stavka => stavka.Proizvod.SifraProizvoda)  // Grupisanje po šifri proizvoda
-                .Select(g => new
-                {
-                    UkupnaIzlaznaVrednost = g.Sum(stavka => stavka.IzlaznaVrednost),
-                    UkupnaIzlaznaKolicina = g.Sum(stavka => stavka.IzlaznaKolicina)
-                })
-                .FirstOrDefaultAsync();
-
-            // Upit za Racune
-            var racuni = await userDbContext.Racun
-                 .Where(p => p.Dokument.DatumDokumenta >= startDate && p.Dokument.DatumDokumenta <= adjustedEndDate
-                             && p.RacunStavke.Any(x => x.Proizvod.SifraProizvoda == sifra))  // Provera proizvoda u stavkama
-                 .SelectMany(p => p.RacunStavke)  // Raspakujemo stavke
-                 .Where(stavka => stavka.Proizvod.SifraProizvoda == sifra)  // Filtriranje stavki po šifri proizvoda
-                 .GroupBy(stavka => stavka.Proizvod.SifraProizvoda)  // Grupisanje po šifri proizvoda
-                 .Select(g => new
-                 {
-                     UkupnaIzlaznaVrednost = g.Sum(stavka => stavka.IzlaznaVrednost),
-                     UkupnaIzlaznaKolicina = g.Sum(stavka => stavka.IzlaznaKolicina)
-                 })
-                 .FirstOrDefaultAsync();
-
-            // Kombinacija rezultata iz svih tabela
-
-
-            var ukupnaUlaznaVrednost =
-                (prijemnice?.UkupnaUlaznaVrednost ?? 0) +
-                (kalkulacije?.UkupnaUlaznaVrednost ?? 0);
-
-            var ukupnaUlaznaKolicina =
-                (prijemnice?.UkupnaUlaznaKolicina ?? 0) +
-                (kalkulacije?.UkupnaUlaznaKolicina ?? 0);
-
-            var ukupnaIzlaznaVrednost =
-                (otpremnice?.UkupnaIzlaznaVrednost ?? 0) +
-                (racuni?.UkupnaIzlaznaVrednost ?? 0);
-
-            var ukupnaIzlaznaKolicina =
-                (otpremnice?.UkupnaIzlaznaKolicina ?? 0) +
-                (racuni?.UkupnaIzlaznaKolicina ?? 0);
-
-            // Konačni proračun
-            var razlikaVrednosti = ukupnaUlaznaVrednost - ukupnaIzlaznaVrednost;
-            var razlikaKolicina = ukupnaUlaznaKolicina - ukupnaIzlaznaKolicina;
-            var prosecnaVrednost = razlikaKolicina == 0 ? (decimal?)null : razlikaVrednosti / razlikaKolicina;
-
-            var result = new
-            {
-                kal = new { UK = kalkulacije?.UkupnaUlaznaKolicina ?? 0, UV = kalkulacije?.UkupnaUlaznaVrednost ?? 0 },
-                pri = new { UK = prijemnice?.UkupnaUlaznaKolicina ?? 0, UV = prijemnice?.UkupnaUlaznaVrednost ?? 0 },
-                otp = new { IK = otpremnice?.UkupnaIzlaznaKolicina ?? 0, IV = otpremnice?.UkupnaIzlaznaVrednost ?? 0 },
-                rac = new { IK = racuni?.UkupnaIzlaznaKolicina ?? 0, IV = racuni?.UkupnaIzlaznaVrednost ?? 0},
-                UkupnaUlaznaVrednost = ukupnaUlaznaVrednost,
-                UkupnaIzlaznaVrednost = ukupnaIzlaznaVrednost,
-                RazlikaVrednosti = razlikaVrednosti,
-                UkupnaUlaznaKolicina = ukupnaUlaznaKolicina,
-                UkupnaIzlaznaKolicina = ukupnaIzlaznaKolicina,
-                RazlikaKolicina = razlikaKolicina,
-                ProsecnaVrednost = prosecnaVrednost
-            };
-
-            var pr = await userDbContext.Proizvod.FirstOrDefaultAsync(x => x.SifraProizvoda == sifra);
-
-            var proizvod = new
-            {
-                CurrentTime = DateTime.UtcNow,
-                ImeProizvoda = pr.NazivProizvoda,
-                SifraProizvoda = pr.SifraProizvoda,
-                JM = pr.JM
-            };
-
-            return Ok(new { Izvestaj = result, Proizvod = proizvod });
+            return Ok(new { Izvestaj = izvestaj, Vreme = DateTime.UtcNow });
         }
+
+
 
         [HttpGet("izvestaj")]
         public async Task<IActionResult> GetAggregatedData2(
-            [FromQuery] DateTime startDate,
-            [FromQuery] DateTime endDate)
+           [FromQuery] DateTime startDate,
+           [FromQuery] DateTime endDate)
         {
-            // Adjust endDate
-            var adjustedStartDate = startDate.Date.AddDays(1).AddTicks(-1);
 
             var adjustedEndDate = endDate.Date.AddDays(1).AddTicks(-1);
 
             // Upit za Prijemnice
             var prijemnice = await userDbContext.Prijemnica
-                .Where(p => p.Dokument.DatumDokumenta >= adjustedStartDate && p.Dokument.DatumDokumenta <= adjustedEndDate)
+                .Where(p => p.Dokument.DatumDokumenta >= startDate && p.Dokument.DatumDokumenta <= adjustedEndDate)
                 .SelectMany(p => p.PrijemnicaStavke)
                 .GroupBy(stavka => stavka.Proizvod.SifraProizvoda)
                 .Select(g => new
@@ -160,7 +56,7 @@ namespace ADMitroSremEmploye.Controllers.MP
 
             // Upit za Kalkulacije
             var kalkulacije = await userDbContext.Kalkulacija
-                .Where(p => p.Dokument.DatumDokumenta >= adjustedStartDate && p.Dokument.DatumDokumenta <= adjustedEndDate)
+                .Where(p => p.Dokument.DatumDokumenta >= startDate && p.Dokument.DatumDokumenta <= adjustedEndDate)
                 .SelectMany(p => p.KalkulacijaStavke)
                 .GroupBy(stavka => stavka.Proizvod.SifraProizvoda)
                 .Select(g => new
@@ -173,7 +69,7 @@ namespace ADMitroSremEmploye.Controllers.MP
 
             // Upit za Otpremnice
             var otpremnice = await userDbContext.Otpremnica
-                .Where(p => p.Dokument.DatumDokumenta >= adjustedStartDate && p.Dokument.DatumDokumenta <= adjustedEndDate)
+                .Where(p => p.Dokument.DatumDokumenta >= startDate && p.Dokument.DatumDokumenta <= adjustedEndDate)
                 .SelectMany(p => p.OtpremnicaStavke)
                 .GroupBy(stavka => stavka.Proizvod.SifraProizvoda)
                 .Select(g => new
@@ -186,7 +82,7 @@ namespace ADMitroSremEmploye.Controllers.MP
 
             // Upit za Racune
             var racuni = await userDbContext.Racun
-                .Where(p => p.Dokument.DatumDokumenta >= adjustedStartDate && p.Dokument.DatumDokumenta <= adjustedEndDate)
+                .Where(p => p.Dokument.DatumDokumenta >= startDate && p.Dokument.DatumDokumenta <= adjustedEndDate)
                 .SelectMany(p => p.RacunStavke)
                 .GroupBy(stavka => stavka.Proizvod.SifraProizvoda)
                 .Select(g => new
@@ -231,7 +127,7 @@ namespace ADMitroSremEmploye.Controllers.MP
 
             // Kreiranje liste proizvoda sa nazivom i jedinicom mere
             var listaProizvoda = await userDbContext.Proizvod
-                .Select(p => new
+                .Select(p => new ProizvodIzvestaj
                 {
                     SifraProizvoda = p.SifraProizvoda,
                     NazivProizvoda = p.NazivProizvoda,
@@ -243,11 +139,9 @@ namespace ADMitroSremEmploye.Controllers.MP
             var spojeniRezultati = rezultati.Join(listaProizvoda,
                 r => r.SifraProizvoda,
                 p => p.SifraProizvoda,
-                (r, p) => new
+                (r, p) => new Izvestaj
                 {
-                    SifraProizvoda = r.SifraProizvoda,
-                    NazivProizvoda = p.NazivProizvoda,
-                    JedinicaMere = p.JM,
+                    Proizvod = p,
                     UkupnaUlaznaVrednost = r.UkupnaUlaznaVrednost,
                     UkupnaUlaznaKolicina = r.UkupnaUlaznaKolicina,
                     UkupnaIzlaznaVrednost = r.UkupnaIzlaznaVrednost,
