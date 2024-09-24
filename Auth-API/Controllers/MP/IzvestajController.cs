@@ -37,7 +37,6 @@ namespace ADMitroSremEmploye.Controllers.MP
             var izvestaji = await izvestajRepository.GetIzvestajZaProizvodeAsync(startDate, endDate);
 
             return Ok(new { Izvestaj = izvestaji, Vreme = DateTime.UtcNow });
-
         }
     }
 }

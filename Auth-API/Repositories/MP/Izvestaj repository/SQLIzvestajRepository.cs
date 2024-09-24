@@ -107,6 +107,8 @@ namespace ADMitroSremEmploye.Repositories.MP.Izvestaj_repository
             var adjustedEndDate = endDate.Date.AddDays(1).AddTicks(-1);
 
             var prijemnice = await userDbContext.Prijemnica
+                .AsNoTracking()
+                .AsSplitQuery()
                 .Where(p => p.Dokument.DatumDokumenta >= startDate && p.Dokument.DatumDokumenta <= adjustedEndDate)
                 .SelectMany(p => p.PrijemnicaStavke)
                 .GroupBy(stavka => stavka.Proizvod.SifraProizvoda)
@@ -119,6 +121,8 @@ namespace ADMitroSremEmploye.Repositories.MP.Izvestaj_repository
                 .ToListAsync();
 
             var kalkulacije = await userDbContext.Kalkulacija
+                .AsNoTracking()
+                .AsSplitQuery()
                 .Where(p => p.Dokument.DatumDokumenta >= startDate && p.Dokument.DatumDokumenta <= adjustedEndDate)
                 .SelectMany(p => p.KalkulacijaStavke)
                 .GroupBy(stavka => stavka.Proizvod.SifraProizvoda)
@@ -131,7 +135,14 @@ namespace ADMitroSremEmploye.Repositories.MP.Izvestaj_repository
                 .ToListAsync();
 
             var otpremnice = await userDbContext.Otpremnica
+                .AsNoTracking()
+                .AsSplitQuery()
                 .Where(p => p.Dokument.DatumDokumenta >= startDate && p.Dokument.DatumDokumenta <= adjustedEndDate)
+                .Include(p => p.OtpremnicaStavke) // Eager Loading stavki
+                .Select(p => new
+                {
+                    p.OtpremnicaStavke
+                })
                 .SelectMany(p => p.OtpremnicaStavke)
                 .GroupBy(stavka => stavka.Proizvod.SifraProizvoda)
                 .Select(g => new
@@ -143,6 +154,8 @@ namespace ADMitroSremEmploye.Repositories.MP.Izvestaj_repository
                 .ToListAsync();
 
             var racuni = await userDbContext.Racun
+                .AsNoTracking()
+                .AsSplitQuery()
                 .Where(p => p.Dokument.DatumDokumenta >= startDate && p.Dokument.DatumDokumenta <= adjustedEndDate)
                 .SelectMany(p => p.RacunStavke)
                 .GroupBy(stavka => stavka.Proizvod.SifraProizvoda)
@@ -187,6 +200,8 @@ namespace ADMitroSremEmploye.Repositories.MP.Izvestaj_repository
                 .ToList();
 
             var listaProizvoda = await userDbContext.Proizvod
+                .AsNoTracking()
+                .AsSplitQuery()
                 .Select(p => new ProizvodIzvestaj
                 {
                     SifraProizvoda = p.SifraProizvoda,
