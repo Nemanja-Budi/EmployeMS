@@ -9,6 +9,7 @@ using ADMitroSremEmploye.Repositories.Bank_repository;
 using ADMitroSremEmploye.Repositories.Employe_repository;
 using ADMitroSremEmploye.Repositories.Employe_Salary_repository;
 using ADMitroSremEmploye.Repositories.Member_repository;
+using ADMitroSremEmploye.Repositories.MP.Izvestaj_repository;
 using ADMitroSremEmploye.Repositories.MP.Kalkulacija_repository;
 using ADMitroSremEmploye.Repositories.MP.Otpremnica_repository;
 using ADMitroSremEmploye.Repositories.MP.Racun_repository;
@@ -67,6 +68,7 @@ builder.Services.AddScoped<ISalaryServiceRepository, SalaryServiceRepository>();
 builder.Services.AddScoped<IKalkulacijaRepository, SQLKalkulacijaRepository>();
 builder.Services.AddScoped<IRacunRepository, SQLRacunRepository>();
 builder.Services.AddScoped<IOtpremnicaRepository, SQLOtpremnicaRepository>();
+builder.Services.AddScoped<IIzvestajRepository, SQLIzvestajRepository>();
 
 
 
